@@ -1,0 +1,28 @@
+% chapter/Chapter.tex
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,graphicx,booktabs,siunitx}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[hidelinks]{hyperref}
+\graphicspath{{figures/}}
+\title{Mathematical Models in Biotechnology}
+\author{Jeffrey D. Varner\\
+  Robert Frederick Smith School of Chemical and Biomolecular Engineering,\\
+  Cornell University, Ithaca, NY, USA}
+\date{}
+\begin{document}
+\maketitle
+\begin{abstract}
+Placeholder abstract.
+\end{abstract}
+\input{sections/introduction}
+\input{sections/kinetics}
+\input{sections/fba}
+\input{sections/geneexpression}
+\input{sections/deeplearning}
+\input{sections/hybrid}
+\appendix
+\input{sections/appendix}
+\bibliographystyle{unsrtnat}
+\bibliography{References}
+\end{document}
