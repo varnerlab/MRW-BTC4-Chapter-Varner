@@ -23,8 +23,8 @@
 - Source repos (clone fresh if `/tmp` copies are gone):
   - 5820 (local): `/Users/jdv27/Desktop/julia_work/CHEME-5820-Instances/Spring-2026/`
   - FBA: `github.com/varnerlab/Lecture-5430-FluxBalanceAnalysis`
-  - Gene model (local): `/Users/jdv27/Desktop/papers/Gluconate-Sensor-Model-Paper`
-  - Kompala: `github.com/varnerlab/Kompala-Model-LP-Paper`
+  - Kompala (cybernetic): `github.com/varnerlab/Kompala-Model-LP-Paper`
+  - §4 network motifs are written fresh (no repo). Gluconate model (`/Users/jdv27/Desktop/papers/Gluconate-Sensor-Model-Paper`) and Adhikari 2020 are **cited only**, not vendored.
 
 ---
 
@@ -314,51 +314,52 @@ git commit -m "Vendor and smoke-test urea-cycle FBA example"
 
 ---
 
-### Task 1.5: Vendor and smoke-test the gene-expression structured-promoter model
+### Task 1.5: Vendor and smoke-test the cybernetic (Kompala) model
 
 **Files:**
-- Create: `code/geneexpression/structured_promoter.jl` (adapted from `Gluconate-Sensor-Model-Paper/code/src/{Model,Types,Parameters,Biophysical}.jl`)
-- Create: `code/geneexpression/run_gluconate.jl` (simulate one parameter set, save dose-response figure)
-- Create: `code/data/cellfree_constants.json` (copied from the gluconate repo `CellFree.json`)
+- Create: `code/geneexpression/cybernetic.jl` (Kompala diauxic-growth / LP-choice model; adapted from the Kompala repo)
+- Create: `code/geneexpression/run_cybernetic.jl` (simulate mixed-substrate diauxie, save figure)
 
-**Source (local):** `/Users/jdv27/Desktop/papers/Gluconate-Sensor-Model-Paper/code/`.
+**Source:** clone `github.com/varnerlab/Kompala-Model-LP-Paper`; adapt `code/choice-simulation` and `code/discrete-cellmass-simulation`. (This is the only §4 model that needs vendoring; smoke-testing it in Phase 1 de-risks the one remote dependency early.)
 
-**Produces:** `gluconate_balances!(du,u,p,t)` (11-state ODE); `simulate_dose_response(concentrations)::DataFrame` with columns `gluconate_mM, venus`. Writes `code/figs/gluconate_dose_response.pdf`.
+**Produces:** `simulate_diauxie(; tspan)::DataFrame` with columns `t, biomass, S1, S2` (two substrates, sequential uptake). Writes `code/figs/cybernetic_diauxie.pdf`.
 
-- [ ] **Step 1: Vendor the model files and constants**
+- [ ] **Step 1: Adapt the Kompala model into `cybernetic.jl`**
 
-Copy `Model.jl`, `Types.jl`, `Parameters.jl`, `Biophysical.jl`, and `CellFree.json` from the gluconate repo into `code/geneexpression/` (constants to `code/data/cellfree_constants.json`); strip the module wrappers and point `load_biophysical_constants` at `datapath("cellfree_constants.json")`. Use one representative parameter set from the repo `results/` ensemble (hard-code it as `default_gluconate_params()`).
+Translate the cybernetic variables / LP allocation of enzyme synthesis across the two substrates from the Kompala repo into `simulate_diauxie` matching the **Produces** signature (pure Julia; no notebook dependencies).
 
-- [ ] **Step 2: Write the dose-response run script**
+- [ ] **Step 2: Write the run script**
 
 ```julia
-# code/geneexpression/run_gluconate.jl
+# code/geneexpression/run_cybernetic.jl
 include(joinpath(@__DIR__, "..", "Include.jl"))
-include(joinpath(@__DIR__, "structured_promoter.jl"))
-conc = 10.0 .^ range(-4, 1.3, length=40)   # mM
-df = simulate_dose_response(conc)
-CSV.write(datapath("gluconate_dose_response.csv"), df)
+include(joinpath(@__DIR__, "cybernetic.jl"))
+df = simulate_diauxie(tspan=(0.0, 20.0))
+CSV.write(datapath("cybernetic_diauxie.csv"), df)
 let fig = Figure()
-    ax = Axis(fig[1,1], xscale=log10, xlabel="gluconate (mM)", ylabel="Venus")
-    lines!(ax, df.gluconate_mM, df.venus)
-    save(figpath("gluconate_dose_response.pdf"), fig)
+    ax = Axis(fig[1,1], xlabel="time (h)", ylabel="conc.")
+    lines!(ax, df.t, df.biomass; label="biomass")
+    lines!(ax, df.t, df.S1;      label="substrate 1")
+    lines!(ax, df.t, df.S2;      label="substrate 2")
+    axislegend(ax)
+    save(figpath("cybernetic_diauxie.pdf"), fig)
 end
-println("min=", minimum(df.venus), " max=", maximum(df.venus))
+println("S1_end=", df.S1[end], " S2_end=", df.S2[end])
 ```
 
-- [ ] **Step 3: Run and verify a sigmoidal, monotone-increasing response**
+- [ ] **Step 3: Run and verify sequential substrate consumption (diauxie)**
 
 ```bash
-cd code && julia --project=. geneexpression/run_gluconate.jl && \
-test -f figs/gluconate_dose_response.pdf && echo GENE_OK
+cd code && julia --project=. geneexpression/run_cybernetic.jl && \
+test -f figs/cybernetic_diauxie.pdf && echo CYB_OK
 ```
-Expected: `max > min` (induction observed), `GENE_OK`. Assert `issorted(df.venus)` approximately (monotone non-decreasing dose-response).
+Expected: `CYB_OK`; the printout/figure shows S1 is depleted before S2 begins declining (diauxic lag); both substrates end near zero.
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add code/geneexpression code/data/cellfree_constants.json
-git commit -m "Vendor and smoke-test gluconate structured-promoter model"
+git add code/geneexpression/cybernetic.jl code/geneexpression/run_cybernetic.jl
+git commit -m "Vendor and smoke-test Kompala cybernetic model"
 ```
 
 ---
@@ -370,7 +371,7 @@ git commit -m "Vendor and smoke-test gluconate structured-promoter model"
 
 **Produces:** Full Introduction prose establishing the mechanistic→data-driven spectrum, model purposes (prediction/design/control/understanding), cross-cutting themes (identifiability, calibration vs. validation, extrapolation), the two recurring systems, and a roadmap referencing `\ref{sec:kinetics}`…`\ref{sec:hybrid}`.
 
-- [ ] **Step 1: Write the Introduction section** (replace the stub with ~1.5–2 pages of prose; introduce the CHO and cell-free running examples; forward-reference each section by label).
+- [ ] **Step 1: Write the Introduction section** (replace the stub with ~1.5–2 pages of prose; introduce the CHO bioreactor and E. coli gene-regulatory-circuit running examples; forward-reference each section by label).
 
 - [ ] **Step 2: Build and verify references resolve**
 
@@ -394,7 +395,7 @@ git add chapter/sections/introduction.tex && git commit -m "Draft Introduction (
 
 **Produces:** BibTeX entries for all anchor references named in the spec so later sections can `\cite` them immediately.
 
-- [ ] **Step 1: Add entries** for: Michaelis & Menten 1913; Monod 1949; Luedeking & Piret 1959; Thiele & Palsson 2013; Heirendt 2019; Ackers 1982; McClure 1980; Moon 2012; Adhikari 2020 (`10.3389/fbioe.2020.539081`); Kompala 1986; Hochreiter & Schmidhuber 1997; Gu, Goel & Ré 2022; Vaswani 2017. Pull bibliographic data from the PDFs in the 5430 repo `docs/` where available.
+- [ ] **Step 1: Add entries** for: Michaelis & Menten 1913; Monod 1949; Luedeking & Piret 1959; Thiele & Palsson 2013; Heirendt 2019; **Alon 2006 (*An Introduction to Systems Biology*); Shen-Orr et al. 2002; Mangan & Alon 2003; Goentoro et al. 2009; Shoval & Alon 2010 (SnapShot: Network Motifs, *Cell* 143:326)**; Kompala 1986; Adhikari 2020 (`10.3389/fbioe.2020.539081`, cited as biophysical next level); Hochreiter & Schmidhuber 1997; Gu, Goel & Ré 2022; Vaswani 2017. Pull bibliographic data from the PDFs in the 5430 repo `docs/` and the Alon SnapShot reference list where available.
 
 - [ ] **Step 2: Verify BibTeX parses**
 
@@ -478,96 +479,141 @@ git commit -m "Write section 3 (FBA) with urea-cycle example and S*v=0 derivatio
 
 ---
 
-## Phase 3 — Gene-expression ladder (Week 3, Jul 7–13)
+## Phase 3 — Gene expression: network motifs + cybernetic coda (Week 3, Jul 7–13)
 
-### Task 3.1: Rung 1 (Hill) and Rung 2 (effective biophysical) code
-
-**Files:**
-- Create: `code/geneexpression/hill.jl` (Hill activation/repression input functions)
-- Create: `code/geneexpression/effective_biophysical.jl` (compact Adhikari-2020-style cell-free deGFP: pseudo-enzyme kinetic limits × partition-function control)
-- Create: `code/geneexpression/run_ladder.jl` (produce a single comparison figure across rungs)
-
-**Produces:** `hill(x; K, n, mode=:activation)::Float64`; `simulate_effective_biophysical(; tspan)::DataFrame` with columns `t, mRNA, protein`. `run_ladder.jl` writes `code/figs/gene_ladder.pdf` overlaying the qualitative behavior of all four rungs.
-
-- [ ] **Step 1: Implement Hill input functions** in `hill.jl` (activation `xⁿ/(Kⁿ+xⁿ)`, repression `Kⁿ/(Kⁿ+xⁿ)`).
-
-- [ ] **Step 2: Implement the effective biophysical model** in `effective_biophysical.jl` — kinetic limit `r = kE·(R/(K+R))·(G/(τK+(τ+1)G))` form (pseudo-MM) times a partition-function control `u = ΣWₛ/(1+ΣWₛ)`; adapt the structure from `structured_promoter.jl` but with a single σ70-driven deGFP circuit and no resource depletion.
-
-- [ ] **Step 3: Write `run_ladder.jl`** to simulate Hill, effective-biophysical, and (reusing Task 1.5) the structured-promoter response, and save `gene_ladder.pdf`.
-
-- [ ] **Step 4: Run and verify**
-
-```bash
-cd code && julia --project=. geneexpression/run_ladder.jl && test -f figs/gene_ladder.pdf && echo LADDER_OK
-```
-Expected: `LADDER_OK`; printout shows each rung produces a bounded, positive response.
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add code/geneexpression/hill.jl code/geneexpression/effective_biophysical.jl code/geneexpression/run_ladder.jl
-git commit -m "Implement gene-expression ladder rungs 1-2 and comparison figure"
-```
-
----
-
-### Task 3.2: Rung 4 (Kompala cybernetic) code
+### Task 3.1: Network-motif models and figure (the worked example)
 
 **Files:**
-- Create: `code/geneexpression/cybernetic.jl` (Kompala diauxic-growth / LP-choice model)
-- Create: `code/geneexpression/run_cybernetic.jl` (simulate mixed-substrate diauxie, save figure)
+- Create: `code/geneexpression/motifs.jl` (Hill input functions + four motif ODEs)
+- Create: `code/geneexpression/run_motifs.jl` (simulate all four motifs, save one multi-panel figure)
 
-**Source:** clone `github.com/varnerlab/Kompala-Model-LP-Paper`; adapt `code/choice-simulation` and `code/discrete-cellmass-simulation`.
+**Produces:** `hill_act(x; K, n)`, `hill_rep(x; K, n)`; `simulate_nar(; tspan)`, `simulate_c1ffl(; pulse, tspan)`, `simulate_i1ffl(; tspan)`, `simulate_oscillator(; tspan)`, each returning a `DataFrame` keyed on `t`. `run_motifs.jl` writes `code/figs/motifs.pdf` (4 panels: NAR vs. simple regulation; C1-FFL persistence detector; I1-FFL pulse; oscillator).
 
-**Produces:** `simulate_diauxie(; tspan)::DataFrame` with columns `t, biomass, S1, S2` (two substrates, sequential uptake). Writes `code/figs/cybernetic_diauxie.pdf`.
+- [ ] **Step 1: Implement Hill functions and the four motif ODEs**
 
-- [ ] **Step 1: Adapt the Kompala model** into `cybernetic.jl` (cybernetic variables / LP allocation of enzyme synthesis across the two substrates).
+```julia
+# code/geneexpression/motifs.jl
+hill_act(x; K=1.0, n=2) = x^n / (K^n + x^n)
+hill_rep(x; K=1.0, n=2) = K^n / (K^n + x^n)
 
-- [ ] **Step 2: Write the run script** to reproduce the classic diauxic curve and save the figure.
+# Negative autoregulation vs. simple regulation (β chosen so both share steady state)
+function simulate_nar(; tspan=(0.0, 10.0), β=10.0, α=1.0, K=1.0, n=2)
+    f!(du,u,p,t) = begin
+        du[1] = β - α*u[1]                       # simple regulation
+        du[2] = β*hill_rep(u[2]; K=K, n=n) - α*u[2]  # NAR (note: rescale β to match Yst if desired)
+    end
+    sol = solve(ODEProblem(f!, [0.0,0.0], tspan), Tsit5(), saveat=0.05)
+    DataFrame(t=sol.t, simple=getindex.(sol.u,1), nar=getindex.(sol.u,2))
+end
 
-- [ ] **Step 3: Run and verify sequential substrate consumption**
+# Coherent type-1 FFL with AND gate: X->Y, X->Z, Y->Z (persistence detector)
+function simulate_c1ffl(; tspan=(0.0, 16.0), βy=1.0, βz=1.0, αy=1.0, αz=1.0,
+                          Kxy=0.5, Kxz=0.5, Kyz=0.5, n=2, pulse=(2.0,4.0), step_on=8.0)
+    Xsig(t) = (pulse[1] ≤ t ≤ pulse[2]) || (t ≥ step_on) ? 1.0 : 0.0   # transient pulse, then sustained step
+    f!(du,u,p,t) = begin
+        X = Xsig(t)
+        du[1] = βy*hill_act(X; K=Kxy, n=n) - αy*u[1]                       # Y
+        du[2] = βz*hill_act(X; K=Kxz, n=n)*hill_act(u[1]; K=Kyz, n=n) - αz*u[2]  # Z (AND)
+    end
+    sol = solve(ODEProblem(f!, [0.0,0.0], tspan), Tsit5(), saveat=0.05)
+    DataFrame(t=sol.t, X=Xsig.(sol.t), Y=getindex.(sol.u,1), Z=getindex.(sol.u,2))
+end
+
+# Incoherent type-1 FFL: X->Y, X->Z, Y-|Z (pulse generator)
+function simulate_i1ffl(; tspan=(0.0, 12.0), βy=1.0, βz=1.0, αy=1.0, αz=1.0,
+                          Kxy=0.5, Kxz=0.5, Kyz=0.5, n=2, step_on=1.0)
+    Xsig(t) = t ≥ step_on ? 1.0 : 0.0
+    f!(du,u,p,t) = begin
+        X = Xsig(t)
+        du[1] = βy*hill_act(X; K=Kxy, n=n) - αy*u[1]                       # Y
+        du[2] = βz*hill_act(X; K=Kxz, n=n)*hill_rep(u[1]; K=Kyz, n=n) - αz*u[2]  # Z (X AND not-Y)
+    end
+    sol = solve(ODEProblem(f!, [0.0,0.0], tspan), Tsit5(), saveat=0.05)
+    DataFrame(t=sol.t, X=Xsig.(sol.t), Y=getindex.(sol.u,1), Z=getindex.(sol.u,2))
+end
+
+# Goodwin-style negative-feedback oscillator (3 variables, high Hill coefficient)
+function simulate_oscillator(; tspan=(0.0, 80.0), a=1.0, b=0.1, c=1.0, d=0.1, e=1.0, f=0.1, K=1.0, n=9)
+    g!(du,u,p,t) = begin
+        du[1] = a*hill_rep(u[3]; K=K, n=n) - b*u[1]
+        du[2] = c*u[1] - d*u[2]
+        du[3] = e*u[2] - f*u[3]
+    end
+    sol = solve(ODEProblem(g!, [0.1,0.1,0.1], tspan), Tsit5(), saveat=0.1)
+    DataFrame(t=sol.t, X=getindex.(sol.u,1), Y=getindex.(sol.u,2), Z=getindex.(sol.u,3))
+end
+```
+(`solve`, `ODEProblem`, `Tsit5` come from DifferentialEquations.jl, already loaded by `Include.jl`.)
+
+- [ ] **Step 2: Write the run script (multi-panel figure)**
+
+```julia
+# code/geneexpression/run_motifs.jl
+include(joinpath(@__DIR__, "..", "Include.jl"))
+include(joinpath(@__DIR__, "motifs.jl"))
+nar  = simulate_nar();  c1 = simulate_c1ffl();  i1 = simulate_i1ffl();  osc = simulate_oscillator()
+fig = Figure(size=(900,650))
+let ax = Axis(fig[1,1], title="Negative autoregulation", xlabel="time", ylabel="Y")
+    lines!(ax, nar.t, nar.simple; label="simple"); lines!(ax, nar.t, nar.nar; label="NAR"); axislegend(ax)
+end
+let ax = Axis(fig[1,2], title="C1-FFL (persistence detector)", xlabel="time")
+    lines!(ax, c1.t, c1.X; label="X"); lines!(ax, c1.t, c1.Z; label="Z"); axislegend(ax)
+end
+let ax = Axis(fig[2,1], title="I1-FFL (pulse generator)", xlabel="time")
+    lines!(ax, i1.t, i1.X; label="X"); lines!(ax, i1.t, i1.Z; label="Z"); axislegend(ax)
+end
+let ax = Axis(fig[2,2], title="Negative-feedback oscillator", xlabel="time")
+    lines!(ax, osc.t, osc.X; label="X"); axislegend(ax)
+end
+save(figpath("motifs.pdf"), fig)
+println("nar_halftime_simple<nar? ", nothing)  # visual check; see expectations below
+```
+
+- [ ] **Step 3: Run and verify the signature dynamics**
 
 ```bash
-cd code && julia --project=. geneexpression/run_cybernetic.jl && test -f figs/cybernetic_diauxie.pdf && echo CYB_OK
+cd code && julia --project=. geneexpression/run_motifs.jl && test -f figs/motifs.pdf && echo MOTIFS_OK
 ```
-Expected: `CYB_OK`; printout confirms S1 is depleted before S2 begins declining (diauxic lag).
+Expected: `MOTIFS_OK`. Visual/assertion checks: (a) NAR reaches half its steady state faster than simple regulation; (b) C1-FFL Z stays ~0 during the brief X pulse but rises under the sustained X step (transient filtered); (c) I1-FFL Z rises then falls back (a pulse); (d) the oscillator's X shows ≥2 peaks over the window. Add `@assert` statements for (c) `maximum(i1.Z) > 1.5*i1.Z[end]` and (d) a simple peak count.
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add code/geneexpression/cybernetic.jl code/geneexpression/run_cybernetic.jl
-git commit -m "Implement Kompala cybernetic model (ladder rung 4)"
+git add code/geneexpression/motifs.jl code/geneexpression/run_motifs.jl
+git commit -m "Implement network-motif worked example (NAR, C1/I1-FFL, oscillator)"
 ```
 
 ---
 
-### Task 3.3: §4 prose and derivations (the ladder)
+### Task 3.2: §4 prose, derivations, and figure assembly
 
 **Files:**
 - Modify: `chapter/sections/geneexpression.tex`
-- Modify: `chapter/sections/appendix.tex` (partition-function / Ackers derivation; McClure 4-step → kinetic limits)
+- Modify: `chapter/sections/appendix.tex` (Hill input-function derivation; C1-FFL sign-sensitive-delay and I1-FFL pulse analysis; cybernetic allocation objective)
 
-**Interfaces — Consumes:** `code/figs/{gene_ladder,gluconate_dose_response,cybernetic_diauxie}.pdf`.
+**Interfaces — Consumes:** `code/figs/motifs.pdf` (Task 3.1) and `code/figs/cybernetic_diauxie.pdf` (Task 1.5).
 
-- [ ] **Step 1: Copy the three figures into the chapter**
+- [ ] **Step 1: Refresh both figures into the chapter**
 
 ```bash
-cd code && for f in gene_ladder gluconate_dose_response cybernetic_diauxie; do cp figs/$f.pdf ../chapter/figures/; done
+cd code && julia --project=. geneexpression/run_motifs.jl && julia --project=. geneexpression/run_cybernetic.jl && \
+cp figs/motifs.pdf figs/cybernetic_diauxie.pdf ../chapter/figures/
 ```
 
-- [ ] **Step 2: Write §4 prose** — the four-rung ladder with increasing biophysical granularity; cell-free vs. whole-cell thread; present each rung with its governing equations and figure references. Put the statistical-mechanics partition-function control derivation (Ackers) and the McClure 4-step → kinetic-limit derivation in `appendix.tex`.
+- [ ] **Step 2: Write §4 prose** — (4.1) regulatory input functions (Hill activation/repression, cooperativity); (4.2) network motifs as design principles, presenting NAR, C1-FFL, I1-FFL, and the oscillator with their governing ODEs and `\ref{fig:motifs}`; note that more granular biophysical promoter models (Adhikari 2020; the structured-promoter gluconate biosensor) are the next level of detail, with citations; (4.3) the cybernetic/Kompala coda for whole-cell resource allocation with `\ref{fig:cybernetic}`. Put the Hill-function derivation, the C1-FFL sign-sensitive-delay argument, the I1-FFL pulse analysis, and the cybernetic objective in `appendix.tex`.
 
-- [ ] **Step 3: Build and verify all three figures and the cross-refs resolve**
+- [ ] **Step 3: Build and verify both figures and cross-refs resolve**
 
 ```bash
 cd chapter && make 2>&1 | grep -iE "undefined|error|Warning: File" | head
 ```
+Expected: no undefined `fig:motifs` / `fig:cybernetic`; both PDFs included.
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add chapter/sections/geneexpression.tex chapter/sections/appendix.tex chapter/figures/{gene_ladder,gluconate_dose_response,cybernetic_diauxie}.pdf
-git commit -m "Write section 4 (gene-expression ladder) with figures and derivations"
+git add chapter/sections/geneexpression.tex chapter/sections/appendix.tex chapter/figures/motifs.pdf chapter/figures/cybernetic_diauxie.pdf
+git commit -m "Write section 4 (network motifs + cybernetic coda) with figures and derivations"
 ```
 
 ---
@@ -771,8 +817,8 @@ git commit -m "Add abstract and complete reference pass"
 - [ ] **Step 1: Regenerate every figure from scratch** to confirm reproducibility
 
 ```bash
-cd code && for s in kinetics/run_cho fba/run_fba geneexpression/run_ladder \
-  geneexpression/run_gluconate geneexpression/run_cybernetic \
+cd code && for s in kinetics/run_cho fba/run_fba geneexpression/run_motifs \
+  geneexpression/run_cybernetic \
   deeplearning/run_lstm deeplearning/run_s4 deeplearning/run_comparison \
   deeplearning/run_hybrid; do echo "== $s =="; julia --project=. $s.jl || exit 1; done
 ```
@@ -818,9 +864,9 @@ git tag chapter-submission-2026-07-24
 
 ## Self-Review (against the spec)
 
-**Spec coverage:** §1 Intro → Task 1.6; §2 Kinetics → 1.3, 2.1; §3 FBA → 1.4, 2.2; §4 ladder (4 rungs) → 1.5, 3.1, 3.2, 3.3; §5 deep TS (RNN/LSTM/S4 + Transformer note) → 4.1, 4.2, 4.3, 4.4; §6 hybrid/outlook → 4.5. Repo layout → 1.1, 1.2. Build/Makefile → 1.2. References → 1.7, 5.1. Reproducibility/Manifest → 1.1, 5.2. Two recurring systems → CHO (1.3→4.x), cell-free (1.5, 3.x). Derivations inline → appendix updated in 2.1, 2.2, 3.3, 4.4. All spec sections map to tasks.
+**Spec coverage:** §1 Intro → Task 1.6; §2 Kinetics → 1.3, 2.1; §3 FBA → 1.4, 2.2; §4 gene expression (Hill input functions + network motifs + cybernetic coda) → 1.5 (Kompala vendoring), 3.1 (motif models), 3.2 (prose + derivations); §5 deep TS (RNN/LSTM/S4 + Transformer note) → 4.1, 4.2, 4.3, 4.4; §6 hybrid/outlook → 4.5. Repo layout → 1.1, 1.2. Build/Makefile → 1.2. References → 1.7, 5.1. Reproducibility/Manifest → 1.1, 5.2. Two recurring systems → CHO (1.3→4.x), E. coli gene circuits (3.1, 3.2). Derivations inline → appendix updated in 2.1, 2.2, 3.2, 4.4. All spec sections map to tasks.
 
-**De-risking cuts (from spec §8), if behind by Jul 18:** make Task 3.2 (Kompala) review-only (drop the code task, cite instead); lighten Task 4.5 (hybrid) to a conceptual figure; reduce Rung 2 in Task 3.1 to a reused figure. None block the build.
+**De-risking cuts (from spec §8), if behind by Jul 18:** make the Kompala cybernetic coda (Tasks 1.5/3.2) review-only (cite, do not re-run); drop the negative-feedback-oscillator motif in Task 3.1 (keep NAR + C1-FFL + I1-FFL); lighten Task 4.5 (hybrid) to a conceptual figure. None block the build.
 
 **Placeholder scan:** code steps show real Julia; LaTeX steps specify exact files and content; verification commands have expected output. Vendoring tasks name exact source files to copy and the exact target interface to expose — not "implement later."
 

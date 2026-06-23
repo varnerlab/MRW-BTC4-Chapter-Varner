@@ -16,7 +16,7 @@ The chapter is organized as a **mechanistic → data-driven spectrum**. It opens
 Two biological systems recur so the reader sees the same biology through different mathematical lenses:
 
 - **A CHO fed-batch monoclonal-antibody (mAb) bioreactor** — introduced as a mechanistic ODE in the kinetics section (§2), then revisited as a data-driven and hybrid forecasting problem in the deep-learning section (§5) and the hybrid section (§6).
-- **E. coli cell-free transcription–translation (TX-TL)** — the substrate for the gene-expression "ladder" (§4).
+- **E. coli gene-regulatory circuits** — the substrate for the network-motif treatment (§4): how circuit topology (autoregulation, feed-forward loops, feedback) produces dynamic function.
 
 Flux balance analysis (§3, urea cycle) stands on its own as the constraint-based interlude between dynamic kinetic models and gene-expression models.
 
@@ -29,7 +29,8 @@ These were resolved during brainstorming and are fixed unless the author revises
 | Section ordering | Mechanistic → data-driven arc (Intro, Kinetics, FBA, Gene expression, Deep time-series, Hybrid/Outlook) |
 | Computational depth | One original, reproducible Julia worked example per pillar |
 | FBA case study | Urea cycle, adapted from `varnerlab/Lecture-5430-FluxBalanceAnalysis` |
-| Original angles featured | Gene-expression ladder; S4-vs-LSTM on mAb data; mechanistic+ML hybrid; cell-free vs whole-cell |
+| Original angles featured | Network-motif design principles (Alon) + cybernetic coda; S4-vs-LSTM on mAb data; mechanistic+ML hybrid |
+| §4 gene-expression approach | Network motifs (NAR, C1-FFL, I1-FFL, oscillator) + Kompala cybernetic; gluconate/Adhikari biophysical models cited, not built |
 | LaTeX template | Plain `article` class for now; swap to publisher template later |
 | Math depth | Full derivations inline (in text or appendix) |
 | Authorship | Solo — Jeffrey D. Varner, Cornell |
@@ -64,16 +65,20 @@ Each pillar is anchored by one original Julia worked example whose figures are r
 - Derivation inline: `S·v = 0` from open-species mole balances under steady-state, constant-volume, no-accumulation assumptions (the Palsson constraints).
 - Anchor refs: Orth, Thiele & Palsson 2010 ("What is FBA?"); Thiele & Palsson 2013; Heirendt 2019 (COBRA).
 
-### §4 Gene-expression models — the ladder (centerpiece)
-Four rungs of increasing biophysical granularity, all on E. coli cell-free expression, with **cell-free vs whole-cell** threaded through:
+### §4 Models of gene expression — network motifs (centerpiece)
+Gene-regulatory circuits modeled as **network motifs** (Alon): how recurring topologies produce characteristic dynamic functions, built from Hill input functions and simple ODEs. Structure:
 
-1. **Hill / phenomenological control functions** — saturating activation/repression input functions; cooperativity. *Implemented directly (trivial).*
-2. **Effective biophysical model** (Adhikari, Vilkhovoy, Vadhin, Lim, Varner 2020, *Front. Bioeng. Biotechnol.* 8:539081) — pseudo-enzyme (Michaelis–Menten-like) kinetic limits × partition-function control functions; coarse-grained, tractable parameter count; cell-free deGFP. *Compact reimplementation, adaptable from the gluconate framework.*
-3. **Structured-promoter model** (gluconate biosensor paper, `Gluconate-Sensor-Model-Paper`) — McClure 4-step TX/TL mechanism + Boltzmann partition function over promoter states + load-dependent resource depletion; 11-state ODE; gluconate dose-response as validation. *Adapted from the local repo.*
-4. **Cybernetic / resource-allocation "choice"** (Kompala model, `varnerlab/Kompala-Model-LP-Paper`) — gene expression as an optimal allocation decision; mixed-substrate diauxic growth; the bridge to whole-cell. *Adapted from the Kompala LP repo.*
-- **Worked example:** the four-rung ladder applied to cell-free / mixed-substrate systems, showing how prediction and interpretability change as granularity increases.
-- Derivations inline: partition-function / statistical-mechanics control (Ackers 1982); McClure 4-step mechanism → kinetic limits; resource depletion; cybernetic objective.
-- Anchor refs: Ackers et al. 1982; McClure 1980; Moon et al. 2012; Adhikari et al. 2020; Kompala et al. 1986.
+1. **Regulatory input functions (Hill).** Saturating activation/repression and cooperativity; the building block of every motif. *Implemented directly.*
+2. **Network motifs (the worked example).** Simulate the canonical motifs and their signature dynamics:
+   - **Negative autoregulation (NAR)** — faster response time and reduced cell-cell variability vs. simple regulation.
+   - **Coherent type-1 feed-forward loop (C1-FFL, AND gate)** — sign-sensitive delay / persistence detector that filters transient ON inputs.
+   - **Incoherent type-1 FFL (I1-FFL)** — pulse generator, response accelerator, fold-change detector.
+   - **Negative-feedback loop** — oscillations arising from two separated timescales.
+   Each motif is a small, fresh Julia ODE; figures reproduce the Alon-style dynamics. *No vendoring required.*
+3. **Cybernetic / resource-allocation coda** (Kompala model, `varnerlab/Kompala-Model-LP-Paper`) — gene expression as an optimal allocation decision; mixed-substrate diauxic growth; the bridge to whole-cell regulation. *Adapted from the Kompala LP repo.*
+- **Note:** more granular mechanistic/biophysical promoter models (effective-biophysical, Adhikari et al. 2020; the structured-promoter gluconate biosensor) are **cited as the next level of detail, not re-implemented**.
+- Derivations inline: Hill input functions and cooperativity; the C1-FFL sign-sensitive-delay and I1-FFL pulse dynamics; the cybernetic allocation objective.
+- Anchor refs: Alon 2006 (*An Introduction to Systems Biology*); Shen-Orr et al. 2002; Mangan & Alon 2003 (FFL); Goentoro et al. 2009 (I1-FFL fold-change detection); Shoval & Alon 2010 (SnapShot: Network Motifs); Kompala et al. 1986.
 
 ### §5 Deep time-series models
 - Why data-driven sequence models; sequential data and the limits of mechanistic models when mechanism is unknown or too costly.
@@ -114,7 +119,7 @@ MRW-BTC4-Chapter-Varner/
 │   ├── src/                        # shared utilities (IO, plotting theme, helpers)
 │   ├── kinetics/                   # CHO mechanistic ODE + figures
 │   ├── fba/                        # urea cycle FBA (adapted from 5430 repo)
-│   ├── geneexpression/             # the four-rung ladder
+│   ├── geneexpression/             # Hill input functions + network motifs + cybernetic (Kompala)
 │   ├── deeplearning/               # LSTM + S4 (Flux/Lux) + hybrid on CHO data
 │   ├── data/                       # CHO synthetic trajectories, cell-free data, urea-cycle network
 │   └── figs/                       # generated figures → copied/symlinked into chapter/figures
@@ -123,7 +128,7 @@ MRW-BTC4-Chapter-Varner/
 ```
 
 - Each worked example is a runnable script that regenerates its figures. Running `code/Include.jl` then the per-pillar scripts reproduces every figure in the chapter.
-- Source code from the four origin repos is **vendored and adapted** into the matching `code/` subfolder (all author's own MIT-licensed work), then wired to the shared `Include.jl` / `Project.toml`.
+- Source code from three origin repos is **vendored and adapted** into the matching `code/` subfolder (CHO/S4 from the 5820 course; urea-cycle FBA from the 5430 repo; cybernetic from the Kompala repo — all author's own MIT-licensed work), then wired to the shared `Include.jl` / `Project.toml`. The §4 network motifs are written fresh (no vendoring); the gluconate model is cited only.
 - `Manifest.toml` will be committed (the repo is an application, not a package); the current `.gitignore` rule for `Manifest*.toml` will be relaxed for `code/Manifest.toml`.
 
 ## 5. Build system
@@ -136,7 +141,7 @@ A `Makefile` in `chapter/` modeled on the Gluconate paper's Makefile:
 ## 6. References
 
 - Single `chapter/References.bib`, numbered-reference style.
-- Seed from PDFs already collected in the 5430 FBA repo `docs/` (Orth 2010, Thiele 2013, Heirendt 2019, Bordbar 2014, etc.), the Kompala 1986 paper, the Adhikari 2020 and gluconate papers, plus canonical deep-learning references (Hochreiter & Schmidhuber 1997; Gu et al. 2022; Vaswani et al. 2017) and classical kinetics (Michaelis–Menten 1913; Monod 1949; Luedeking–Piret 1959).
+- Seed from PDFs already collected in the 5430 FBA repo `docs/` (Orth 2010, Thiele 2013, Heirendt 2019, Bordbar 2014, etc.), the Kompala 1986 paper, the Alon network-motif corpus (Alon 2006; Shen-Orr 2002; Mangan & Alon 2003; Goentoro 2009; Shoval & Alon 2010), the Adhikari 2020 and gluconate papers (cited as the biophysical next level), plus canonical deep-learning references (Hochreiter & Schmidhuber 1997; Gu et al. 2022; Vaswani et al. 2017) and classical kinetics (Michaelis–Menten 1913; Monod 1949; Luedeking–Piret 1959).
 - Target ~60–100 references for a derivation-rich review.
 
 ## 7. Recurring-system reuse map
@@ -144,15 +149,15 @@ A `Makefile` in `chapter/` modeled on the Gluconate paper's Makefile:
 | System | §2 Kinetics | §3 FBA | §4 Gene expr. | §5 Deep TS | §6 Hybrid |
 |---|---|---|---|---|---|
 | CHO fed-batch mAb | mechanistic ODE (source of synthetic data) | — | — | LSTM vs S4 forecast | mechanistic+ML hybrid |
-| E. coli cell-free TX-TL | — | — | ladder rungs 1–3 | — | — |
-| Mixed-substrate growth | — | — | rung 4 (cybernetic) | — | — |
+| E. coli gene circuits | — | — | Hill, NAR, C1/I1-FFL, oscillator | — | — |
+| Mixed-substrate growth | — | — | cybernetic coda (Kompala) | — | — |
 | Metabolism / urea cycle | — | FBA LP | — | — | — |
 
 ## 8. Risks, scope guards, and possible cuts
 
-- **Scope is ambitious** (6 sections, 4 worked examples, derivations inline) for ~4.5 weeks. It is feasible because most code already exists in the source repos and is being adapted, not written from scratch.
-- **Highest-effort items:** the §4 gene-expression ladder (four rungs) and the §5 S4 implementation in Flux/Lux. The S4/HiPPO-LegS layer has no turnkey framework implementation and must be written as a custom layer.
-- **De-risking cuts, in priority order if time runs short:** (a) make the cybernetic/Kompala rung review-only (cite, do not re-run); (b) lighten the §6 hybrid example to a conceptual figure; (c) reduce ladder rung 2 (Adhikari) to a reused figure rather than a fresh run. None of these affect the chapter's spine.
+- **Scope is ambitious** (6 sections, 4 worked examples, derivations inline) for ~4.5 weeks. It is feasible because most code already exists in the source repos and is being adapted, not written from scratch, and the §4 motifs are simple fresh ODEs.
+- **Highest-effort item:** the §5 S4 implementation in Flux/Lux. The S4/HiPPO-LegS layer has no turnkey framework implementation and must be written as a custom layer.
+- **De-risking cuts, in priority order if time runs short:** (a) make the cybernetic/Kompala coda review-only (cite, do not re-run); (b) drop the negative-feedback-oscillator motif, keeping NAR + C1-FFL + I1-FFL; (c) lighten the §6 hybrid example to a conceptual figure. None of these affect the chapter's spine.
 
 ## 9. Out of scope
 
@@ -160,12 +165,13 @@ A `Makefile` in `chapter/` modeled on the Gluconate paper's Makefile:
 - A Transformer/attention worked example (conceptual mention only).
 - Real experimental CHO data (synthetic from the mechanistic model only).
 - Genome-scale FBA beyond the urea-cycle example (mentioned, not computed).
+- Detailed biophysical promoter models in §4 (effective-biophysical Adhikari 2020; structured-promoter gluconate biosensor) — cited as the next level of granularity, not re-implemented.
 
 ## 10. Timeline (Jun 23 → due Jul 24)
 
 - **Week 1 (now–Jun 29):** Scaffold repo — `chapter/` LaTeX skeleton + `Makefile`, `code/Include.jl`, `Project.toml`. Vendor and smoke-test the four code examples so each runs and emits at least one figure. Draft §1 Introduction and the full outline. Seed `References.bib`.
 - **Week 2 (Jun 30–Jul 6):** §2 Kinetics (CHO mechanistic) and §3 FBA (urea cycle) — prose, derivations, and figures.
-- **Week 3 (Jul 7–13):** §4 Gene-expression ladder — all four rungs, prose, derivations, and figures.
+- **Week 3 (Jul 7–13):** §4 Gene expression — Hill input functions, network motifs (NAR / C1-FFL / I1-FFL / oscillator), and the cybernetic coda — prose, derivations, and figures.
 - **Week 4 (Jul 14–20):** §5 Deep time-series (RNN/LSTM/S4, S4-vs-LSTM) and §6 Hybrid/Outlook — prose, derivations, and figures.
 - **Week 5 (Jul 21–24):** Integration, references, full build, polish, internal review, submit.
 
