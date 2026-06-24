@@ -1,2 +1,71 @@
 \section{Derivations}\label{sec:appendix}
-Placeholder.
+
+%-----------------------------------------------------------------------
+\subsection{Quasi-Steady-State Derivation of the Michaelis--Menten Rate Law}
+\label{sec:mm_derivation}
+%-----------------------------------------------------------------------
+
+Consider the single-enzyme mechanism
+\begin{equation}\label{eq:app_mechanism}
+  E + S \;\underset{k_{-1}}{\overset{k_1}{\rightleftharpoons}}\; ES
+  \;\overset{k_2}{\longrightarrow}\; E + P,
+\end{equation}
+where $E$, $S$, $ES$, and $P$ denote free enzyme, substrate, enzyme--substrate
+complex, and product, respectively.  Writing mass-action balances for each
+species:
+\begin{align}
+  \frac{d[E]}{dt}  &= -k_1[E][S] + (k_{-1} + k_2)[ES], \label{eq:app_dE}\\
+  \frac{d[ES]}{dt} &=  k_1[E][S] - (k_{-1} + k_2)[ES], \label{eq:app_dES}\\
+  \frac{d[S]}{dt}  &= -k_1[E][S] + k_{-1}[ES],          \label{eq:app_dS}\\
+  \frac{d[P]}{dt}  &=  k_2[ES].                          \label{eq:app_dP}
+\end{align}
+The total enzyme concentration $[E]_T = [E] + [ES]$ is conserved, so
+$[E] = [E]_T - [ES]$.
+
+\paragraph{The quasi-steady-state assumption (QSSA).}
+When the enzyme is present at a concentration much lower than the substrate
+($[E]_T \ll [S]_0$), the complex $ES$ reaches a pseudo-steady state on a
+fast time scale relative to the depletion of $S$.  Setting
+$d[ES]/dt \approx 0$ in Eq.~\eqref{eq:app_dES} gives:
+\begin{equation}
+  k_1([E]_T - [ES])[S] = (k_{-1} + k_2)[ES].
+\end{equation}
+Solving for $[ES]$:
+\begin{equation}
+  [ES]\bigl(k_1[S] + k_{-1} + k_2\bigr) = k_1[E]_T[S],
+\end{equation}
+\begin{equation}\label{eq:app_ES}
+  [ES] = \frac{k_1[E]_T[S]}{k_1[S] + k_{-1} + k_2}
+        = \frac{[E]_T[S]}{[S] + \dfrac{k_{-1}+k_2}{k_1}}.
+\end{equation}
+Defining the Michaelis constant
+\begin{equation}\label{eq:KM_def}
+  K_M \equiv \frac{k_{-1} + k_2}{k_1},
+\end{equation}
+Eq.~\eqref{eq:app_ES} becomes $[ES] = [E]_T[S]/(K_M + [S])$.
+
+\paragraph{The rate law.}
+The product formation rate (velocity) $v = d[P]/dt = k_2[ES]$ is therefore:
+\begin{equation}\label{eq:app_MM}
+  v = \frac{k_2[E]_T[S]}{K_M + [S]} = \frac{V_{\max}[S]}{K_M + [S]},
+\end{equation}
+where $V_{\max} \equiv k_2[E]_T$.  This is the Michaelis--Menten equation
+\cite{MichaelisMenten1913}.
+
+\paragraph{Limiting behavior.}
+\begin{itemize}
+  \item $[S] \ll K_M$: $v \approx (V_{\max}/K_M)[S]$, a first-order dependence
+    on substrate with apparent first-order rate constant $k_{\rm cat}/K_M =
+    k_2/K_M$.
+  \item $[S] \gg K_M$: $v \approx V_{\max}$, zero-order in substrate; all
+    enzyme active sites are saturated.
+  \item $[S] = K_M$: $v = V_{\max}/2$, the defining operational meaning of
+    $K_M$.
+\end{itemize}
+
+\paragraph{Validity of the QSSA.}
+The QSSA is formally valid when $[E]_T \ll K_M + [S]_0$, where $[S]_0$ is
+the initial substrate concentration.  Under these conditions the time scale for
+$ES$ to equilibrate ($\tau_{ES} \sim 1/(k_1[S]+k_{-1}+k_2)$) is much shorter
+than the substrate depletion time ($\tau_S \sim [S]_0/V_{\max}$), justifying
+the pseudo-steady-state approximation.
