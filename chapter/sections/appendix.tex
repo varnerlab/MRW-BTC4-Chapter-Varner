@@ -414,5 +414,5 @@ The block-diagonal $A \in \mathbb{R}^{(h d_{\rm in}) \times (h d_{\rm in})}$
 and $B \in \mathbb{R}^{(h d_{\rm in}) \times d_{\rm in}}$ are constructed
 by \texttt{build\_legS\_matrices\_mimo}, discretized by
 \texttt{discretize\_bilinear}, and then frozen.  Only the readout
-$C \in \mathbb{R}^{(N_{\rm states} \times H_{\rm horizon}) \times H}$
+$C \in \mathbb{R}^{(N_{\rm states} \times H_{\rm horizon}) \times N_{\mathrm{lat}}}$
 and feedforward $D$ are updated during training.

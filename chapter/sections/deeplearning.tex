@@ -117,7 +117,7 @@ a continuous linear dynamical system
   \qquad
   \mathbf{y}(t) = C\,\mathbf{x}(t) + D\,\mathbf{u}(t),
 \end{equation}
-where $\mathbf{x}(t) \in \mathbb{R}^H$ is a latent state, $\mathbf{u}(t)$ is
+where $\mathbf{x}(t) \in \mathbb{R}^{N_{\mathrm{lat}}}$ is a latent state, $\mathbf{u}(t)$ is
 the input, and $(A, B, C, D)$ are parameter matrices.  For discrete-time
 sequences the continuous system is converted to a recurrence via bilinear
 (Tustin) discretization at step $\Delta t$:
@@ -152,7 +152,7 @@ construction are given in Appendix~\ref{sec:s4_derivation}.
 
 The implementation used here (\texttt{code/deeplearning/s4.jl}) applies one
 independent $h$-dimensional LegS filter per input channel in a block-diagonal
-arrangement, giving total state dimension $H = h \times N_{\mathrm{states}}$
+arrangement, giving total latent dimension $N_{\mathrm{lat}} = h \times N_{\mathrm{states}}$
 with $h = 16$.  Critically, the discrete operators $\bar{A}$ and $\bar{B}$ are
 \emph{fixed} at their HiPPO-LegS values and are never updated by gradient
 descent; only the readout $C$ and the feedforward $D$ are trainable.  This is
