@@ -140,3 +140,123 @@ analysis resolves this underdeterminacy by selecting the element of
 $\mathcal{N}(\mathbf{S})$ that maximizes a biologically motivated linear
 objective, subject to inequality bounds on individual fluxes, as described
 in Section~\ref{sec:fba}.
+
+%-----------------------------------------------------------------------
+\subsection{Derivation of the Hill Input Function}
+\label{sec:hill_derivation}
+%-----------------------------------------------------------------------
+
+Consider a promoter with $n$ identical, independent binding sites for a
+transcription factor (TF) monomer $X$.  In the cooperative limit each of the
+$n$ sites must be occupied simultaneously for the promoter to be active (all-or-nothing
+binding).  Let $p$ denote the probability that any single site is occupied.
+At equilibrium $p = x / (K_d + x)$, where $x$ is the free TF concentration
+and $K_d$ is the microscopic dissociation constant.  The probability that
+all $n$ sites are simultaneously occupied is
+\begin{equation}
+  P_{\rm on} = p^n = \frac{x^n}{(K_d + x)^n}.
+\end{equation}
+
+In the cooperativity limit the dominant species are the fully unbound and
+fully bound promoter states, so to a good approximation
+\begin{equation}
+  P_{\rm on} \approx \frac{x^n}{K^n + x^n},
+  \qquad K \equiv K_d \left(1 + \frac{K_d^{n-1}}{K_d^{n-1}}\right)^{1/(n-1)}
+  \approx K_d,
+\end{equation}
+which is the activating Hill function with $n$ as the cooperativity
+(Hill) coefficient and $K$ as the half-maximal activation concentration
+\cite{Alon2006}.  The same derivation via a thermodynamic (Boltzmann)
+partition function over all $2^n$ binding states yields
+\begin{equation}
+  f_{\rm act}(x) = \frac{(x/K)^n}{1 + (x/K)^n} = \frac{x^n}{K^n + x^n},
+\end{equation}
+confirming the form in Eq.~\eqref{eq:hill_act}.  The repressing Hill function
+$f_{\rm rep}(x) = 1 - f_{\rm act}(x) = K^n/(K^n + x^n)$ describes the
+complementary case in which TF binding occludes the promoter.  When $n = 1$
+the functions reduce to simple hyperbolic (Michaelis-type) saturation; for
+$n > 1$ the response becomes progressively more switch-like, approaching a
+step function at $x = K$ as $n \to \infty$.
+
+%-----------------------------------------------------------------------
+\subsection{C1-FFL Sign-Sensitive Delay and I1-FFL Pulse Analysis}
+\label{sec:c1ffl_analysis}
+%-----------------------------------------------------------------------
+
+\paragraph{C1-FFL sign-sensitive delay.}
+In the coherent type-1 FFL with AND gate at $Z$, the output is governed by
+Eqs.~\eqref{eq:c1ffl_Y}--\eqref{eq:c1ffl_Z} in Section~\ref{sec:motifs}.
+When $X$ steps on at $t = 0$, the direct arm immediately drives the AND-gate
+factor $f_{\rm act}(X;\,K_{XZ},\,n)$ toward 1, but the second AND-gate factor
+$f_{\rm act}(Y;\,K_{YZ},\,n)$ remains near zero until $Y$ rises above $K_{YZ}$.
+Since $Y$ relaxes exponentially toward its steady state $Y^* = \beta_Y/\alpha_Y$
+with time constant $\tau_Y = 1/\alpha_Y$, the time at which $Y$ crosses $K_{YZ}$
+is approximately
+\begin{equation}\label{eq:t_delay}
+  t_{\rm delay} \approx \frac{1}{\alpha_Y}\ln\!\left(\frac{Y^*}{Y^* - K_{YZ}}\right),
+\end{equation}
+giving the sign-sensitive delay for sustained ON inputs.  For a transient
+pulse of duration $\Delta t \ll 1/\alpha_Y$, $Y$ barely rises from zero before
+$X$ turns off again; the AND gate never opens and $Z$ is filtered.  The delay
+appears only for the ON transition (sign-sensitive), not the OFF transition, in
+which $Z$ falls immediately once the direct arm is removed.  This asymmetry
+allows the C1-FFL to discriminate between brief noise and sustained
+environmental signals \cite{ManganAlon2003}.
+
+\label{sec:i1ffl_analysis}
+
+\paragraph{I1-FFL pulse analysis.}
+In the incoherent type-1 FFL governed by Eqs.~\eqref{eq:i1ffl_Y}--\eqref{eq:i1ffl_Z},
+let $X$ step on at $t = 0$.  Immediately after the step the repressor $Y$
+is still zero, so $f_{\rm rep}(0;\,K_{YZ},\,n) = 1$ and $Z$ is driven at
+its maximal rate $\beta_Z\,f_{\rm act}(X;\,K_{XZ},\,n)$.  On the time scale
+$1/\alpha_Y$, $Y$ accumulates to
+$Y^* = \beta_Y\,f_{\rm act}(X;\,K_{XY},\,n)/\alpha_Y$
+and suppresses $Z$.  The new $Z$ steady state is
+\begin{equation}
+  Z^* = \frac{\beta_Z}{\alpha_Z}\,f_{\rm act}(X;\,K_{XZ},\,n)\,
+         f_{\rm rep}(Y^*;\,K_{YZ},\,n) < Z_{\rm peak},
+\end{equation}
+so $Z$ first rises to a transient peak before falling back to $Z^*$.  The
+peak height is set by the early dynamics when $Y \approx 0$, and $Z^*$ is
+reduced relative to the peak by the factor $f_{\rm rep}(Y^*;\,K_{YZ},\,n)$.
+The fold-change detection property \cite{Goentoro2009} follows from the
+observation that if $X$ is multiplied by a constant factor $\lambda$
+(fold-change), both $Y^*$ and the initial $Z$ drive scale proportionally,
+leaving the ratio $Z_{\rm peak}/Z^*$ invariant---the circuit reports the
+\emph{ratio} of signal levels, not their absolute magnitudes.
+
+%-----------------------------------------------------------------------
+\subsection{Cybernetic Allocation Objective}
+\label{sec:cybernetic_derivation}
+%-----------------------------------------------------------------------
+
+The cybernetic control variables $u_i$ and $v_i$ can be derived from a
+growth-rate maximization principle \cite{Kompala1984}.  At each instant the
+cell must allocate a fixed total enzyme-synthesis capacity $r_E$ across $N$
+pathways.  Let $u_i \geq 0$ with $\sum_i u_i = 1$ denote the synthesis
+fractions, and let $v_i \in [0,1]$ denote activity fractions.  The
+instantaneous growth rate is
+\begin{equation}\label{eq:obj_cyber}
+  \mu = \sum_{i=1}^{N} rG_i\,v_i,
+  \qquad rG_i = \mu_{\max,i}\,\frac{E_i}{E_{\max,i}}\,\frac{S_i}{K_i + S_i}.
+\end{equation}
+Maximizing $\mu$ over $v_i \in [0,1]$ subject to no constraint other than
+the bound gives $v_i = 1$ for the pathway with the largest $rG_i$ and
+$v_i = 0$ for all others---an all-or-nothing LP solution.  The matching-law
+variant smooths this discontinuous policy by solving a proportional-share
+problem: the synthesis allocation $u_i$ that maximizes the expected future
+return under uncertainty about which substrate will persist is
+proportional to the current relative return
+\begin{equation}
+  u_i = \frac{rG_i}{\sum_j rG_j},
+\end{equation}
+which is the matching law of behavioral ecology applied to enzyme synthesis.
+Enzyme activity is modulated by the normalized relative advantage,
+\begin{equation}
+  v_i = \frac{rG_i}{\max_j rG_j},
+\end{equation}
+so the best pathway operates at full activity ($v = 1$) and all others are
+partially suppressed.  These two rules together constitute the cybernetic
+model as implemented in \texttt{cybernetic.jl} and governed by
+Eqs.~\eqref{eq:S_balance}--\eqref{eq:C_balance} of Section~\ref{sec:cybernetic}.

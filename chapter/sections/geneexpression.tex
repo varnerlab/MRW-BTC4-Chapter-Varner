@@ -1,2 +1,296 @@
 \section{Models of Gene Expression}\label{sec:gene}
-Placeholder.
+
+Gene expression is controlled not by individual promoters in isolation but by
+networks of interacting regulatory proteins, small molecules, and nucleic acid
+sequences.  Three complementary frameworks span the range from the shape of a
+single regulatory binding curve to the behavior of multi-gene circuits and
+whole-cell resource allocation: (i) Hill-type input functions that describe how
+transcription factor occupancy depends on effector concentration, (ii) ordinary
+differential equation (ODE) network-motif models that reveal how recurring
+connectivity patterns give rise to specific dynamical behaviors, and (iii)
+cybernetic models that treat the cell as an optimizer allocating limited
+biosynthetic resources among competing metabolic pathways.  Together these
+frameworks provide a mechanistic vocabulary for understanding and engineering
+gene regulatory circuits.
+
+%-----------------------------------------------------------------------
+\subsection{Regulatory Input Functions: the Hill Equation}
+\label{sec:hill}
+%-----------------------------------------------------------------------
+
+The probability that a promoter is occupied by a transcription factor---and
+therefore the fractional transcriptional activity of the target gene---is the
+central input function of gene-circuit models.  For a transcriptional
+activator $X$ that binds cooperatively to $n$ sites on a promoter with
+dissociation constant $K$ (in concentration units), equilibrium statistical
+mechanics yields the activating Hill function
+\cite{Alon2006}:
+\begin{equation}\label{eq:hill_act}
+  f_{\rm act}(x) = \frac{x^n}{K^n + x^n},
+\end{equation}
+where $x$ denotes the concentration of $X$.  The function rises from 0 to 1
+as $x$ increases, with $f_{\rm act}(K) = 1/2$; thus $K$ is the half-maximal
+activation concentration.  For a repressor that occludes the same $n$ binding
+sites the complementary repressing Hill function is
+\begin{equation}\label{eq:hill_rep}
+  f_{\rm rep}(x) = \frac{K^n}{K^n + x^n} = 1 - f_{\rm act}(x).
+\end{equation}
+
+The Hill coefficient $n$ measures the steepness (cooperativity) of the
+response.  When $n = 1$ the binding curve is a simple rectangular hyperbola;
+for $n > 1$ the curve becomes progressively more switch-like, approaching a
+step function as $n \to \infty$.  Physically, positive cooperativity ($n > 1$)
+arises when the binding of one ligand increases the affinity for subsequent
+ligands---as in allosteric proteins---or when $n$ molecules must bind
+simultaneously before the complex is active.  In the context of gene regulation
+the effective cooperativity is often set by the multimerization state of the
+transcription factor or by the number of operator sites.  A full derivation of
+the Hill form from equilibrium binding of $n$ cooperative ligands is given in
+Appendix Section~\ref{sec:hill_derivation}.
+
+Because Eqs.~\eqref{eq:hill_act} and~\eqref{eq:hill_rep} are bounded between
+zero and one, any production rate can be written as a maximal rate multiplied
+by a Hill function.  Multiple regulators are combined multiplicatively (AND
+logic) or additively (OR logic), making Hill functions the universal building
+block of gene-circuit ODEs.  In the motif.jl implementation used throughout
+this section the Hill functions are defined as
+\texttt{hill\_act(x; K, n)} $= x^n/(K^n + x^n)$ and
+\texttt{hill\_rep(x; K, n)} $= K^n/(K^n + x^n)$,
+with default cooperativity $n = 2$.
+
+%-----------------------------------------------------------------------
+\subsection{Network Motifs as Design Principles}
+\label{sec:motifs}
+%-----------------------------------------------------------------------
+
+Analysis of the \textit{Escherichia coli} transcriptional regulation network
+revealed that a small number of three- and four-node connectivity patterns
+occur far more often than expected by chance \cite{ShenOrr2002}.  These
+``network motifs'' are not merely statistical curiosities; each recurring
+pattern confers a specific dynamical function that can be understood
+analytically and verified computationally \cite{Alon2006,Alon2007}.
+Figure~\ref{fig:motifs} illustrates the four motifs developed in this section:
+negative autoregulation, the coherent type-1 feed-forward loop, the incoherent
+type-1 feed-forward loop, and a three-component negative-feedback oscillator.
+A compact catalog of these and related motifs can be found in
+\citet{ShovalAlon2010}.
+
+\subsubsection*{Negative Autoregulation}
+
+The simplest circuit with a non-trivial design function is one in which a
+transcription factor $Y$ represses its own gene.  With Hill repression and
+first-order degradation, the ODE governing $Y$ is
+\begin{equation}\label{eq:nar}
+  \frac{dY}{dt} = \beta_{\rm nar}\,f_{\rm rep}(Y;\,K,\,n) - \alpha\,Y,
+\end{equation}
+where $\beta_{\rm nar}$ is the maximal synthesis rate and $\alpha$ is the
+degradation rate constant.  The steady state $Y^*$ satisfies
+$\beta_{\rm nar}\,f_{\rm rep}(Y^*;\,K,\,n) = \alpha\,Y^*$, so
+\begin{equation}\label{eq:beta_nar}
+  \beta_{\rm nar} = \frac{\alpha\,Y^*}{f_{\rm rep}(Y^*;\,K,\,n)}.
+\end{equation}
+To isolate the effect of feedback, the unregulated (simple) comparator has
+the constant production rate $\beta_{\rm simple} = \alpha\,Y^*$, giving
+identical steady states to both circuits.  Early in the response, when
+$Y \approx 0$, $f_{\rm rep}(0;\,K,\,n) = 1$, so the NAR circuit initially
+produces at the elevated rate $\beta_{\rm nar} > \beta_{\rm simple}$; as $Y$
+rises above $K$ the repressor begins to shut itself off, braking synthesis
+just as the target concentration is approached.  The net result is a faster
+rise to the common steady state: the half-response time of NAR is strictly less
+than that of the unregulated circuit \cite{Alon2006}.  Panel A of
+Figure~\ref{fig:motifs} confirms this behavior.  Beyond speed, negative
+autoregulation reduces cell-to-cell variability in protein level: because the
+circuit corrects perturbations about $Y^*$, stochastic fluctuations are
+attenuated relative to the unregulated case.
+
+\subsubsection*{Coherent Type-1 Feed-Forward Loop (C1-FFL): Persistence Detector}
+
+A feed-forward loop (FFL) adds a second regulatory arm to a linear cascade.
+In the coherent type-1 FFL (C1-FFL) the master regulator $X$ activates both
+the intermediate $Y$ and the output $Z$, while $Y$ also activates $Z$ (all
+interactions are activating) \cite{ManganAlon2003}.  With an AND gate at $Z$
+(both $X$ and $Y$ must be sufficiently high to drive $Z$ production), the
+governing ODEs are
+\begin{align}
+  \frac{dY}{dt} &= \beta_Y\,f_{\rm act}(X;\,K_{XY},\,n)
+                   - \alpha_Y\,Y, \label{eq:c1ffl_Y}\\
+  \frac{dZ}{dt} &= \beta_Z\,f_{\rm act}(X;\,K_{XZ},\,n)\,
+                              f_{\rm act}(Y;\,K_{YZ},\,n)
+                   - \alpha_Z\,Z. \label{eq:c1ffl_Z}
+\end{align}
+The design function follows from a timing argument detailed in
+Appendix Section~\ref{sec:c1ffl_analysis}: a transient pulse of $X$ is
+filtered because $Y$ cannot accumulate fast enough (on the time scale
+$1/\alpha_Y$) to open the AND gate before $X$ turns off again; a sustained
+step of $X$, however, keeps the direct arm open long enough for $Y$ to rise
+above $K_{YZ}$, at which point $Z$ turns on after a sign-sensitive delay of
+approximately $1/\alpha_Y$.  Panel B of Figure~\ref{fig:motifs} shows
+this behavior: a brief input pulse leaves $Z$ essentially unaffected, while
+the subsequent sustained step elicits a delayed but robust $Z$ response.
+The C1-FFL thus acts as a persistence detector---or equivalently as a noise
+filter that rejects transient signals while passing sustained signals.
+
+\subsubsection*{Incoherent Type-1 Feed-Forward Loop (I1-FFL): Pulse Generator}
+
+In the incoherent type-1 FFL (I1-FFL) the regulatory signs are mixed: $X$
+activates both $Y$ and $Z$, but $Y$ represses $Z$.  The ODEs are
+\begin{align}
+  \frac{dY}{dt} &= \beta_Y\,f_{\rm act}(X;\,K_{XY},\,n)
+                   - \alpha_Y\,Y, \label{eq:i1ffl_Y}\\
+  \frac{dZ}{dt} &= \beta_Z\,f_{\rm act}(X;\,K_{XZ},\,n)\,
+                              f_{\rm rep}(Y;\,K_{YZ},\,n)
+                   - \alpha_Z\,Z. \label{eq:i1ffl_Z}
+\end{align}
+When $X$ steps on, the direct activating arm immediately drives $Z$ upward;
+simultaneously, $X$ activates the slower indirect arm, accumulating $Y$ on
+the time scale $1/\alpha_Y$.  Once $Y$ is sufficiently high, its repression
+of $Z$ overrides the direct activation, pulling $Z$ back toward a lower
+steady state.  The result is a transient pulse in $Z$: the peak output
+exceeds the eventual steady state by a factor that depends on the ratio of
+the direct and indirect pathway strengths (Appendix Section~\ref{sec:i1ffl_analysis}).
+Panel C of Figure~\ref{fig:motifs} shows the pulse.  A particularly important
+property of the I1-FFL is fold-change detection: the peak of $Z$ is
+determined by the fold-change in $X$, not its absolute level \cite{Goentoro2009}.
+This scale-invariance allows the circuit to respond consistently to signals
+encountered against widely varying backgrounds.
+
+\subsubsection*{Negative-Feedback Oscillator (Goodwin)}
+
+A three-variable negative-feedback loop, originally analyzed by Goodwin
+\cite{Alon2006}, can generate sustained oscillations when the Hill coefficient
+is sufficiently high.  The ODE system is
+\begin{align}
+  \frac{dX}{dt} &= a\,f_{\rm rep}(Z;\,K,\,n) - b\,X, \label{eq:osc_X}\\
+  \frac{dY}{dt} &= c\,X - d\,Y,                       \label{eq:osc_Y}\\
+  \frac{dZ}{dt} &= e\,Y - f\,Z,                       \label{eq:osc_Z}
+\end{align}
+where the repressor $Z$ feeds back to suppress $X$ through a Hill repression
+term.  The three-stage cascade $X \to Y \to Z \dashv X$ introduces a phase
+lag around the loop; when the nonlinearity is sharp enough ($n \geq 9$) the
+fixed point becomes unstable and the system settles onto a limit cycle.
+Panel D of Figure~\ref{fig:motifs} shows sustained oscillations of $X$, $Y$,
+and $Z$ with six peaks across the simulation window, consistent with a period
+of roughly 15--20 time units.  Biologically, this architecture appears in
+circadian clocks (where $Z$ is the repressor protein PER/CRY in the
+mammalian clock network) and in certain cell-cycle controllers.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.90\textwidth]{motifs.pdf}
+  \caption{Four canonical network motifs simulated with Hill input functions.
+    (A)~Negative autoregulation (NAR) versus simple regulation: both circuits
+    share the same steady state $Y^*$ (dashed line) but NAR reaches half-maximal
+    response faster.
+    (B)~Coherent type-1 FFL (AND gate): a brief input pulse (left of $t=2$) is
+    filtered and $Z$ remains near zero; a sustained step (beginning at $t=8$)
+    allows $Y$ to accumulate and $Z$ turns on after a delay of $\approx 1/\alpha_Y$.
+    (C)~Incoherent type-1 FFL: $Z$ exhibits a pulse upon the step increase in $X$,
+    with peak exceeding the eventual steady state by more than sixfold.
+    (D)~Goodwin-style three-variable negative-feedback oscillator with Hill
+    coefficient $n=10$; sustained limit-cycle oscillations persist throughout the
+    simulation.}
+  \label{fig:motifs}
+\end{figure}
+
+\paragraph{A note on biophysical promoter models.}
+The Hill functions developed here capture regulatory logic at the level of
+effective binding equilibria.  More granular biophysical descriptions,
+including effective-biophysical models that explicitly resolve transcription
+and translation elongation rates \cite{Adhikari2020} and structured-promoter
+biosensor models that embed sequence-level parameters, provide the next tier
+of mechanistic detail; they are cited here but not derived in this chapter.
+
+%-----------------------------------------------------------------------
+\subsection{Cybernetic Resource Allocation: Diauxic Growth}
+\label{sec:cybernetic}
+%-----------------------------------------------------------------------
+
+The gene-circuit models of Section~\ref{sec:motifs} treat a single regulatory
+node or a small defined circuit.  At the whole-cell scale, hundreds of
+metabolic pathways compete for a shared pool of ribosomes, transcription
+machinery, and energy.  Cybernetic models, introduced by Kompala and Ramkrishna
+\cite{Kompala1984,Kompala1986}, treat these allocation decisions as the outcome
+of optimal resource distribution: the cell is assumed to invest enzyme
+synthesis in whichever pathway yields the greatest current return, generating
+emergent diauxic growth behavior without prescribing substrate preference
+explicitly.
+
+\subsubsection*{The Matching-Law Cybernetic Model}
+
+Consider a culture growing on two substrates $S_1$ (glucose) and $S_2$
+(xylose), each consumed by a dedicated enzymatic pathway $E_i$ with
+enzyme-specific growth rate
+\begin{equation}\label{eq:rGi}
+  rG_i = \mu_{\max,i}\,\frac{E_i}{E_{\max,i}}\,\frac{S_i}{K_i + S_i},
+  \qquad i = 1,2,
+\end{equation}
+where $\mu_{\max,i}$ is the maximum pathway-specific growth rate and $K_i$ is
+the Monod half-saturation constant.  The enzyme concentration $E_i$ modulates
+the effective pathway capacity.
+
+Cybernetic control is embodied in two variables derived from the relative
+returns $rG_i$:
+\begin{equation}\label{eq:ui}
+  u_i = \frac{rG_i}{\sum_j rG_j}
+\end{equation}
+allocates the \emph{enzyme synthesis} rate according to the matching law:
+each pathway receives a fraction of the total ribosomal investment equal to
+its fractional contribution to the instantaneous growth rate.  Separately,
+\begin{equation}\label{eq:vi}
+  v_i = \frac{rG_i}{\max_j rG_j}
+\end{equation}
+modulates \emph{enzyme activity}: existing enzyme molecules are deployed most
+fully in the highest-return pathway, and partially downregulated in others.
+The derivation and biological motivation of these allocation rules as a
+consequence of maximizing the instantaneous growth rate are given in
+Appendix Section~\ref{sec:cybernetic_derivation}.  The same allocation
+idea can also be cast as a linear program that chooses the single best
+pathway at each instant (the Kompala-LP reframing), but the matching-law
+variant---implemented here---allows graded co-utilization of pathways.
+
+The net specific growth rate is
+\begin{equation}\label{eq:mu_net}
+  \mu = \sum_i rG_i\,v_i,
+\end{equation}
+and the governing ODEs for the five-state system
+$(S_1,\,S_2,\,E_1,\,E_2,\,C)$, where $C$ is biomass, are
+\begin{align}
+  \frac{dS_i}{dt} &= -\frac{1}{Y_i}\,rG_i\,v_i\,C, \label{eq:S_balance}\\
+  \frac{dE_i}{dt} &= r_{E_i}\,u_i - (\mu + \beta_i)\,E_i, \label{eq:E_balance}\\
+  \frac{dC}{dt}   &= (\mu - k_d)\,C, \label{eq:C_balance}
+\end{align}
+where $Y_i$ is the biomass yield on substrate $i$, $r_{E_i} = 1/\tau_i$
+is the maximal enzyme synthesis rate (active only when $S_i > 0$),
+$\beta_i$ is the enzyme degradation rate, and $k_d$ is the maintenance
+death rate.  The enzyme balance (Eq.~\ref{eq:E_balance}) shows the matching
+law directly: synthesis is invested in enzyme $i$ at rate $r_{E_i}\,u_i$,
+so when $rG_1 \gg rG_2$ nearly all new enzyme is directed to pathway 1.
+
+\subsubsection*{Diauxic Growth Dynamics}
+
+Figure~\ref{fig:cybernetic} shows biomass $C$ and both substrate
+concentrations simulated over 20~h starting from
+$S_1 = 0.5$~g/L (glucose), $S_2 = 2.5$~g/L (xylose), and a low initial
+biomass of $4 \times 10^{-3}$~g\textsubscript{DW}/L.  The matching law
+concentrates enzyme synthesis on glucose because $\mu_{\max,1} = 1.08$~h$^{-1}$
+exceeds $\mu_{\max,2} = 0.82$~h$^{-1}$ and $K_1 = 0.01$~g/L is much smaller
+than $K_2 = 0.20$~g/L, making glucose the higher-return substrate.
+Consequently $S_1$ is exhausted before $S_2$ begins to fall appreciably.
+After glucose depletion, $rG_1 \to 0$ and the matching law redirects
+synthesis toward the xylose pathway; $u_2 \to 1$ and enzyme $E_2$
+accumulates, so $S_2$ consumption resumes after a brief lag.  Biomass grows
+continuously, with a distinct dip in growth rate between the two substrate
+phases.  The model reproduces qualitatively the classic diauxic phenotype
+reported experimentally by \citet{Kompala1986} and predicted analytically
+by \citet{Kompala1984}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\textwidth]{cybernetic_diauxie.pdf}
+  \caption{Cybernetic model simulation of diauxic growth on glucose ($S_1$,
+    g/L) and xylose ($S_2$, g/L).  Biomass $C$ grows exponentially during
+    glucose consumption, pauses briefly at the diauxic lag, then resumes as
+    the matching-law control variables redirect enzyme synthesis to the xylose
+    pathway.  Both substrates are fully depleted by $t \approx 12$~h.}
+  \label{fig:cybernetic}
+\end{figure}
