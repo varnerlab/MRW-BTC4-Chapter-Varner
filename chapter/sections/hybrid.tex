@@ -46,7 +46,7 @@ correction is expected to shrink to zero as the mechanistic model becomes more
 accurate.
 
 This construction is closely related to ideas in scientific machine learning
-\cite{Hochreiter1997,Gu2022}: physics-informed neural networks embed differential
+\cite{Raissi2019,Rackauckas2020}: physics-informed neural networks embed differential
 equation residuals as penalty terms in the loss, while universal differential
 equations replace unknown rate terms with neural networks trained on trajectory
 data.  The residual-learning framing used here is particularly natural for
@@ -81,8 +81,12 @@ Three forecasters are trained and evaluated on the same held-out test windows
 (tail 20\% of the 247 aligned time points, corresponding to 42 test windows
 with lookback $L = 24$ and horizon $H = 12$):
 \begin{enumerate}
-  \item \textbf{Pure mechanistic}: the imperfect ODE is integrated from the
-    true state at the window start; no data correction is applied.
+  \item \textbf{Pure mechanistic}: the imperfect mechanistic model is
+    propagated forward once from $t=0$ using the true initial conditions, and
+    each test window's horizon forecast is read from this single biased
+    trajectory; no data-driven correction is applied.  As a result, the
+    pure-mechanistic baseline accumulates parameter-induced model drift over
+    the horizon, which the learned residual in the hybrid is able to remove.
   \item \textbf{Pure data-driven}: an LSTM (hidden size 32, Adam at $5 \times 10^{-3}$,
     300 epochs) is trained directly on the normalized true-data windows.
   \item \textbf{Hybrid}: an identical LSTM is trained on normalized
@@ -196,7 +200,7 @@ fine-tuned with a small number of runs for a specific product.  Such a model
 could serve as a data-efficient surrogate for process optimization and
 scale-up risk assessment without requiring a full mechanistic closure.
 
-Protein and genome sequence models \cite{Kompala1986} are also reshaping the
+Protein and genome sequence models \cite{Jumper2021} are also reshaping the
 upstream of bioprocess design.  If cell-line productivity can be predicted
 from sequence features, the classical separation between strain engineering
 and process engineering begins to dissolve.  Integrating sequence-level
