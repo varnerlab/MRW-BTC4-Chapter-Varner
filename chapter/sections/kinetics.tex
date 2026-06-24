@@ -217,13 +217,18 @@ at high glucose concentrations.
 
 Figure~\ref{fig:cho} shows biomass and mAb trajectories simulated over a
 240~h fed-batch run using the model equations above and literature parameter
-values (see text).  Growth proceeds exponentially during the early phase while
-glucose and glutamine remain abundant.  As byproducts accumulate, the
-inhibitory terms in Eq.~\eqref{eq:cho_mu} reduce $\mu$ and the death term
-$\mu_d$ rises, driving the culture toward a stationary phase.  The
-non-growth-associated coefficient $\beta_P$ in Eq.~\eqref{eq:cho_qp} sustains
-mAb secretion even after net growth ceases, so the product titer continues to
-rise through the final hours of the batch.
+values (see text).  The glucose-triggered hysteretic feed engages repeatedly
+throughout the run---glucose declines as cells consume it, falls below
+$\text{Glc}_{\min}$, the feed activates at $F_{\max}$ replenishing glucose
+to $\text{Glc}_{\max}$, and then switches off, producing the characteristic
+sawtooth pattern and a corresponding step-wise increase in reactor volume $V$.
+Growth proceeds exponentially during the early phase while glucose and glutamine
+remain abundant.  As byproducts accumulate, the inhibitory terms in
+Eq.~\eqref{eq:cho_mu} reduce $\mu$ and the death term $\mu_d$ rises, driving
+the culture toward a stationary phase.  The non-growth-associated coefficient
+$\beta_P$ in Eq.~\eqref{eq:cho_qp} sustains mAb secretion even after net
+growth ceases, so the product titer continues to rise through the final hours
+of the batch.
 
 \begin{figure}[htbp]
   \centering

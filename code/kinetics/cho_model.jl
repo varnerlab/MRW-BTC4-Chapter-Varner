@@ -209,7 +209,7 @@ with columns `t, V, X, Glc, Gln, Lac, Amm, mAb`.
 Initial conditions (typical inoculation):
 - V₀   = 1.0 L
 - X₀   = 0.2 gDW/L  (~4 × 10⁵ cells/mL × 5 × 10⁻¹⁰ gDW/cell)
-- Glc₀ = 25.0 mM
+- Glc₀ = 5.0  mM  (below Glc_min so feed engages at t=0)
 - Gln₀ = 4.0  mM
 - Lac₀ = 0.0  mM
 - Amm₀ = 0.0  mM
@@ -218,11 +218,15 @@ Initial conditions (typical inoculation):
 function simulate_cho(; tspan=(0.0, 240.0), saveat=1.0)
 
     p = default_cho_params()
+    # Glc₀ < Glc_min ⟹ feed should be ON at t = 0.
+    # ContinuousCallback only catches a downcrossing mid-run, so we initialise
+    # feed_on = 1 explicitly when starting below the threshold.
+    p.feed_on[] = 1.0
 
     u0 = [
         1.0,   # V   (L)
         0.2,   # X   (gDW/L)
-        25.0,  # Glc (mM)
+        5.0,   # Glc (mM)  — below Glc_min so feed is ON from t=0
         4.0,   # Gln (mM)
         0.0,   # Lac (mM)
         0.0,   # Amm (mM)
