@@ -256,3 +256,163 @@ so the best pathway operates at full activity ($v = 1$) and all others are
 partially suppressed.  These two rules together constitute the cybernetic
 model as implemented in \texttt{cybernetic.jl} and governed by
 Eqs.~\eqref{eq:S_balance}--\eqref{eq:C_balance} of Section~\ref{sec:cybernetic}.
+
+%-----------------------------------------------------------------------
+\subsection{Backpropagation Through Time and the Vanishing-Gradient Problem}
+\label{sec:bptt_derivation}
+%-----------------------------------------------------------------------
+
+Consider an Elman RNN with scalar hidden state for clarity.  At step $t$ the
+state is $h_t = \phi(w_{hh}\,h_{t-1} + w_{uh}\,u_t + b)$ and the output is
+$\hat{y}_t = w_{yh}\,h_t$.  The scalar loss over a sequence of length $T$ is
+$\mathcal{L} = \sum_{t=1}^{T}\ell(\hat{y}_t, y_t)$.
+
+\paragraph{Unrolling.}
+Backpropagation through time unrolls the recurrence into a computation graph
+with $T$ layers, each parameterized by the same weights.  By the chain rule,
+the gradient of the loss at the final step with respect to the hidden state at
+step $t$ is
+\begin{equation}\label{eq:bptt_chain}
+  \frac{\partial \mathcal{L}}{\partial h_t}
+    = \frac{\partial \mathcal{L}}{\partial h_T}
+      \prod_{k=t+1}^{T} \frac{\partial h_k}{\partial h_{k-1}},
+\end{equation}
+where
+\begin{equation}\label{eq:bptt_local}
+  \frac{\partial h_k}{\partial h_{k-1}}
+    = \phi'\!\left(w_{hh}\,h_{k-1} + w_{uh}\,u_k + b\right)\cdot w_{hh}.
+\end{equation}
+
+\paragraph{Vanishing and exploding gradients.}
+The product in Eq.~\eqref{eq:bptt_chain} contains $T - t$ factors of the form
+$\phi'(\cdot)\,w_{hh}$.  For the $\tanh$ activation,
+$|\phi'(\cdot)| \leq 1$, so if $|w_{hh}| < 1$ the product decays
+geometrically as $O\bigl((|w_{hh}|)^{T-t}\bigr) \to 0$ as $T - t \to \infty$.
+Gradients flowing to early time steps effectively vanish, preventing the model
+from learning dependencies spanning many steps.  Conversely, if $|w_{hh}| > 1$
+the product grows without bound, causing numerically unstable gradient
+explosions.  In the multi-dimensional case the relevant quantity is the spectral
+radius $\rho(W_{hh} \,\mathrm{diag}[\phi'(\mathbf{h}_k)])$: if this exceeds
+one the gradients explode; if it is less than one for all $k$ the gradients
+vanish.  Gradient clipping addresses explosions; the LSTM architecture
+(Section~\ref{sec:dl_rnn}) addresses vanishing gradients structurally.
+
+%-----------------------------------------------------------------------
+\subsection{LSTM Gate Equations and Gradient Flow}
+\label{sec:lstm_derivation}
+%-----------------------------------------------------------------------
+
+The LSTM update equations for step $t$ are reproduced from
+Eqs.~\eqref{eq:lstm_i}--\eqref{eq:lstm_h} for convenience.  Let
+$\mathbf{z}_t = [\mathbf{h}_{t-1};\mathbf{u}_t]$ denote the concatenated input.
+Then
+\begin{align}
+  \mathbf{i}_t &= \sigma(W_i\,\mathbf{z}_t + \mathbf{b}_i), \\
+  \mathbf{f}_t &= \sigma(W_f\,\mathbf{z}_t + \mathbf{b}_f), \\
+  \mathbf{o}_t &= \sigma(W_o\,\mathbf{z}_t + \mathbf{b}_o), \\
+  \tilde{\mathbf{c}}_t &= \tanh(W_c\,\mathbf{z}_t + \mathbf{b}_c), \\
+  \mathbf{c}_t &= \mathbf{f}_t \odot \mathbf{c}_{t-1}
+                  + \mathbf{i}_t \odot \tilde{\mathbf{c}}_t, \label{eq:app_lstm_c}\\
+  \mathbf{h}_t &= \mathbf{o}_t \odot \tanh(\mathbf{c}_t).
+\end{align}
+
+\paragraph{Gradient flow through the cell state.}
+The key insight is that the cell-state update Eq.~\eqref{eq:app_lstm_c}
+involves an \emph{additive} term: the new cell state is the old cell state
+scaled by the forget gate plus a new contribution.  The partial derivative of
+$\mathbf{c}_t$ with respect to $\mathbf{c}_{t-1}$ is
+\begin{equation}\label{eq:lstm_grad}
+  \frac{\partial \mathbf{c}_t}{\partial \mathbf{c}_{t-1}}
+    = \mathrm{diag}(\mathbf{f}_t),
+\end{equation}
+a diagonal matrix of forget-gate values.  The corresponding BPTT product for
+the cell state is $\prod_{k=t+1}^{T} \mathrm{diag}(\mathbf{f}_k)$.  Because
+the forget gates are \emph{learned} sigmoid activations, the network can set
+$\mathbf{f}_k \approx \mathbf{1}$ on channels where long-range memory is
+required, keeping the product close to the identity and preventing gradient
+decay.  This is the structural mechanism by which the LSTM avoids the vanishing
+gradient: information flows through the cell state along a highway of
+forget-gate-modulated identity connections \cite{Hochreiter1997}.
+
+%-----------------------------------------------------------------------
+\subsection{S4 Bilinear Discretization and the HiPPO-LegS Construction}
+\label{sec:s4_derivation}
+%-----------------------------------------------------------------------
+
+\paragraph{Bilinear (Tustin) discretization.}
+Starting from the continuous-time linear system
+$\dot{\mathbf{x}}(t) = A\,\mathbf{x}(t) + B\,\mathbf{u}(t)$,
+integrate over one step $[t_k, t_{k+1}]$ of length $\Delta t$ using the
+trapezoidal approximation
+$\int_{t_k}^{t_{k+1}} A\mathbf{x}\,d\tau
+ \approx \tfrac{\Delta t}{2}\bigl(A\mathbf{x}_{k+1} + A\mathbf{x}_k\bigr)$,
+which gives
+\begin{equation}
+  \mathbf{x}_{k+1} - \mathbf{x}_k
+    = \tfrac{\Delta t}{2}\,A\,\mathbf{x}_{k+1}
+    + \tfrac{\Delta t}{2}\,A\,\mathbf{x}_k
+    + \Delta t\,B\,\mathbf{u}_{k+1}.
+\end{equation}
+Collecting $\mathbf{x}_{k+1}$ terms on the left:
+\begin{equation}
+  \left(I - \tfrac{\Delta t}{2}A\right)\mathbf{x}_{k+1}
+    = \left(I + \tfrac{\Delta t}{2}A\right)\mathbf{x}_k
+    + \Delta t\,B\,\mathbf{u}_{k+1}.
+\end{equation}
+Provided $(I - \tfrac{\Delta t}{2}A)$ is invertible, which holds for all
+finite $\Delta t$ when the eigenvalues of $A$ are finite, the discrete
+recurrence is
+\begin{equation}\label{eq:bilinear_disc}
+  \mathbf{x}_{k+1} = \bar{A}\,\mathbf{x}_k + \bar{B}\,\mathbf{u}_{k+1},
+\end{equation}
+with
+\begin{equation}\label{eq:bilinear_AB}
+  \bar{A} = \left(I - \tfrac{\Delta t}{2}A\right)^{-1}
+            \left(I + \tfrac{\Delta t}{2}A\right),
+  \qquad
+  \bar{B} = \left(I - \tfrac{\Delta t}{2}A\right)^{-1} \Delta t\,B.
+\end{equation}
+This is the bilinear (Tustin) transformation, Eq.~\eqref{eq:ssm_disc} of
+Section~\ref{sec:dl_s4}.  The bilinear rule is preferred over the simpler
+forward Euler ($\bar{A} = I + \Delta t A$) because it preserves stability:
+if $A$ has all eigenvalues in the open left half-plane, the bilinear map
+sends them into the open unit disk, so the discrete system is also stable.
+
+\paragraph{HiPPO-LegS construction.}
+The HiPPO (High-order Polynomial Projection Operators) framework of Gu et al.\
+\cite{Gu2022} seeks a pair $(A, b)$ such that the continuous-time recurrence
+$\dot{\mathbf{x}}(t) = A\mathbf{x}(t) + b\,u(t)$ maintains an optimal
+polynomial approximation of the input history $u(\tau)$, $\tau \leq t$.  Under
+the Legendre scaled (LegS) measure --- in which the approximation is measured
+in $L^2([0,t])$ with the uniform weight, and the approximation order $h$ is
+held fixed as $t$ grows --- the optimal matrices are
+\begin{equation}\label{eq:app_hippo}
+  A_{nk} = -\begin{cases}
+              \sqrt{(2n+1)(2k+1)} & n > k,\\
+              n + 1               & n = k,\\
+              0                   & n < k,
+            \end{cases}
+  \qquad
+  b_n = \sqrt{2n+1},
+  \quad n, k = 1, \ldots, h.
+\end{equation}
+The matrix $A$ is lower-triangular with negative diagonal, ensuring that all
+eigenvalues are negative real numbers and that the continuous system is
+asymptotically stable.  The latent state $\mathbf{x}(t)$ at any time $t$ holds
+the optimal Legendre coefficients for the input up to $t$; reading out a linear
+combination $C\mathbf{x}(t)$ therefore reconstructs a polynomial approximation
+of any desired functional of the input history.  This is the theoretical
+justification for training only $C$ (and $D$) while keeping $(A, B)$ frozen:
+the structured state already encodes all the long-range information present in
+the input window, and the readout selects the relevant combination for the
+forecasting task \cite{Gu2022}.
+
+In the implementation (\texttt{code/deeplearning/s4.jl}), one independent
+$h$-dimensional LegS filter is applied per input channel in a block-diagonal
+arrangement so that the channels do not interact through the state matrix.
+The block-diagonal $A \in \mathbb{R}^{(h d_{\rm in}) \times (h d_{\rm in})}$
+and $B \in \mathbb{R}^{(h d_{\rm in}) \times d_{\rm in}}$ are constructed
+by \texttt{build\_legS\_matrices\_mimo}, discretized by
+\texttt{discretize\_bilinear}, and then frozen.  Only the readout
+$C \in \mathbb{R}^{(N_{\rm states} \times H_{\rm horizon}) \times H}$
+and feedforward $D$ are updated during training.
