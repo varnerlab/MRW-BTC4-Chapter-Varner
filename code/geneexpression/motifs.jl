@@ -157,8 +157,8 @@ oscillations.  The repressor Z feeds back to suppress X with a sigmoidal
 nonlinearity; the three-stage delay (X → Y → Z ⊣ X) enables limit-cycle
 behaviour.
 
-Parameters here give sustained oscillations with period ≈ 20–30 time units;
-two clear peaks are visible within tspan=(0, 100).
+Parameters here give sustained oscillations with period ≈ 15–17 time units;
+six clear peaks are visible within tspan=(0, 100).
 """
 function simulate_oscillator(; tspan=(0.0, 100.0),
                                a=8.0, b=0.5, c=1.0, d=0.2, e=1.0, f=0.2,

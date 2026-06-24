@@ -157,14 +157,10 @@ all $n$ sites are simultaneously occupied is
   P_{\rm on} = p^n = \frac{x^n}{(K_d + x)^n}.
 \end{equation}
 
-In the cooperativity limit the dominant species are the fully unbound and
-fully bound promoter states, so to a good approximation
-\begin{equation}
-  P_{\rm on} \approx \frac{x^n}{K^n + x^n},
-  \qquad K \equiv K_d \left(1 + \frac{K_d^{n-1}}{K_d^{n-1}}\right)^{1/(n-1)}
-  \approx K_d,
-\end{equation}
-which is the activating Hill function with $n$ as the cooperativity
+In the all-or-nothing (two-state) approximation, intermediate partially-bound
+states are neglected and the bound fraction takes the Hill form
+$P_{\mathrm{on}} \approx x^n/(K^n + x^n)$, with the half-saturation constant
+$K \approx K_d$.  This is the activating Hill function with $n$ as the cooperativity
 (Hill) coefficient and $K$ as the half-maximal activation concentration
 \cite{Alon2006}.  The same derivation via a thermodynamic (Boltzmann)
 partition function over all $2^n$ binding states yields
@@ -222,7 +218,7 @@ peak height is set by the early dynamics when $Y \approx 0$, and $Z^*$ is
 reduced relative to the peak by the factor $f_{\rm rep}(Y^*;\,K_{YZ},\,n)$.
 The fold-change detection property \cite{Goentoro2009} follows from the
 observation that if $X$ is multiplied by a constant factor $\lambda$
-(fold-change), both $Y^*$ and the initial $Z$ drive scale proportionally,
+(fold-change), both $Y^*$ and the initial rate of $Z$ production ($dZ/dt$ at $t=0^+$) scale proportionally,
 leaving the ratio $Z_{\rm peak}/Z^*$ invariant---the circuit reports the
 \emph{ratio} of signal levels, not their absolute magnitudes.
 
