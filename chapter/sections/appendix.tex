@@ -342,28 +342,28 @@ forget-gate-modulated identity connections \cite{Hochreiter1997}.
 \paragraph{Bilinear (Tustin) discretization.}
 Starting from the continuous-time linear system
 $\dot{\mathbf{x}}(t) = A\,\mathbf{x}(t) + B\,\mathbf{u}(t)$,
-integrate over one step $[t_k, t_{k+1}]$ of length $\Delta t$ using the
+integrate over one step $[t_{k-1}, t_k]$ of length $\Delta t$ using the
 trapezoidal approximation
-$\int_{t_k}^{t_{k+1}} A\mathbf{x}\,d\tau
- \approx \tfrac{\Delta t}{2}\bigl(A\mathbf{x}_{k+1} + A\mathbf{x}_k\bigr)$,
+$\int_{t_{k-1}}^{t_k} A\mathbf{x}\,d\tau
+ \approx \tfrac{\Delta t}{2}\bigl(A\mathbf{x}_k + A\mathbf{x}_{k-1}\bigr)$,
 which gives
 \begin{equation}
-  \mathbf{x}_{k+1} - \mathbf{x}_k
-    = \tfrac{\Delta t}{2}\,A\,\mathbf{x}_{k+1}
-    + \tfrac{\Delta t}{2}\,A\,\mathbf{x}_k
-    + \Delta t\,B\,\mathbf{u}_{k+1}.
+  \mathbf{x}_k - \mathbf{x}_{k-1}
+    = \tfrac{\Delta t}{2}\,A\,\mathbf{x}_k
+    + \tfrac{\Delta t}{2}\,A\,\mathbf{x}_{k-1}
+    + \Delta t\,B\,\mathbf{u}_k.
 \end{equation}
-Collecting $\mathbf{x}_{k+1}$ terms on the left:
+Collecting $\mathbf{x}_k$ terms on the left:
 \begin{equation}
-  \left(I - \tfrac{\Delta t}{2}A\right)\mathbf{x}_{k+1}
-    = \left(I + \tfrac{\Delta t}{2}A\right)\mathbf{x}_k
-    + \Delta t\,B\,\mathbf{u}_{k+1}.
+  \left(I - \tfrac{\Delta t}{2}A\right)\mathbf{x}_k
+    = \left(I + \tfrac{\Delta t}{2}A\right)\mathbf{x}_{k-1}
+    + \Delta t\,B\,\mathbf{u}_k.
 \end{equation}
 Provided $(I - \tfrac{\Delta t}{2}A)$ is invertible, which holds for all
 finite $\Delta t$ when the eigenvalues of $A$ are finite, the discrete
 recurrence is
 \begin{equation}\label{eq:bilinear_disc}
-  \mathbf{x}_{k+1} = \bar{A}\,\mathbf{x}_k + \bar{B}\,\mathbf{u}_{k+1},
+  \mathbf{x}_k = \bar{A}\,\mathbf{x}_{k-1} + \bar{B}\,\mathbf{u}_k,
 \end{equation}
 with
 \begin{equation}\label{eq:bilinear_AB}

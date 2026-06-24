@@ -204,21 +204,21 @@ $X$                   & $10^6$ cells/mL & 0.0335 & 0.0284 \\
 $[\mathrm{Glc}]$      & mM           & 4.976  & 3.936  \\
 $[\mathrm{Gln}]$      & mM           & 1.640  & 1.298  \\
 $[\mathrm{Lac}]$      & mM           & 2.484  & 0.532  \\
-$[\mathrm{Amm}]$      & mM           & 0.443  & 0.095  \\
-$[\mathrm{mAb}]$      & mg/L         & 162.1  & 34.6   \\
+$[\mathrm{Amm}]$      & mM           & 0.4433 & 0.09520 \\
+$[\mathrm{mAb}]$      & mg/L         & 162.1  & 34.63  \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 In this demonstration S4 achieved lower RMSE than the LSTM on all seven states.
 The largest relative improvement is on $[\mathrm{mAb}]$ (LSTM: 162.1\,mg/L vs.\
-S4: 34.6\,mg/L) and on $[\mathrm{Amm}]$ (LSTM: 0.443\,mM vs.\ S4: 0.095\,mM),
+S4: 34.63\,mg/L) and on $[\mathrm{Amm}]$ (LSTM: 0.4433\,mM vs.\ S4: 0.09520\,mM),
 both of which display smooth, monotonically evolving profiles over the batch.
 The HiPPO-LegS memory structure appears well-suited to such long-range
 monotone trends, as it encodes the entire lookback window into a polynomial
 projection before the (linear) readout is applied.
 
-Figures~\ref{fig:lstm} and~\ref{fig:s4} show representative one-step-ahead
+Figures~\ref{fig:lstm} and~\ref{fig:s4} show representative 12-step-ahead
 forecast panels for the LSTM and S4 models, respectively.
 Figure~\ref{fig:s4vslstm} presents the head-to-head RMSE comparison across
 all seven states.
@@ -226,19 +226,23 @@ all seven states.
 \begin{figure}[ht]
   \centering
   \includegraphics[width=\linewidth]{lstm_cho.pdf}
-  \caption{LSTM forecast on the held-out CHO mAb test set.  Each panel shows
-    observed (solid) and predicted (dashed) trajectories for one of the seven
-    process states.  Lookback $L=24$, horizon $H=12$, hidden size 32.}
+  \caption{LSTM 12-step-ahead forecast on the held-out CHO mAb test set
+    (first test window).  Each panel shows the 24-step input window (blue),
+    the 12-step ground-truth horizon (dashed), and the LSTM prediction (red)
+    for one of the seven process states.  Lookback $L=24$, horizon $H=12$,
+    hidden size 32.}
   \label{fig:lstm}
 \end{figure}
 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=\linewidth]{s4_cho.pdf}
-  \caption{S4/HiPPO-LegS forecast on the same held-out CHO mAb test set as
-    Figure~\ref{fig:lstm}.  The state-space dynamics $(\bar{A}, \bar{B})$ are
-    fixed at their HiPPO-LegS values; only the readout $C$ and feedforward $D$
-    are trained.  Per-channel LegS order $h=16$.}
+  \caption{S4/HiPPO-LegS 12-step-ahead forecast on the same held-out CHO mAb
+    test set as Figure~\ref{fig:lstm} (first test window).  Each panel shows
+    the 24-step input window (blue), the 12-step ground-truth horizon (dashed),
+    and the S4 prediction (orange).  The state-space dynamics $(\bar{A},
+    \bar{B})$ are fixed at their HiPPO-LegS values; only the readout $C$ and
+    feedforward $D$ are trained.  Per-channel LegS order $h=16$.}
   \label{fig:s4}
 \end{figure}
 
