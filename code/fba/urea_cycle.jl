@@ -7,8 +7,8 @@ Stoichiometry, flux bounds, and objective are transcribed from:
   CHEME-5450-Example-Solution-UreaCycle-S2026.ipynb (varnerlab/Lecture-5430-FluxBalanceAnalysis)
 
 Network (VFF format, from data/Network.net):
-  v1  EC 6.3.4.5  ATP + Citrulline + Aspartate → AMP + Diphosphate + N-(L-Arginino)succinate  [irreversible]
-  v2  EC 4.3.2.1  N-(L-Arginino)succinate → Fumarate + Arginine                               [irreversible]
+  v1  EC 6.3.4.5  ATP + Citrulline + Aspartate → AMP + Diphosphate + N-(L-Arginino)succinate  [reversible]
+  v2  EC 4.3.2.1  N-(L-Arginino)succinate → Fumarate + Arginine                               [reversible]
   v3  EC 3.5.3.1  Arginine + H2O → Ornithine + Urea                                            [irreversible]
   v4  EC 2.1.3.3  Carbamoyl_phosphate + Ornithine → Orthophosphate + Citrulline                [irreversible]
   v5  EC 1.15.13.39  2 Arginine + 4 O2 + 3 NADPH + 3 H → 2 NO + 2 Citrulline + 3 NADP + 4 H2O [reversible, but ΔG ≪ −10 kJ/mol → treated irreversible]
@@ -29,7 +29,10 @@ Flux bounds:
     v5: kcat = 10.0  → Vmax = 0.100
   lb = −δVmax, ub = Vmax for enzymatic reactions; ±1000 for exchange reactions.
 
-Objective: maximise flux through b4 (urea export), c[b4] = 1.0.
+Objective: maximise urea export through b4.  Because b4 is defined as [] → Urea
+  (import-positive convention), export is negative flux.  The objective coefficient
+  is set to c[b4] = -1.0 so that maximising c·v drives v[b4] as negative as possible,
+  i.e. maximises the rate of urea export.
 
 Fields:
   S            stoichiometric matrix  (18 metabolites × 19 reactions)
@@ -37,7 +40,7 @@ Fields:
   metabolites  metabolite names (rows of S, alphabetically sorted)
   lb           lower flux bounds
   ub           upper flux bounds
-  c            objective coefficients (maximise b4)
+  c            objective coefficients (c[b4] = -1.0; maximises urea export)
 """
 function urea_cycle_model()::NamedTuple
 

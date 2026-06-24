@@ -58,6 +58,8 @@ println("   Z_max during brief pulse  = ", round(Z_pulse_max; digits=4), "  (sho
 println("   Z_max during sustained step = ", round(Z_step_max; digits=4), "  (should be > 0)")
 println("   Pulse filtered? ", Z_pulse_max < 0.05)
 println("   Step passes?    ", Z_step_max  > 0.1)
+@assert Z_pulse_max < 0.05  "C1-FFL should filter brief pulse: Z_pulse_max=$(Z_pulse_max) (expected < 0.05)"
+@assert Z_step_max  > 0.1   "C1-FFL should pass sustained step: Z_step_max=$(Z_step_max) (expected > 0.1)"
 
 ## (c) I1-FFL pulse generator
 Z_max_i1 = maximum(i1.Z)

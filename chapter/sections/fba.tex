@@ -28,8 +28,9 @@ compartment of volume $V$ gives the dynamic equation
 \begin{equation}\label{eq:fba_dynamic}
   \frac{d\mathbf{x}}{dt} = \mathbf{S}\,\mathbf{v} - \mu\,\mathbf{x},
 \end{equation}
-where $\mathbf{x}$ is the vector of intracellular metabolite concentrations and
-$\mu$ is the specific growth rate (dilution by cell growth).  Metabolic fluxes
+where $\mathbf{x}$ is the vector of intracellular metabolite amounts
+(concentrations in the constant-volume case) and $\mu$ is the specific growth
+rate (dilution by cell growth).  Metabolic fluxes
 operate on the time scale of seconds to minutes, whereas the cell-growth time
 scale is hours.  On the metabolic time scale the dilution term $\mu\,\mathbf{x}$
 is negligible relative to $\mathbf{S}\,\mathbf{v}$, and metabolite
@@ -163,7 +164,9 @@ Capacity upper bounds are set as $V_{\max,j} = k_{\text{cat},j}\,[E]_0$ with
 $[E]_0 = 0.01$\,mmol\,gDW$^{-1}$ and turnover numbers from BRENDA.  The
 rate-limiting step in this parameterization is v2 (argininosuccinate lyase),
 whose $k_{\text{cat}} = 3.28$\,s$^{-1}$ gives
-$V_{\max,\text{v2}} = 0.0328$\,mmol\,gDW$^{-1}$\,h$^{-1}$.
+$V_{\max,\text{v2}} = 0.0328$\,mmol\,gDW$^{-1}$\,h$^{-1}$ --- the smallest
+of the five enzymatic capacity bounds (v1: 0.100, v3: 1.9, v4: 4.1, v5: 0.100)
+and therefore the unique network bottleneck.
 
 \paragraph{Objective and sign convention.}
 The biological goal is to maximize urea export.  Exchange reaction b4 is

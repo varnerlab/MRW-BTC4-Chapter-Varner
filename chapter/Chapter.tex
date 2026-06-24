@@ -13,7 +13,32 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-Placeholder abstract.
+Mathematical models in biotechnology span a spectrum from fully mechanistic
+ordinary-differential-equation (ODE) systems grounded in conservation laws and
+reaction kinetics to purely data-driven deep sequence architectures that infer
+temporal structure from observations alone.  This chapter surveys that spectrum
+with a unified worked example: a CHO fed-batch monoclonal-antibody bioreactor,
+revisited through four complementary lenses.  We begin with kinetic and
+mechanistic ODE models---Michaelis--Menten enzyme kinetics, Monod growth,
+Luedeking--Piret product formation---integrated into a seven-state fed-batch
+simulator that produces the ground-truth trajectories used throughout.  We then
+develop constraint-based flux balance analysis (FBA), illustrated on a urea-cycle
+model of HL-60 cells in which a linear program maximizes urea export subject to
+stoichiometric steady-state and thermodynamic capacity constraints.  Models of
+gene expression are treated next: Hill-type transcriptional input functions,
+network motifs (negative autoregulation, coherent and incoherent feed-forward
+loops, Goodwin oscillator), and cybernetic resource-allocation models of diauxic
+growth.  The deep-learning section derives Elman RNN, LSTM, and structured
+state-space (S4/HiPPO-LegS) architectures and demonstrates a head-to-head
+forecast comparison on the CHO system in which S4 achieves lower test error on
+all seven process states.  Finally, a hybrid residual-learning framework---a
+mechanistic ODE prior augmented by a learned discrepancy model---is shown to
+correct parameter-induced model drift with substantially greater data efficiency
+than either pure-mechanistic or pure-data-driven forecasters alone.  Together,
+the examples argue that the productive frontier of quantitative biotechnology
+lies in mechanism-informed machine learning: hybrid architectures that preserve
+the physical interpretability and extrapolation capability of first-principles
+models while capturing the representational flexibility of learned components.
 \end{abstract}
 \input{sections/introduction}
 \input{sections/kinetics}

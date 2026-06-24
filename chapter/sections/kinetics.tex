@@ -217,11 +217,14 @@ at high glucose concentrations.
 
 Figure~\ref{fig:cho} shows biomass and mAb trajectories simulated over a
 240~h fed-batch run using the model equations above and literature parameter
-values (see text).  The glucose-triggered hysteretic feed engages repeatedly
-throughout the run---glucose declines as cells consume it, falls below
-$\text{Glc}_{\min}$, the feed activates at $F_{\max}$ replenishing glucose
-to $\text{Glc}_{\max}$, and then switches off, producing the characteristic
-sawtooth pattern and a corresponding step-wise increase in reactor volume $V$.
+values (see text).  At inoculation the initial glucose concentration is set
+below $\text{Glc}_{\min}$, so the feed is already on at $t = 0$ and glucose
+rises during the first hours of the run before the hysteretic cycle begins.
+Thereafter the glucose-triggered hysteretic feed engages repeatedly---glucose
+declines as cells consume it, falls below $\text{Glc}_{\min}$, the feed
+activates at $F_{\max}$ replenishing glucose to $\text{Glc}_{\max}$, and then
+switches off, producing the characteristic sawtooth pattern and a corresponding
+step-wise increase in reactor volume $V$.
 Growth proceeds exponentially during the early phase while glucose and glutamine
 remain abundant.  As byproducts accumulate, the inhibitory terms in
 Eq.~\eqref{eq:cho_mu} reduce $\mu$ and the death term $\mu_d$ rises, driving
