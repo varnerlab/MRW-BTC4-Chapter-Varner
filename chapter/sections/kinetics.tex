@@ -23,7 +23,7 @@ proceeds irreversibly to release product $P$ and regenerate free enzyme:
 \end{equation}
 Under the quasi-steady-state assumption (QSSA)---that $ES$ reaches a
 pseudo-steady state on a time scale much shorter than the depletion of
-$S$---the reaction velocity is (see Appendix, Section~\ref{sec:appendix}
+$S$---the reaction velocity is (see Appendix, Section~\ref{sec:mm_derivation}
 for the full derivation):
 \begin{equation}\label{eq:michaelis_menten}
   v = \frac{V_{\max}[S]}{K_M + [S]},
@@ -216,8 +216,8 @@ at high glucose concentrations.
 \subsubsection*{Simulated Dynamics}
 
 Figure~\ref{fig:cho} shows biomass and mAb trajectories simulated over a
-240~h fed-batch run using the model equations above and the parameter values
-of Xing et al.  Growth proceeds exponentially during the early phase while
+240~h fed-batch run using the model equations above and literature parameter
+values (see text).  Growth proceeds exponentially during the early phase while
 glucose and glutamine remain abundant.  As byproducts accumulate, the
 inhibitory terms in Eq.~\eqref{eq:cho_mu} reduce $\mu$ and the death term
 $\mu_d$ rises, driving the culture toward a stationary phase.  The
@@ -243,12 +243,13 @@ Coagulation Cascade}
 
 Michaelis--Menten and mass-action rate laws scale naturally to networks of
 arbitrary complexity.  A notable biomedical example is the Hockin--Mann model
-of the human blood coagulation cascade, which describes the extrinsic
-coagulation pathway through 34 coupled ODEs and more than 40 elementary
-reactions, each written in mass-action or Michaelis--Menten form.  Parameters
-were estimated from purified-component biochemical data, and the model
-successfully reproduces the threshold behavior, amplification, and time course
-of thrombin generation observed in plasma assays.  This example illustrates
-that mechanistic kinetic models are not limited to a handful of reactions: when
-the biochemistry is well characterized, models of comparable size can capture
-network-level behavior that is inaccessible to simpler empirical correlations.
+of the human blood coagulation cascade \cite{HockinMann2002}, which describes
+the extrinsic coagulation pathway through several dozen coupled ODEs and
+elementary reactions, each written in mass-action or Michaelis--Menten form.
+Parameters were estimated from purified-component biochemical data, and the
+model successfully reproduces the threshold behavior, amplification, and time
+course of thrombin generation observed in plasma assays.  This example
+illustrates that mechanistic kinetic models are not limited to a handful of
+reactions: when the biochemistry is well characterized, models of comparable
+size can capture network-level behavior that is inaccessible to simpler
+empirical correlations.
