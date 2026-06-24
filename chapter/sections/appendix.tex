@@ -71,3 +71,72 @@ Under these conditions the time scale for
 $ES$ to equilibrate ($\tau_{ES} \sim 1/(k_1[S]+k_{-1}+k_2)$) is much shorter
 than the substrate depletion time ($\tau_S \sim [S]_0/V_{\max}$), justifying
 the pseudo-steady-state approximation.
+
+%-----------------------------------------------------------------------
+\subsection{Derivation of the Steady-State Flux-Balance Constraint
+            \texorpdfstring{$\mathbf{S}\,\mathbf{v}=\mathbf{0}$}{S v = 0}}
+\label{sec:fba_derivation}
+%-----------------------------------------------------------------------
+
+Consider a well-mixed intracellular compartment of volume $V$ containing
+$m$ metabolite species and $r$ enzymatic and transport reactions.
+Let $x_i$ (mol) denote the moles of species $i$ inside the compartment.
+An open-species mole balance for species $i$ accounts for chemical
+conversion, transport across the compartment boundary, and dilution by
+cell growth:
+\begin{equation}\label{eq:app_fba_mole_balance}
+  \frac{dx_i}{dt}
+    = \sum_{j=1}^{r} S_{ij}\,v_j\,V
+      - \mu\,x_i,
+      \qquad i = 1, \ldots, m,
+\end{equation}
+where $S_{ij}$ is the stoichiometric coefficient of species $i$ in reaction $j$
+(negative for reactants, positive for products), $v_j$ is the volumetric
+reaction rate of reaction $j$ (mol per unit volume per unit time), and $\mu$
+is the specific growth rate.  The term $S_{ij}\,v_j\,V$ is the molar rate of
+production of species $i$ by reaction $j$; the term $\mu\,x_i$ accounts for the
+dilution of intracellular species as the cell grows and the compartment volume
+increases.
+
+Expressing concentrations $c_i = x_i / V$ and assuming constant volume
+(constant cell size during balanced growth), Eq.~\eqref{eq:app_fba_mole_balance}
+becomes
+\begin{equation}\label{eq:app_fba_conc}
+  \frac{dc_i}{dt}
+    = \sum_{j=1}^{r} S_{ij}\,v_j - \mu\,c_i,
+    \qquad i = 1, \ldots, m,
+\end{equation}
+or in matrix form
+\begin{equation}\label{eq:app_fba_matrix}
+  \frac{d\mathbf{c}}{dt} = \mathbf{S}\,\mathbf{v} - \mu\,\mathbf{c}.
+\end{equation}
+
+\paragraph{Separation of time scales.}
+Metabolic fluxes equilibrate on time scales of seconds to minutes; the
+cell-growth time scale $\tau_\mu = \mu^{-1}$ is typically hours.  Consequently,
+$|\mathbf{S}\,\mathbf{v}| \gg |\mu\,\mathbf{c}|$ for most intracellular
+metabolites, and the dilution term is negligible relative to the metabolic
+production and consumption terms.  On the fast metabolic time scale
+$\mathbf{c}$ therefore relaxes to a pseudo-steady state satisfying
+\begin{equation}\label{eq:app_fba_pss}
+  \frac{d\mathbf{c}}{dt} \approx \mathbf{0}.
+\end{equation}
+
+\paragraph{The steady-state constraint.}
+Substituting Eq.~\eqref{eq:app_fba_pss} into Eq.~\eqref{eq:app_fba_matrix}
+and dropping the negligible dilution term gives
+\begin{equation}\label{eq:app_Sv0}
+  \boxed{\mathbf{S}\,\mathbf{v} = \mathbf{0}.}
+\end{equation}
+This is the fundamental steady-state mass-balance constraint of flux balance
+analysis: the stoichiometric matrix $\mathbf{S}$ maps the flux vector
+$\mathbf{v}$ to zero, so $\mathbf{v}$ must lie in the (right) null space
+$\mathcal{N}(\mathbf{S})$.
+
+For a network with $r > m$ (more reactions than metabolites) the null space
+has positive dimension $r - \mathrm{rank}(\mathbf{S}) > 0$, meaning that
+infinitely many flux vectors satisfy Eq.~\eqref{eq:app_Sv0}.  Flux balance
+analysis resolves this underdeterminacy by selecting the element of
+$\mathcal{N}(\mathbf{S})$ that maximizes a biologically motivated linear
+objective, subject to inequality bounds on individual fluxes, as described
+in Section~\ref{sec:fba}.
