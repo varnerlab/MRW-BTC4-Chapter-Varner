@@ -1,1 +1,157 @@
-%% example_feedback.tex (stub)
+%% example_feedback.tex
+\section{Worked Example: A Feedback-Inhibited Linear Pathway}\label{sec:feedback}
+
+The urea-cycle example opened two of the four gateways in
+Equation~\eqref{eq:general-bound}, thermodynamic and kinetic, and left
+the regulatory factor $\theta_j$ at its information-free default of
+unity. This example opens that third gateway, and it does so on a
+pathway simple enough that the correct answer can be obtained two
+different ways and checked against itself: once from an explicit
+kinetic model integrated to steady state, and once from the linear
+program of Equation~\eqref{eq:fba-lp}, with the kinetic result standing
+in as the truth the flux-balance calculation must reproduce. The
+pathway is a linear chain,
+\begin{equation}\label{eq:feedback-network}
+  \emptyset \xrightarrow{\,r_0\,} X_1 \xrightarrow{\,r_1\,} X_2
+  \xrightarrow{\,r_2\,} X_3 \xrightarrow{\,r_3\,} \emptyset,
+\end{equation}
+with $r_0$ the uptake step, $r_1$ and $r_2$ interconversions, and $r_3$
+the export step, and the end product $X_3$ inhibits the input reaction
+$r_0$: a high steady-state level of $X_3$ throttles its own supply.
+This is textbook end-product inhibition, and it is deliberately the
+simplest network that can carry it, a single control point acting on a
+single upstream step.
+
+The truth is generated from a Biochemical Systems Theory (BST)
+S-system, the power-law formalism in which every reaction rate is
+written as a product of the participating species raised to real-valued
+kinetic orders, $v_j=\alpha_j\prod_i X_i^{\,g_{ij}}$
+\cite{Savageau1976,SavageauVoit1987}. Ordinary mass-action kinetics
+recovers integer orders; feedback inhibition is written just as
+naturally with a negative order, so that increasing the inhibiting
+species lowers rather than raises the rate. Here $r_0$ carries a
+negative kinetic order in $X_3$,
+\begin{equation}\label{eq:feedback-rate}
+  v_{r_0} = \alpha_{r_0}\,X_3^{-1/2}, \qquad \alpha_{r_0}=10,
+\end{equation}
+with $\alpha_{r_0}$ the uninhibited capacity of the uptake step and the
+exponent $-1/2$ the strength of the feedback, while $r_1$, $r_2$, and
+$r_3$ are ordinary first-order steps with rate constants $100$, $100$,
+and $1$ respectively, the first two set fast enough that they never
+limit throughput. The model was built and integrated to steady state
+with BSTModelKit.jl \cite{Vadhin2026}. Because the chain of
+Equation~\eqref{eq:feedback-network} is linear, every reaction shares a
+single steady-state flux, the throughput $T=v_{r_0}=v_{r_1}=v_{r_2}=v_{r_3}$,
+and because $r_3$ is first order with unit rate constant, $X_3=T$ at
+steady state. Substituting into Equation~\eqref{eq:feedback-rate} gives
+a self-consistency condition on $T$ alone,
+\begin{equation}\label{eq:feedback-throughput}
+  T = \alpha_{r_0}\,T^{-1/2}
+  \;\;\Longrightarrow\;\;
+  T = \alpha_{r_0}^{2/3} = 10^{2/3} \approx 4.64,
+\end{equation}
+the value confirmed by direct numerical integration of the S-system.
+Feedback has throttled the pathway to a throughput less than half of
+the uninhibited capacity $\alpha_{r_0}=10$, and it is precisely that
+gap, between what the input step could do unregulated and what it
+actually does once its own product pushes back, that the flux-balance
+side of this example must recover without ever being told the answer.
+
+The same regulatory fact admits two representations, and making that
+duality explicit is the point of this example. In the S-system it is
+the negative kinetic order in Equation~\eqref{eq:feedback-rate}: the
+exponent on $X_3$ in the rate law for $r_0$. In the flux-balance
+picture it is the control function $\theta_j$ of
+Equation~\eqref{eq:general-bound}, the same object introduced in
+Section~\ref{sec:gateways} through the partition-function accounting
+of Equations~\eqref{eq:partition} and~\eqref{eq:control-split}
+\cite{Adhikari2020}. There $\theta_j$ was built from a Boltzmann sum
+over regulatory microstates; here, for a single allosteric step acting
+on a single effector, that general machinery collapses to the concrete
+power law $\theta(X_3)=X_3^{-1/2}$, the same exponent that appears in
+Equation~\eqref{eq:feedback-rate}. The two formalisms are not
+independent descriptions that happen to agree. They are the same
+biology, end-product inhibition of the uptake step, written once as a
+kinetic order inside a dynamic rate law and once as a control factor
+multiplying a static capacity, and the worked comparison below shows
+that either route, when driven by the same measured $X_3$, lands on
+the same throughput.
+
+The flux-balance model retains the stoichiometry of
+Equation~\eqref{eq:feedback-network} in a matrix
+$\mathbf S\in\mathbb R^{3\times4}$, rows $X_1,X_2,X_3$ and columns
+$r_0,\dots,r_3$, and the same steady-state constraint
+$\mathbf S\hat{\mathbf v}=\mathbf 0$ established in
+Section~\ref{sec:derivation} and carried into the linear program of
+Section~\ref{sec:lp}. The three downstream steps $r_1$, $r_2$, and
+$r_3$ are left with a generous constant capacity, well above the
+uptake ceiling, so that they never bind and the input reaction remains
+the sole determinant of throughput, exactly as it is in the S-system.
+All the regulatory content sits on the single bound that matters,
+\begin{equation}\label{eq:feedback-bound}
+  0 \;\le\; \hat v_{r_0} \;\le\; V^{\circ}_{\max,r_0}\,\theta(X_3),
+  \qquad V^{\circ}_{\max,r_0}=10,
+\end{equation}
+the regulatory instance of Equation~\eqref{eq:general-bound} with the
+thermodynamic, expression, and saturation gateways left at their
+defaults and only $\theta$ in play. The objective maximizes export,
+$\hat v_{r_3}$, so that the optimal throughput is read directly off the
+bound on the single reaction that constrains it.
+
+Two experiments are run against Equation~\eqref{eq:feedback-bound},
+differing in nothing but $\theta$. With the regulatory gateway closed,
+$\theta$ is forced to its information-free default of unity and the
+input bound sits at the full uninhibited capacity, $\hat
+v_{r_0}\le10$. Solving the linear program under that bound drives every
+flux in the chain to $10$, the naive optimum overshooting the true
+throughput of $4.64$ by more than a factor of two, because a
+feedback-blind model has no way to know that the cell itself would
+never let $X_3$ climb high enough to sustain that rate. With the
+regulatory gateway open, $\theta$ is instead evaluated at the measured
+steady-state end-product level, $\theta=X_3^{-1/2}\approx0.46$,
+computed from $X_3\approx4.64$ through the same control-function
+machinery of Section~\ref{sec:gateways} that produced
+Equation~\eqref{eq:feedback-rate}, not copied from the throughput
+answer itself. The input bound tightens to $\hat
+v_{r_0}\le10\times0.464\approx4.64$, and the linear program, maximizing
+the same objective under the same stoichiometry and the same
+downstream capacities, now returns a throughput of $4.64$ across all
+four reactions, matching the BST truth to within numerical tolerance.
+Because the two runs differ in exactly one number, the value of
+$\theta$ multiplying the input capacity, and that single change is what
+separates a threefold overshoot from the correct answer, the
+regulatory gateway is shown to be load-bearing rather than decorative:
+turning it off provably changes the prediction, and turning it back on
+provably restores the truth. Figure~\ref{fig:feedback} shows the
+per-reaction fluxes for all three cases, the BST truth, the
+gateway-closed overshoot, and the gateway-open recovery, alongside the
+uninhibited capacity line at $10$.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\textwidth]{feedback_gateway.pdf}
+  \caption{Per-reaction steady-state fluxes for the linear
+    feedback-inhibited pathway of Equation~\eqref{eq:feedback-network}.
+    Bars compare the BST S-system truth (throughput $T\approx4.64$),
+    the flux-balance solution with the regulatory gateway closed
+    ($\theta=1$, overshooting to the uninhibited capacity of $10$ on
+    every reaction), and the flux-balance solution with the gateway
+    open ($\theta=X_3^{-1/2}\approx0.46$ computed from the measured
+    end-product level, recovering the truth). The dashed line marks
+    the uninhibited capacity $V^{\circ}_{\max,r_0}=10$.}
+  \label{fig:feedback}
+\end{figure}
+
+Section~\ref{sec:lp} showed that the mole-balance constraint alone
+leaves flux underdetermined, a subspace rather than a point, and
+Section~\ref{sec:gateways} showed that it is the bound, not the
+stoichiometric matrix, that carries whatever biology narrows that
+subspace to a prediction. This example makes both statements concrete
+for regulation specifically. Nothing about end-product inhibition
+appears anywhere in $\mathbf S$: the stoichiometry of
+Equation~\eqref{eq:feedback-network} is the same whether or not $X_3$
+feeds back on $r_0$. The entire regulatory fact, encoded in the S-system
+as a negative kinetic order and in the flux-balance model as the
+control function $\theta$ on the input bound, is restored through
+Equation~\eqref{eq:feedback-bound} alone, and the two representations,
+checked against each other on this pathway, agree.
