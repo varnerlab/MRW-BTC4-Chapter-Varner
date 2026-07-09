@@ -13,38 +13,17 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-Mathematical models in biotechnology span a spectrum from fully mechanistic
-ordinary-differential-equation (ODE) systems grounded in conservation laws and
-reaction kinetics to purely data-driven deep sequence architectures that infer
-temporal structure from observations alone.  This chapter surveys that spectrum
-with a worked example: a CHO fed-batch monoclonal-antibody bioreactor revisited
-through four complementary lenses.  We begin with kinetic ODE
-models---Michaelis--Menten enzyme kinetics, Monod growth, and Luedeking--Piret
-product formation---integrated into a seven-state fed-batch simulator producing
-the ground-truth trajectories used throughout.  We then develop constraint-based
-flux balance analysis (FBA), illustrated on a urea-cycle model of HL-60 cells in
-which a linear program maximizes urea export subject to stoichiometric and
-capacity constraints.  Models of gene expression are treated next: Hill-type
-transcriptional input functions, network motifs (negative autoregulation, coherent
-and incoherent feed-forward loops, Goodwin oscillator), and cybernetic
-resource-allocation models of diauxic growth.  The deep-learning section derives
-Elman RNN, LSTM, and structured state-space (S4/HiPPO-LegS) architectures and
-demonstrates a head-to-head comparison on the CHO system in which S4 achieves
-lower test error on all seven process states.  Finally, a hybrid
-residual-learning framework---a mechanistic ODE prior augmented by a learned
-discrepancy model---corrects parameter-induced model drift with substantially
-greater data efficiency than pure-mechanistic or pure-data-driven forecasters.
-Together, the examples argue that the productive frontier of biotechnology lies
-in mechanism-informed machine learning: hybrid architectures that preserve
-interpretability and extrapolation capability of first-principles models while
-capturing the flexibility of learned components.
+This chapter develops flux balance analysis as a linear-programming framework
+for predicting metabolic phenotypes from stoichiometry alone.
 \end{abstract}
 \input{sections/introduction}
-\input{sections/kinetics}
-\input{sections/fba}
-\input{sections/geneexpression}
-\input{sections/deeplearning}
-\input{sections/hybrid}
+\input{sections/derivation}
+\input{sections/linearprogram}
+\input{sections/gateways}
+\input{sections/example_urea}
+\input{sections/example_feedback}
+\input{sections/capstones}
+\input{sections/outlook}
 \appendix
 \input{sections/appendix}
 \bibliographystyle{unsrtnat}
