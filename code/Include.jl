@@ -7,6 +7,6 @@ using Pkg
 Pkg.activate(_ROOT)
 
 using CSV, DataFrames, JSON, Statistics, LinearAlgebra, Random
-using DifferentialEquations, JuMP, HiGHS, Flux, CairoMakie
+using JuMP, HiGHS, BSTModelKit, CairoMakie
 
 include(joinpath(_PATH_TO_SRC, "Runtime.jl"))
