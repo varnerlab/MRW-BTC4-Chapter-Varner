@@ -40,12 +40,30 @@ function feedback_truth()
     model.static_factors_array    = [1.0, 1.0, 1.0, 1.0]        # E1,E2,E3,E4
     model.α = [5.0, 5.0, 5.0, 5.0, 2.0, 1.0, 1.0]               # per-reaction rate constants
 
-    # Feedback via negative kinetic orders. G rows index total_species_list
-    # [A,B,C,D,E,E1,E2,E3,E4]; G cols index reactions [r1,r2,r3,r4,r0,r5,r6].
+    # Feedback via negative kinetic orders. G rows index model.total_species_list
+    # (= vcat(dynamic, static) = [A,B,C,D,E,E1,E2,E3,E4]); G cols index
+    # model.list_of_reactions (connection-record order = [r1,r2,r3,r4,r0,r5,r6]).
+    # BSTModelKit's Factory.jl builds G as
+    # `_build_exponent_matrix(total_species_list, sorted_rate_dict_array)` and
+    # exposes both orderings on the model object itself, so we look up the
+    # feedback indices BY NAME rather than hardcoding row/column numbers, and we
+    # assert those orderings match what the rest of this file assumes (species,
+    # reactions) so a package change would fail loudly instead of silently
+    # mistargeting the feedback.
+    @assert model.list_of_dynamic_species == species "BSTModelKit dynamic-species order changed: expected $(species), got $(model.list_of_dynamic_species)"
+    @assert model.list_of_reactions == reactions "BSTModelKit reaction order changed: expected $(reactions), got $(model.list_of_reactions)"
+
+    row_E  = findfirst(==("E"),  model.total_species_list)
+    col_r1 = findfirst(==("r1"), model.list_of_reactions)
+    row_D  = findfirst(==("D"),  model.total_species_list)
+    col_r2 = findfirst(==("r2"), model.list_of_reactions)
+
     G = model.G
-    G[5, 1] = -0.5   # E (species 5) inhibits r1 (reaction 1)
-    G[4, 2] = -0.5   # D (species 4) inhibits r2 (reaction 2)
+    G[row_E, col_r1] = -0.5   # E inhibits r1
+    G[row_D, col_r2] = -0.5   # D inhibits r2
     model.G = G
+
+    println("feedback: E->r1, D->r2 via G[$(row_E),$(col_r1)], G[$(row_D),$(col_r2)]")
 
     Xss = steadystate(model; tspan=(0.0, 200.0))
     vss = reaction_fluxes(model, Xss)
