@@ -15,15 +15,15 @@ application to the next is only the content poured into $\mathbf S$,
 $\boldsymbol\ell$, $\mathbf u$, and $\mathbf c$.
 
 The reconstruction couples the four canonical urea-cycle enzymes to a
-fifth, competing branch and to the extracellular environment.
-Argininosuccinate synthetase ($v_1$, EC 6.3.4.5) condenses citrulline
+fifth, competing branch and to the extracellular environment (left
+panel, Fig.~\ref{fig:urea}). Argininosuccinate synthetase ($v_1$, EC 6.3.4.5) condenses citrulline
 with aspartate and ATP to argininosuccinate, releasing AMP and
 diphosphate; argininosuccinate lyase ($v_2$, EC 4.3.2.1) cleaves that
 intermediate to arginine and fumarate; arginase I ($v_3$, EC 3.5.3.1)
 hydrolyzes arginine to ornithine and urea; and ornithine
 transcarbamylase ($v_4$, EC 2.1.3.3) recombines ornithine with
 carbamoyl phosphate to regenerate citrulline, closing the cycle. A
-fifth reaction, nitric oxide synthase ($v_5$, EC 1.15.13.39), draws on
+fifth reaction, nitric oxide synthase ($v_5$, EC 1.14.13.39), draws on
 the same arginine pool consumed by $v_3$ and oxidizes it with NADPH
 and oxygen to nitric oxide and citrulline, diverting flux away from
 urea production toward signaling chemistry. These five enzymatic
@@ -118,23 +118,36 @@ $\hat v_{b_4}=-0.0328$, and every exchange flux carrying carbon or
 nitrogen into or out of the cycle, carbamoyl phosphate and aspartate
 on the uptake side, urea and fumarate on the secretion side, scaled to
 match it, giving the full optimal flux distribution
-(Fig.~\ref{fig:urea}).
+(right panel, Fig.~\ref{fig:urea}).
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.85\textwidth]{urea_fba.pdf}
-  \caption{Optimal flux distribution for the urea-cycle linear program
-    of Equation~\eqref{eq:fba-lp}, with bounds set by the
-    thermodynamic and kinetic gateways and the objective
-    $c_{b_4}=-1$ maximizing urea export. Bar heights
-    give the flux $\hat v_j$ (mmol\,gDW$^{-1}$\,h$^{-1}$) at the
-    optimum. The enzymatic backbone $v_1$ through $v_4$ saturates at
-    $0.0328$, the capacity of argininosuccinate lyase ($v_2$), while
-    the nitric oxide synthase branch $v_5$ carries zero flux. Exchange
-    fluxes $b_1$ through $b_{14}$ follow the import-positive
-    convention, so negative bars denote net secretion; $b_4$ (urea)
-    shows the maximized export flux of $-0.0328$
-    mmol\,gDW$^{-1}$\,h$^{-1}$.}
+  \begin{minipage}[c]{0.52\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{urea_network.pdf}
+  \end{minipage}\hfill
+  \begin{minipage}[c]{0.46\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{urea_fba.pdf}
+  \end{minipage}
+  \caption{The urea-cycle worked example. Left: the reaction network,
+    with the four cyclic enzymes $v_1$ through $v_4$ and the competing
+    nitric oxide synthase branch $v_5$ labeled by EC number, and the
+    boundary exchanges (carbamoyl phosphate $b_1$ and aspartate $b_2$
+    entering, fumarate $b_3$ and urea $b_4$ leaving) crossing the
+    dashed system boundary; arginine, citrulline, ornithine, and
+    argininosuccinate remain internal to the cycle. Right: the optimal
+    flux distribution for the linear program of
+    Equation~\eqref{eq:fba-lp}, with bounds set by the thermodynamic
+    and kinetic gateways and the objective $c_{b_4}=-1$ maximizing urea
+    export; bar heights give the flux $\hat v_j$
+    (mmol\,gDW$^{-1}$\,h$^{-1}$) at the optimum. The enzymatic backbone
+    $v_1$ through $v_4$ saturates at $0.0328$, the capacity of
+    argininosuccinate lyase ($v_2$), while the nitric oxide synthase
+    branch $v_5$ carries zero flux. Exchange fluxes $b_1$ through
+    $b_{14}$ follow the import-positive convention, so negative bars
+    denote net secretion; $b_4$ (urea) shows the maximized export flux
+    of $-0.0328$ mmol\,gDW$^{-1}$\,h$^{-1}$.}
   \label{fig:urea}
 \end{figure}
 
