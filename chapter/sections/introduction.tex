@@ -1,1 +1,67 @@
-%% introduction.tex (stub)
+%% introduction.tex
+\section{Introduction}\label{sec:intro}
+
+Biotechnology depends on predicting and directing cellular metabolism.
+Metabolic engineering redirects flux toward a target product,
+bioprocess development tunes feeding and environment to sustain it, and
+strain design asks which genetic changes will move a phenotype in a
+wanted direction; each is, at bottom, a question about the
+intracellular flux distribution, the rates at which the reactions of
+metabolism actually run under a given condition \cite{Bordbar2014}.
+That distribution is what a quantitative model is asked to predict, and
+it is also what is hardest to observe. A genome sequence and the
+stoichiometry of its annotated reactions are knowable in full, but the
+internal fluxes, the kinetic parameters that would set them, and the
+metabolite concentrations that drive them are, at genome scale, largely
+unmeasured. The problem is therefore to predict a metabolic phenotype
+from what can be known rather than from what a direct calculation would
+require.
+
+Two broad strategies answer that problem. Mechanistic kinetic models
+write an explicit rate law for every reaction, from Michaelis--Menten
+saturation \cite{MichaelisMenten1913} through mass action to the
+power-law formalism of biochemical systems theory
+\cite{Savageau1976,SavageauVoit1987}, and integrate the resulting
+equations forward in time; they resolve the dynamics in full but demand
+a rate constant, an affinity, or a kinetic order for every step,
+parameters that are rarely available beyond a handful of well-studied
+pathways. Constraint-based models make the opposite trade. They ask
+only for the stoichiometry of the network and impose conservation of
+mass at steady state, and in doing so they scale to genome-wide
+reconstructions of thousands of reactions
+\cite{Bordbar2014,AllenPalsson2003}. Flux balance analysis is the
+constraint-based workhorse: it casts phenotype prediction as a linear
+program over the flux vector \cite{Orth2010,Heirendt2019}. Conservation
+alone, however, does not determine a flux distribution; it fixes a
+whole subspace of them, and what selects a prediction from that
+subspace is the box of upper and lower bounds placed on each reaction.
+The bounds, not the stoichiometry, are where biological information
+enters, and the question this chapter takes up is how it enters:
+through which bound does a thermodynamic estimate, a turnover number,
+an expression measurement, or a regulatory signal actually change a
+flux prediction?
+
+This chapter develops flux balance analysis as that integrative
+framework, organized around the bounds as the gateway through which
+every class of biological information enters a flux estimate. The flux
+constraint itself is derived not by asserting steady state but from an
+open mole balance on a growing culture, a derivation that keeps the
+growth-dilution term the textbook form discards and writes the
+constraint as $\mathbf S\hat{\mathbf v}=\mu\mathbf x$ rather than
+$\mathbf S\hat{\mathbf v}=\mathbf 0$. A single bound is then read as a
+product of factors, one gateway each for thermodynamic reversibility,
+enzyme kinetics, gene expression, and regulation, so that opening a
+gateway means supplying the data or the model that sets its factor. Two
+worked steady-state examples make the construction concrete: a
+urea-cycle metabolic network whose flux distribution is pinned by
+thermodynamic and kinetic data drawn entirely from public databases,
+and a feedback-inhibited pathway whose regulatory truth, generated
+independently from a kinetic model, is recovered by opening the
+regulatory gateway on a single bound. Two published systems then show
+the same gateways opened together at a scale no hand calculation could
+reach, one estimating fluxes in a dynamic cell-free reaction
+\cite{Vilkhovoy2023} and one designing a glycan-producing strain by
+model-guided gene deletion \cite{Wayman2019}. Read across these cases,
+estimating a flux distribution from data and designing one by
+intervention are the same operation on the bounds, run in opposite
+directions.
