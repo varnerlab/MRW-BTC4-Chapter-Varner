@@ -9,8 +9,8 @@ filled entirely from public databases, already pin down a sharp
 prediction without a single measurement taken on the cells themselves.
 The network retains the same steady-state constraint
 $\mathbf S\hat{\mathbf v}=\mathbf 0$, Equation~\eqref{eq:sv0}, and the
-same linear program, Equation~\eqref{eq:fba-lp}, established in
-Sections~\ref{sec:derivation} and~\ref{sec:lp}. What changes from one
+same linear program, Equation~\eqref{eq:fba-lp}, established earlier.
+What changes from one
 application to the next is only the content poured into $\mathbf S$,
 $\boldsymbol\ell$, $\mathbf u$, and $\mathbf c$.
 
@@ -33,7 +33,7 @@ on the uptake side, urea, fumarate, AMP, diphosphate, orthophosphate,
 NADP$^{+}$, and nitric oxide on the secretion side, cross the system
 boundary through fourteen exchange reactions, $b_1$ through $b_{14}$,
 written with the import-positive convention $\emptyset\to M_i$
-established in Section~\ref{sec:derivation}. The remaining four,
+established earlier. The remaining four,
 arginine, citrulline, ornithine, and argininosuccinate, are pure cycle
 intermediates with no exchange reaction of their own: each is produced
 and consumed entirely inside the network. Collecting five enzymatic
@@ -41,25 +41,25 @@ and fourteen exchange fluxes against eighteen metabolite balances gives
 $\mathbf S\in\mathbb R^{18\times19}$, $m=18$ intracellular balances and
 $n=19$ reactions.
 
-The thermodynamic gateway of Equation~\eqref{eq:thermo-gate} is opened
-first. Standard Gibbs free energies of reaction for all five enzymatic
+The thermodynamic gateway of Equation~\eqref{eq:thermo-gate} was
+opened first. Standard Gibbs free energies of reaction for all five enzymatic
 steps were evaluated by eQuilibrator \cite{Beber2022}:
 $\Delta G^{\circ}_{v_1}=-4.3$, $\Delta G^{\circ}_{v_2}=-5.5$,
 $\Delta G^{\circ}_{v_3}=-51.0$, $\Delta G^{\circ}_{v_4}=-30.3$, and
 $\Delta G^{\circ}_{v_5}=-1220$ kJ/mol. The threshold
-$\Delta G^{*}_j$ of Equation~\eqref{eq:thermo-gate} is fixed here at
+$\Delta G^{*}_j$ of Equation~\eqref{eq:thermo-gate} was fixed here at
 $-10$ kJ/mol: a reaction whose standard free energy falls below that
 cutoff is declared irreversible and its reverse flux forbidden
 ($\delta_j=0$), while a reaction whose free energy sits above it is
-left reversible ($\delta_j=1$). Only $v_1$ and $v_2$ clear the
-threshold and remain reversible; $v_3$, $v_4$, and $v_5$ fall well
-below it, most dramatically $v_5$ at $-1220$ kJ/mol, and are pinned
-irreversible. Every exchange reaction is left unconstrained by this
-test and keeps a wide default bound in both directions, since the
+left reversible ($\delta_j=1$). Only $v_1$ and $v_2$ cleared the
+threshold and remained reversible; $v_3$, $v_4$, and $v_5$ fell
+below it, $v_5$ the furthest at $-1220$ kJ/mol, and were pinned
+irreversible. Every exchange reaction was left unconstrained by this
+test and kept a wide default bound in both directions, since the
 direction of nutrient uptake or product secretion is a matter of
 medium composition rather than of standard free energy.
 
-The kinetic gateway of Equation~\eqref{eq:vmax} is opened next.
+The kinetic gateway of Equation~\eqref{eq:vmax} was opened next.
 Turnover numbers for the five enzymes were taken from BRENDA
 \cite{Chang2021} and combined with a common reference enzyme abundance
 $e^{\circ}=0.01$ mmol/gDW, a characteristic order of magnitude for
@@ -75,7 +75,7 @@ lyase is the outlier: $k^{\circ}_{\mathrm{cat},v_2}=3.28$ s$^{-1}$, an
 order of magnitude below the other four turnover numbers, gives
 $V^{\circ}_{\max,v_2}=0.0328$ mmol\,gDW$^{-1}$\,h$^{-1}$, the smallest
 of the five capacities by more than threefold. Every exchange reaction
-is again left with a wide capacity bound, since a boundary reaction
+was again left with a wide capacity bound, since a boundary reaction
 represents bulk transport rather than a single characterized enzyme.
 
 With the thermodynamic and kinetic gateways open and the other two
@@ -90,11 +90,11 @@ therefore $-\delta_j V^{\circ}_{\max,j}\le\hat v_j\le V^{\circ}_{\max,j}$
 for $v_1$ through $v_5$, with $\delta_j$ and $V^{\circ}_{\max,j}$ as
 assigned above, and $-1000\le\hat v_j\le1000$ mmol\,gDW$^{-1}$\,h$^{-1}$
 for the fourteen exchange reactions, wide enough to be effectively
-unconstrained.
-
-The objective is to maximize urea export. Exchange reaction $b_4$
+unconstrained. With the feasible box fixed, the one remaining
+ingredient is the objective, here the maximization of urea export.
+Exchange reaction $b_4$
 represents urea crossing the system boundary and, following the
-import-positive convention of Section~\ref{sec:derivation}, is written
+same import-positive convention, is written
 $\emptyset\to\text{urea}$, so that positive $\hat v_{b_4}$ denotes
 uptake and negative $\hat v_{b_4}$ denotes secretion. Maximizing
 secretion is therefore equivalent to minimizing $\hat v_{b_4}$, and
@@ -105,28 +105,28 @@ $\mathbf c^{\top}\hat{\mathbf v}=-\hat v_{b_4}$ drives $\hat v_{b_4}$
 as negative as possible, which is exactly maximal urea export.
 
 Solving Equation~\eqref{eq:fba-lp} by linear programming
-\cite{Orth2010} with these bounds and this objective gives a single,
+\cite{Orth2010} with these bounds and this objective gave a single,
 sharply determined answer. The entire enzymatic backbone, $v_1$
-through $v_4$, saturates at $0.0328$ mmol\,gDW$^{-1}$\,h$^{-1}$, the
+through $v_4$, saturated at $0.0328$ mmol\,gDW$^{-1}$\,h$^{-1}$, the
 capacity imposed by argininosuccinate lyase, and the nitric oxide
-synthase branch $v_5$ carries zero flux: with arginine supply capped
+synthase branch $v_5$ carried zero flux: with arginine supply capped
 by the same $v_2$ bottleneck that limits the rest of the cycle, none
-of it is left over to spend on the competing NOS reaction once urea
-export is the sole objective. The optimal urea-export magnitude is
+of it was left over to spend on the competing NOS reaction once urea
+export is the sole objective. The optimal urea-export magnitude was
 $0.0328$ mmol\,gDW$^{-1}$\,h$^{-1}$, attained at
 $\hat v_{b_4}=-0.0328$, and every exchange flux carrying carbon or
 nitrogen into or out of the cycle, carbamoyl phosphate and aspartate
-on the uptake side, urea and fumarate on the secretion side, scales to
-match it. The full optimal flux distribution is shown in
-Figure~\ref{fig:urea}.
+on the uptake side, urea and fumarate on the secretion side, scaled to
+match it, giving the full optimal flux distribution
+(Fig.~\ref{fig:urea}).
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.85\textwidth]{urea_fba.pdf}
   \caption{Optimal flux distribution for the urea-cycle linear program
     of Equation~\eqref{eq:fba-lp}, with bounds set by the
-    thermodynamic and kinetic gateways of Section~\ref{sec:gateways}
-    and the objective $c_{b_4}=-1$ maximizing urea export. Bar heights
+    thermodynamic and kinetic gateways and the objective
+    $c_{b_4}=-1$ maximizing urea export. Bar heights
     give the flux $\hat v_j$ (mmol\,gDW$^{-1}$\,h$^{-1}$) at the
     optimum. The enzymatic backbone $v_1$ through $v_4$ saturates at
     $0.0328$, the capacity of argininosuccinate lyase ($v_2$), while
@@ -151,5 +151,4 @@ explainable entirely from the reversibility and capacity assigned
 above. Reopening the regulatory gateway $\theta_j$, so that a
 reaction's capacity depends on the cell's own control state rather
 than sitting fixed at its database-derived ceiling, is the subject of
-the feedback-inhibition example that follows in
-Section~\ref{sec:feedback}.
+the feedback-inhibition example that follows.

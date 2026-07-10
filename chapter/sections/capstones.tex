@@ -1,2 +1,111 @@
-%% capstones.tex (stub)
-\section{Capstone Examples}\label{sec:capstones}
+%% capstones.tex
+\section{Integration in Practice}\label{sec:capstones}
+
+The urea-cycle and feedback examples opened the gateways of
+Equation~\eqref{eq:general-bound} one at a time, on networks small
+enough that a hand calculation could check the result against a
+known truth. Two published systems show the same gateways opened
+together, at a scale no hand calculation could reach, and driven by
+measurement rather than by a modeler's guess at what a bound should
+be. The first couples metabolism and regulation into one dynamic
+model of a cell-free reaction; the second uses the same bounds not to
+estimate a flux distribution from data but to design one.
+
+Vilkhovoy and coworkers built the metabolic half of that coupling on
+a sequence-specific reconstruction of \emph{E.~coli} cell-free
+protein synthesis, in which the transcription and translation
+reactions required to make a target protein from its loaded DNA and
+mRNA sequence are computed directly from those sequences and entered
+into the stoichiometric matrix as flux-bearing chemistry alongside
+metabolism itself \cite{Vilkhovoy2018}, the sequence-to-stoichiometry
+construction described earlier and credited
+there as the mechanism behind this capstone. Control over that
+expression machinery, the fraction of promoter and ribosome capacity
+actually switched on at a given moment, is supplied by the effective
+biophysical partition-function model of Adhikari and coworkers
+\cite{Adhikari2020}, the same statistical-mechanical control
+function of Equations~\eqref{eq:partition} and~\eqref{eq:control-split},
+built earlier from a Boltzmann sum over regulatory microstates and
+worked by hand for a single feedback loop. In this setting the same $\theta_j$
+machinery is asked to populate every regulated step of a larger
+network at once, rather than one control point on one pathway. They
+then closed the loop dynamically
+\cite{Vilkhovoy2023}: metabolism, expression, and regulation are
+integrated into a single constraint-based model whose bounds are
+recomputed as the reaction proceeds, so that the thermodynamic,
+kinetic, expression, and regulatory gateways are opened together
+rather than in isolation. This integration is checked against denser
+data: time-resolved measurement of the
+intracellular state over the course of a batch reaction, on the
+order of sixty metabolites tracked through the reaction, together
+with time courses of mRNA, protein abundance, and enzyme activity.
+Every worked example earlier in this chapter compared a flux
+prediction to a single steady-state target; here the comparison runs
+against a trajectory, resolved in both time and in the identity of
+the species tracked, at a resolution the small hand-checked networks
+never had reason to offer.
+
+This density of measurement is what makes cell-free protein synthesis
+the natural home for the term that ordinary flux balance analysis
+sets aside. A cell-free reaction has no growing culture to dilute
+into, so the specific growth rate $\mu$ is zero, but the reaction is
+manifestly not at steady state: transcript, protein, and metabolite pools rise and fall
+over the course of the batch, so the pseudo-steady-state assumption
+that collapses Equation~\eqref{eq:mole-balance} to
+Equation~\eqref{eq:honest-constraint} fails from the direction
+opposite to slow growth. The accumulation that assumption would
+otherwise discard is exactly what the sixty-odd tracked metabolites
+record, and because the reaction vessel and the intracellular
+compartment are one and the same volume, with no membrane separating
+a sampled extracellular phase from an inferred intracellular one,
+that accumulation is read directly off the measurement rather than
+reconstructed indirectly from an uptake or secretion rate. This is
+the setting pointed to when
+Equation~\eqref{eq:sv0} was first written down: cell-free integration
+is where the growth-dilution and accumulation term
+Equation~\eqref{eq:sv0} discards is, for once, under direct
+experimental observation rather than assumed away.
+
+The second capstone runs the same construction in the opposite
+direction. Wayman and coworkers grafted the N-linked glycosylation
+pathway of \emph{Campylobacter jejuni}, the source of the designer
+glycans used to improve the pharmacokinetic and immunogenic
+properties of therapeutic glycoproteins, onto a genome-scale
+reconstruction of \emph{E.~coli} metabolism, and then searched the
+combined network for gene deletions predicted to couple glycan output
+to growth itself, so that a strain could not grow well without also
+making the glycan \cite{Wayman2019}. Where the cell-free capstone
+read the gateways of Equation~\eqref{eq:general-bound} from
+measurement to obtain a flux estimate, this campaign set them
+directly: a reaction knocked out has its bound collapsed to zero, the
+capacity gateway of Equation~\eqref{eq:general-bound} closed rather
+than left open, and each candidate deletion, or combination of
+deletions, defines a distinct box $[\boldsymbol\ell,\mathbf u]$ under
+which the linear program is re-solved for the
+resulting flux distribution, entirely inside the model and before a
+single strain is built. Knocking out a reaction is the simplest way
+to reach into a bound;
+the same gateway can in principle be narrowed by attenuating an
+enzyme's expression or widened by over-expressing it, moving the
+$(e/e^{\circ})$ factor of Equation~\eqref{eq:general-bound} down or up
+rather than collapsing it to zero. The deletions this campaign
+screened were sufficient on their own: the best single knockout
+identified by the model raised glycan production roughly threefold
+over the unmodified strain once built, an outcome the model predicted
+by re-solving the same linear program under the modified bound rather
+than by any change to the stoichiometry $\mathbf S$. The bounds are,
+in this use, not a report of what the cell is doing but a lever for
+what the cell is made to do.
+
+Read together, the two capstones are the same operation on
+Equation~\eqref{eq:general-bound} run in opposite directions. In the
+cell-free system, measurement narrows the gateways and the flux
+distribution is estimated; in the glycan strain, the engineer narrows
+a gateway and the flux distribution is designed. Nothing about the
+linear program distinguishes the two uses,
+since both amount to fixing the bounds $\boldsymbol\ell$ and
+$\mathbf u$ and solving the same constrained optimization; only the
+direction in which information moves through the gateway, from data
+inward for estimation, from intention outward for design, changes.
+Estimation and design are, at bottom, the same operation on the
+bounds, run in two directions.

@@ -1,11 +1,11 @@
 %% gateways.tex
 \section{Bounds as Gateways}\label{sec:gateways}
 
-Section~\ref{sec:lp} left the flux distribution underdetermined: the
+Conservation alone leaves the flux distribution underdetermined: the
 mole-balance constraint fixes a subspace, not a point, and the box of
 bounds together with the objective is what narrows that subspace to a
-prediction. The objective is a modeling choice, taken up in
-Section~\ref{sec:lp}. The bounds are where biology enters, and they
+prediction. The objective is a modeling choice. The bounds are where
+biology enters, and they
 enter not as numbers to be looked up but as a model in their own right.
 Writing a single upper bound as a product of factors makes that model
 visible. For reaction $j$,
@@ -23,9 +23,8 @@ admits gene expression, and $\theta_j$ admits regulation. A bound is
 therefore an honest ledger of what is known about a reaction. With no
 information beyond a capacity scale the correction factors are set to
 unity, and each is reopened, one gateway at a time, as measurements or
-mechanistic models become available. This is also where the promise of
-Section~\ref{sec:lp} is kept: the underdetermined polytope is narrowed
-not by conservation but by the bounds, and every gateway that closes
+mechanistic models become available. This is also where the underdetermined polytope is finally
+narrowed: not by conservation but by the bounds, and every gateway that closes
 tightens that polytope with information of a particular kind, so that
 tracing a prediction back to its cause is a matter of asking which
 factor in Equation~\eqref{eq:general-bound} was responsible.
@@ -70,21 +69,44 @@ from compilations of cellular abundances such as BioNumbers
 \cite{Milo2010}. The scale $V^{\circ}_{\max,j}$ is the flux the enzyme
 would sustain at reference abundance and saturating substrate, and the
 fraction of that ceiling actually reached at the prevailing substrate
-concentration is the saturation factor. Taking the enzyme to obey
-Michaelis--Menten kinetics \cite{MichaelisMenten1913}, the rate of a
-single-substrate reaction is
+concentration is the saturation factor. That factor follows from the
+enzyme mechanism itself. A single-substrate enzyme binds substrate
+reversibly and turns it over to product,
+\begin{equation}\label{eq:mm-mechanism}
+  E + S_j \;\underset{k_{-1}}{\overset{k_1}{\rightleftharpoons}}\; [ES]
+  \;\overset{k_{\mathrm{cat}}}{\longrightarrow}\; E + P,
+\end{equation}
+with $[ES]$ the enzyme-substrate complex. Holding the complex at
+quasi-steady state, on the argument that it equilibrates fast relative
+to the depletion of substrate,
+\begin{equation}\label{eq:mm-qssa}
+  \frac{d[ES]}{dt}
+  = k_1[E][S_j] - (k_{-1}+k_{\mathrm{cat}})[ES] = 0,
+\end{equation}
+and eliminating the free enzyme through the conservation of total
+enzyme $[E]_T=[E]+[ES]$, gives the complex in terms of the substrate
+alone,
+\begin{equation}\label{eq:mm-complex}
+  [ES] = \frac{[E]_T\,[S_j]}{K_{M,j}+[S_j]},
+  \qquad
+  K_{M,j}\equiv\frac{k_{-1}+k_{\mathrm{cat}}}{k_1}.
+\end{equation}
+The reaction velocity is the rate of the turnover step,
+$v_j=k_{\mathrm{cat}}[ES]$, so writing the capacity as
+$V_{\max,j}=k_{\mathrm{cat}}[E]_T$ recovers the Michaelis--Menten rate
+law \cite{MichaelisMenten1913}, and the saturation factor is its
+normalization to that capacity,
 \begin{equation}\label{eq:mm}
   v_j \;=\; V_{\max,j}\,\frac{[S_j]}{K_{M,j}+[S_j]}
   \qquad\Longrightarrow\qquad
-  f_j([S_j]) \;=\; \frac{[S_j]}{K_{M,j}+[S_j]}\;\in[0,1],
+  f_j([S_j]) \;=\; \frac{v_j}{V_{\max,j}}
+  \;=\; \frac{[S_j]}{K_{M,j}+[S_j]}\;\in[0,1],
 \end{equation}
 with $[S_j]$ the substrate concentration and $K_{M,j}$ the Michaelis
 constant. The saturation factor $f_j$ interpolates between an empty
 gateway ($f_j\to0$ as substrate is exhausted) and a fully open one
 ($f_j\to1$ at saturation), and it is the same hyperbolic law that
-governs single-enzyme assays; its derivation from the underlying
-mechanism by the quasi-steady-state assumption on the enzyme-substrate
-complex is carried out in Appendix~\ref{sec:appendix}. Because $f_j$
+governs single-enzyme assays. Because $f_j$
 depends on the substrate concentration, opening this gateway makes the
 bound a function of the metabolic state rather than a fixed number, the
 point at which a static flux balance begins to acquire the
@@ -112,8 +134,8 @@ $(\theta_{m,j}+\mu)$ or $(\theta_{p,j}+\mu)$: every intracellular
 species is removed both by its own turnover and by dilution into the
 growing culture at the specific growth rate $\mu$. That $\mu$ is not a
 new parameter. It is the very growth-dilution term retained in the
-honest constraint of Section~\ref{sec:derivation},
-Equation~\eqref{eq:honest-constraint}, carried through consistently: an
+honest constraint, Equation~\eqref{eq:honest-constraint}, carried
+through consistently: an
 enzyme is diluted by growth exactly as a metabolite is, and the same
 $\mu$ that balances metabolic production in the flux constraint sets
 the residence time of the transcripts and proteins that fix the flux
@@ -134,8 +156,8 @@ any one of several interchangeable isozymes. Through
 Equation~\eqref{eq:expression-ss} the expression gateway couples the
 flux ceiling to the entire upstream apparatus of transcription and
 translation, with $\mu$ standing in every denominator as the visible
-signature of the growth-aware bookkeeping begun in
-Section~\ref{sec:derivation}. The ratio $(e/e^{\circ})$ is also the
+signature of the growth-aware bookkeeping begun in the mole-balance
+derivation. The ratio $(e/e^{\circ})$ is also the
 natural port for measured data: a transcriptomic or proteomic profile
 enters here, rescaling the capacity of each reaction by the abundance
 actually observed under a given condition and turning one
@@ -213,5 +235,5 @@ precursors supplied by exchange reactions across the system boundary.
 Expression then becomes flux-bearing chemistry inside the same linear
 program as metabolism, a construction carried out for cell-free protein
 synthesis by Vilkhovoy and coworkers \cite{Vilkhovoy2018}, and it is
-the mechanism behind the cell-free capstone of
-Section~\ref{sec:capstones}.
+the mechanism behind the cell-free capstone taken up later in this
+chapter.

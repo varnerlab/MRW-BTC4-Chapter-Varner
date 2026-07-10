@@ -6,9 +6,7 @@ differential equation, and that constraint is a mole balance in disguise.
 Writing the balance out, instead of asserting metabolic steady state by
 fiat, makes explicit what is assumed away when the constraint is reduced to
 its familiar textbook form, and which operating conditions the reduction
-cannot cover.
-
-Consider a well-mixed bioreactor of volume $V$ holding a growing cell
+cannot cover. Consider a well-mixed bioreactor of volume $V$ holding a growing cell
 culture. The culture exchanges mass with its surroundings through a set of
 physical streams $s$ (feed, harvest, gas sparging) and hosts an
 intracellular reaction network with $n$ fluxes $\hat v_j$, $j=1,\dots,n$,
@@ -27,25 +25,41 @@ the stoichiometric coefficient of species $i$ in reaction $j$, the $(i,j)$
 entry of the stoichiometric matrix $\mathbf S\in\mathbb R^{m\times n}$.
 Equation~\eqref{eq:mole-balance} is exact: it presumes nothing about
 growth rate, feeding strategy, or steady state, and it is the starting
-point for the complete derivation carried out in
-Appendix~\ref{sec:appendix}.
+point for the reduction carried out below.
 
 Two steps turn Equation~\eqref{eq:mole-balance} into a statement about
-fluxes alone. First, writing the reactor volume in specific units,
+fluxes alone. First, write the reactor volume in specific units,
 $V=B\bar V$, with $B$ the total biomass in the reactor and $\bar V$ the
-culture volume per unit biomass, ties the extensive balance to the
-biomass that is actually growing; the specific growth rate is then
-$\mu\equiv(1/B)\,dB/dt$. Second, expanding the accumulation term
-$d(C_iV)/dt=d(C_iB\bar V)/dt$ by the product rule produces, alongside a
-term in $dC_i/dt$, a term proportional to $\mu$: the growth-dilution
-term. If the intracellular pool of species $i$ is at pseudo-steady state
+culture volume per unit biomass; this ties the extensive balance to the
+biomass that is actually growing, and the specific growth rate follows
+as $\mu\equiv(1/B)\,dB/dt$. Second, expand the accumulation term by the
+product rule,
+\begin{equation}\label{eq:product-rule}
+  \frac{d}{dt}\bigl(C_iV\bigr)=\frac{d}{dt}\bigl(C_iB\bar V\bigr)
+  = B\bar V\,\frac{dC_i}{dt}
+  + C_i\bar V\,\frac{dB}{dt}
+  + C_iB\,\frac{d\bar V}{dt}.
+\end{equation}
+Dividing Equation~\eqref{eq:mole-balance} through by $V=B\bar V$ and
+substituting Equation~\eqref{eq:product-rule} isolates the intensive
+balance for species $i$,
+\begin{equation}\label{eq:intensive-balance}
+  \frac{1}{B\bar V}\sum_{s} d_s\, C_{i,s}\,\dot V_s
+  \;+\; \sum_j \sigma_{ij}\hat v_j
+  \;=\; \frac{dC_i}{dt} \;+\; \mu\,C_i
+  \;+\; \frac{C_i}{\bar V}\,\frac{d\bar V}{dt},
+\end{equation}
+where the middle term on the right, $\mu C_i$ with
+$\mu=(1/B)\,dB/dt$, is the growth-dilution term produced by the product
+rule. Three assumptions each remove one of the remaining terms. If the
+intracellular pool of species $i$ is at pseudo-steady state
 ($dC_i/dt=0$, the usual separation-of-timescales argument, since
 metabolite turnover on the order of seconds to minutes is fast relative
 to a doubling time of hours), if the specific culture volume is constant
 ($d\bar V/dt=0$, so the working volume tracks the growing biomass rather
 than drifting relative to it), and if species $i$ crosses no physical
 stream (the sum over $s$ vanishes for this species), Equation
-\eqref{eq:mole-balance} collapses to
+\eqref{eq:intensive-balance} collapses to
 \begin{equation}\label{eq:honest-constraint}
   C_i\,\mu \;=\; \sum_j \sigma_{ij}\hat v_j
   \qquad\Longleftrightarrow\qquad
@@ -56,10 +70,7 @@ concentrations and $\hat{\mathbf v}\in\mathbb R^n$ collects the fluxes.
 Equation~\eqref{eq:honest-constraint} is the honest flux constraint: net
 metabolic production of every intracellular species is balanced not
 against zero, but against the rate at which that species is diluted by
-its own growing culture. The full reduction from
-Equation~\eqref{eq:mole-balance} to Equation~\eqref{eq:honest-constraint},
-including the product-rule expansion, is given in
-Appendix~\ref{sec:appendix}.
+its own growing culture.
 
 The form used throughout the constraint-based modeling literature is
 obtained by discarding the right-hand side of

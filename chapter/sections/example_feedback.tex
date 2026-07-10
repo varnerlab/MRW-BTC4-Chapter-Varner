@@ -22,7 +22,7 @@ This is textbook end-product inhibition, and it is deliberately the
 simplest network that can carry it, a single control point acting on a
 single upstream step.
 
-The truth is generated from a Biochemical Systems Theory (BST)
+The truth was generated from a Biochemical Systems Theory (BST)
 S-system, the power-law formalism in which every reaction rate is
 written as a product of the participating species raised to real-valued
 kinetic orders, $v_j=\alpha_j\prod_i X_i^{\,g_{ij}}$
@@ -62,8 +62,8 @@ duality explicit is the point of this example. In the S-system it is
 the negative kinetic order in Equation~\eqref{eq:feedback-rate}: the
 exponent on $X_3$ in the rate law for $r_0$. In the flux-balance
 picture it is the control function $\theta_j$ of
-Equation~\eqref{eq:general-bound}, the same object introduced in
-Section~\ref{sec:gateways} through the partition-function accounting
+Equation~\eqref{eq:general-bound}, the same object introduced
+earlier through the partition-function accounting
 of Equations~\eqref{eq:partition} and~\eqref{eq:control-split}
 \cite{Adhikari2020}. There $\theta_j$ was built from a Boltzmann sum
 over regulatory microstates; here, for a single allosteric step acting
@@ -81,10 +81,9 @@ The flux-balance model retains the stoichiometry of
 Equation~\eqref{eq:feedback-network} in a matrix
 $\mathbf S\in\mathbb R^{3\times4}$, rows $X_1,X_2,X_3$ and columns
 $r_0,\dots,r_3$, and the same steady-state constraint
-$\mathbf S\hat{\mathbf v}=\mathbf 0$ established in
-Section~\ref{sec:derivation} and carried into the linear program of
-Section~\ref{sec:lp}. The three downstream steps $r_1$, $r_2$, and
-$r_3$ are left with a generous constant capacity, well above the
+$\mathbf S\hat{\mathbf v}=\mathbf 0$ established earlier and carried
+into the linear program. The three downstream steps $r_1$, $r_2$, and
+$r_3$ were left with a generous constant capacity, above the
 uptake ceiling, so that they never bind and the input reaction remains
 the sole determinant of throughput, exactly as it is in the S-system.
 All the regulatory content sits on the single bound that matters,
@@ -98,34 +97,34 @@ defaults and only $\theta$ in play. The objective maximizes export,
 $\hat v_{r_3}$, so that the optimal throughput is read directly off the
 bound on the single reaction that constrains it.
 
-Two experiments are run against Equation~\eqref{eq:feedback-bound},
+Two experiments were run against Equation~\eqref{eq:feedback-bound},
 differing in nothing but $\theta$. With the regulatory gateway closed,
-$\theta$ is forced to its information-free default of unity and the
-input bound sits at the full uninhibited capacity, $\hat
-v_{r_0}\le10$. Solving the linear program under that bound drives every
+$\theta$ was forced to its information-free default of unity and the
+input bound sat at the full uninhibited capacity, $\hat
+v_{r_0}\le10$. Solving the linear program under that bound drove every
 flux in the chain to $10$, the naive optimum overshooting the true
 throughput of $4.64$ by more than a factor of two, because a
 feedback-blind model has no way to know that the cell itself would
 never let $X_3$ climb high enough to sustain that rate. With the
-regulatory gateway open, $\theta$ is instead evaluated at the measured
+regulatory gateway open, $\theta$ was instead evaluated at the measured
 steady-state end-product level, $\theta=X_3^{-1/2}\approx0.46$,
 computed from $X_3\approx4.64$ through the same control-function
-machinery of Section~\ref{sec:gateways} that produced
-Equation~\eqref{eq:feedback-rate}, not copied from the throughput
+machinery that produced Equation~\eqref{eq:feedback-rate}, not copied
+from the throughput
 answer itself. The input bound tightens to $\hat
 v_{r_0}\le10\times0.464\approx4.64$, and the linear program, maximizing
 the same objective under the same stoichiometry and the same
-downstream capacities, now returns a throughput of $4.64$ across all
+downstream capacities, now returned a throughput of $4.64$ across all
 four reactions, matching the BST truth to within numerical tolerance.
 Because the two runs differ in exactly one number, the value of
 $\theta$ multiplying the input capacity, and that single change is what
 separates a threefold overshoot from the correct answer, the
-regulatory gateway is shown to be load-bearing rather than decorative:
+regulatory gateway was shown to be load-bearing rather than decorative:
 turning it off provably changes the prediction, and turning it back on
-provably restores the truth. Figure~\ref{fig:feedback} shows the
-per-reaction fluxes for all three cases, the BST truth, the
-gateway-closed overshoot, and the gateway-open recovery, alongside the
-uninhibited capacity line at $10$.
+provably restores the truth. The per-reaction fluxes for all three
+cases, the BST truth, the gateway-closed overshoot, and the
+gateway-open recovery, appear alongside the uninhibited capacity line
+at $10$ (Fig.~\ref{fig:feedback}).
 
 \begin{figure}[htbp]
   \centering
@@ -142,9 +141,8 @@ uninhibited capacity line at $10$.
   \label{fig:feedback}
 \end{figure}
 
-Section~\ref{sec:lp} showed that the mole-balance constraint alone
-leaves flux underdetermined, a subspace rather than a point, and
-Section~\ref{sec:gateways} showed that it is the bound, not the
+The mole-balance constraint alone leaves flux underdetermined, a
+subspace rather than a point, and it is the bound, not the
 stoichiometric matrix, that carries whatever biology narrows that
 subspace to a prediction. This example makes both statements concrete
 for regulation specifically. Nothing about end-product inhibition
