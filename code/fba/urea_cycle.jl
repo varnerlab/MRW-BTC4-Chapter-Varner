@@ -29,10 +29,11 @@ Flux bounds:
     v5: kcat = 10.0  → Vmax = 0.100
   lb = −δVmax, ub = Vmax for enzymatic reactions; ±1000 for exchange reactions.
 
-Objective: maximise urea export through b4.  Because b4 is defined as [] → Urea
-  (import-positive convention), export is negative flux.  The objective coefficient
-  is set to c[b4] = -1.0 so that maximising c·v drives v[b4] as negative as possible,
-  i.e. maximises the rate of urea export.
+Objective: maximise urea export through b4.  Under the secretion-positive
+  convention (each exchange written M_i → [], positive flux = secretion), b4
+  reads Urea → [], so urea export is positive flux.  The objective coefficient
+  is set to c[b4] = +1.0 so that maximising c·v drives v[b4] as positive as
+  possible, i.e. maximises the rate of urea export.
 
 Fields:
   S            stoichiometric matrix  (18 metabolites × 19 reactions)
@@ -40,7 +41,7 @@ Fields:
   metabolites  metabolite names (rows of S, alphabetically sorted)
   lb           lower flux bounds
   ub           upper flux bounds
-  c            objective coefficients (c[b4] = -1.0; maximises urea export)
+  c            objective coefficients (c[b4] = +1.0; maximises urea export)
 """
 const KCAT0 = [10.0, 3.28, 190.0, 410.0, 10.0]   # 1/s, from BRENDA (v1..v5)
 const E0    = 0.01                                # mmol/gDW, reference enzyme abundance
@@ -128,6 +129,15 @@ function urea_cycle_model(; kcat=KCAT0, e0=E0, dG=DG0, dG_threshold=-10.0, f=one
     ]
 
     # ------------------------------------------------------------------ #
+    # Exchange convention: secretion-positive (standard COBRA / Orth 2010).
+    # The literal above lists each exchange column b1..b14 in the {} -> M_i
+    # direction (a +1 in the metabolite row). Negate those 14 columns so each
+    # exchange reads M_i -> {}: a positive exchange flux is then SECRETION and a
+    # negative flux UPTAKE, matching the outward boundary arrows and c[b4]=+1.
+    # ------------------------------------------------------------------ #
+    S[:, 6:end] = -S[:, 6:end]
+
+    # ------------------------------------------------------------------ #
     # Flux bounds, built from parameters (Eq. general-bound with e/e0 = theta = 1)
     #   delta_j = 1 if dG_j > threshold (reversible), else 0 (irreversible)
     #   Vmax_j  = kcat_j * e0 ;  cap_j = Vmax_j * f_j
@@ -143,14 +153,12 @@ function urea_cycle_model(; kcat=KCAT0, e0=E0, dG=DG0, dG_threshold=-10.0, f=one
 
     # ------------------------------------------------------------------ #
     # Objective: maximise urea *export* through b4 (column 9).
-    # Exchange reaction b4 is defined as [] → M_Urea_c (positive flux = import).
-    # Urea export corresponds to negative flux through b4.
-    # With Max objective in JuMP, we set c[b4] = -1.0 so that maximising
-    # sum(c*v) drives v[b4] as negative as possible (maximum export).
-    # This matches the notebook convention (objective[b4] = -1, JuMP Min).
+    # Under the secretion-positive convention above, exchange b4 reads
+    # M_Urea_c -> {}, so a positive flux through b4 is urea secretion.
+    # Maximising export is therefore maximising v[b4] directly: set c[b4] = +1.
     # ------------------------------------------------------------------ #
     c = zeros(Float64, length(reactions))
-    c[findfirst(==("b4"), reactions)] = -1.0
+    c[findfirst(==("b4"), reactions)] = 1.0
 
     # sanity checks
     @assert size(S) == (length(metabolites), length(reactions))

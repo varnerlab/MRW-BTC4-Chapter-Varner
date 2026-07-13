@@ -14,12 +14,12 @@ m = urea_cycle_model()
 v = solve_flux(m)
 @assert v !== nothing "nominal model failed to solve"
 b4 = findfirst(==("b4"), m.reactions)
-@assert isapprox(v[b4], -0.0328; atol=1e-6) "urea export $(v[b4]) != -0.0328"
+@assert isapprox(v[b4], 0.0328; atol=1e-6) "urea export $(v[b4]) != 0.0328 (secretion-positive)"
 @assert maximum(abs.(m.S * v)) < 1e-6 "Sv=0 violated"
 
 # f defaults to ones -> passing the nominal Park f leaves v2 the bottleneck (fluxes unchanged)
 f_park = ones(5); f_park[1] = 0.923; f_park[3] = 0.142; f_park[4] = 0.154; f_park[5] = 0.986
 vf = solve_flux(urea_cycle_model(; f = f_park))
-@assert isapprox(vf[b4], -0.0328; atol=1e-6) "Park-f urea export $(vf[b4]) != -0.0328 (v2 should still bind)"
+@assert isapprox(vf[b4], 0.0328; atol=1e-6) "Park-f urea export $(vf[b4]) != 0.0328 (v2 should still bind)"
 
 println("test_urea_cycle: all checks passed")

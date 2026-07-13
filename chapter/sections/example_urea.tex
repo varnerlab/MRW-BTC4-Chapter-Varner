@@ -32,8 +32,9 @@ carbamoyl phosphate, aspartate, ATP, water, oxygen, NADPH, and protons
 on the uptake side, urea, fumarate, AMP, diphosphate, orthophosphate,
 NADP$^{+}$, and nitric oxide on the secretion side, cross the system
 boundary through fourteen exchange reactions, $b_1$ through $b_{14}$,
-written with the import-positive convention $\emptyset\to M_i$
-established earlier. The remaining four,
+written in the standard secretion-positive convention
+$M_i\to\emptyset$, a positive flux denoting secretion and a negative
+flux uptake. The remaining four,
 arginine, citrulline, ornithine, and argininosuccinate, are pure cycle
 intermediates with no exchange reaction of their own: each is produced
 and consumed entirely inside the network. Collecting five enzymatic
@@ -93,15 +94,13 @@ unconstrained. With the feasible box fixed, the one remaining
 ingredient is the objective, here the maximization of urea export.
 Exchange reaction $b_4$
 represents urea crossing the system boundary and, following the
-same import-positive convention, is written
-$\emptyset\to\text{urea}$, so that positive $\hat v_{b_4}$ denotes
-uptake and negative $\hat v_{b_4}$ denotes secretion. Maximizing
-secretion is therefore equivalent to minimizing $\hat v_{b_4}$, and
-since the linear program of Equation~\eqref{eq:fba-lp} is stated as a
-maximization, the objective coefficient is set to $c_{b_4}=-1$ and
-every other entry of $\mathbf c$ to zero: maximizing
-$\mathbf c^{\top}\hat{\mathbf v}=-\hat v_{b_4}$ drives $\hat v_{b_4}$
-as negative as possible, which is exactly maximal urea export.
+same secretion-positive convention, is written
+$\text{urea}\to\emptyset$, so that positive $\hat v_{b_4}$ denotes
+secretion and negative $\hat v_{b_4}$ denotes uptake. Maximizing urea
+export is therefore maximizing $\hat v_{b_4}$ directly, so the objective
+coefficient is set to $c_{b_4}=1$ and every other entry of $\mathbf c$
+to zero: maximizing $\mathbf c^{\top}\hat{\mathbf v}=\hat v_{b_4}$
+drives urea secretion as high as the constraints allow.
 Solving Equation~\eqref{eq:fba-lp} by linear programming
 \cite{Orth2010} with these bounds and this objective gave a single,
 sharply determined answer. The entire enzymatic backbone, $v_1$
@@ -110,9 +109,9 @@ capacity imposed by argininosuccinate lyase, and the nitric oxide
 synthase branch $v_5$ carried zero flux: with arginine supply capped
 by the same $v_2$ bottleneck that limits the rest of the cycle, none
 of it was left over to spend on the competing NOS reaction once urea
-export is the sole objective. The optimal urea-export magnitude was
+export is the sole objective. The optimal urea export was
 $0.0328$ mmol\,gDW$^{-1}$\,h$^{-1}$, attained at
-$\hat v_{b_4}=-0.0328$, and every exchange flux carrying carbon or
+$\hat v_{b_4}=0.0328$, and every exchange flux carrying carbon or
 nitrogen into or out of the cycle, carbamoyl phosphate and aspartate
 on the uptake side, urea and fumarate on the secretion side, scaled to
 match it, giving the full optimal flux distribution
@@ -176,7 +175,7 @@ not from more data in general but from data on the reaction that binds.
     argininosuccinate remain internal to the cycle. Right: the optimal
     flux distribution for the linear program of
     Equation~\eqref{eq:fba-lp}, with bounds set by the thermodynamic
-    and kinetic gateways and the objective $c_{b_4}=-1$ maximizing urea
+    and kinetic gateways and the objective $c_{b_4}=1$ maximizing urea
     export; bar heights give the flux $\hat v_j$
     (mmol\,gDW$^{-1}$\,h$^{-1}$) at the optimum. Because the cycle is linear,
     every nonzero flux equals the single throughput up to sign, so the
@@ -187,9 +186,9 @@ not from more data in general but from data on the reaction that binds.
     $v_1$ through $v_4$ saturates at $0.0328$, the capacity of
     argininosuccinate lyase ($v_2$), while the nitric oxide synthase
     branch $v_5$ carries zero flux. Exchange fluxes $b_1$ through
-    $b_{14}$ follow the import-positive convention, so negative bars
-    denote net secretion; $b_4$ (urea) shows the maximized export flux
-    of $-0.0328$ mmol\,gDW$^{-1}$\,h$^{-1}$.}
+    $b_{14}$ follow the secretion-positive convention, so positive bars
+    denote net secretion and negative bars net uptake; $b_4$ (urea)
+    shows the maximized export flux of $0.0328$ mmol\,gDW$^{-1}$\,h$^{-1}$.}
   \label{fig:urea}
 \end{figure}
 

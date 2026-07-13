@@ -97,7 +97,7 @@ let fig = Figure()
 end
 
 b4 = findfirst(==("b4"), m0.reactions)
-ua = -F[:, b4]  # urea export magnitude
+ua = F[:, b4]  # urea export (secretion-positive: b4 > 0 is export)
 println("configA_kept=", kept)
 println("configA_urea_export mean=", mean(ua), " sd=", std(ua),
         " median=", quantile(ua, 0.5), " ci=[", quantile(ua, 0.025), ",", quantile(ua, 0.975), "]")
@@ -110,7 +110,7 @@ println("configA_v5 mean=", mean(F[:, findfirst(==("v5"), m0.reactions)]))
 # gateway effect that Config A/B probe. Not plotted; reported in prose only.
 Fcap, _ = run_ensemble(SEED; sample_saturation=false)
 cap_kept = size(Fcap, 1)
-uacap = -Fcap[:, b4]  # urea export magnitude, capacity-only
+uacap = Fcap[:, b4]  # urea export (secretion-positive), capacity-only
 println("configCap_kept=", cap_kept)
 println("configCap_urea_export mean=", mean(uacap), " sd=", std(uacap),
         " median=", quantile(uacap, 0.5), " ci=[", quantile(uacap, 0.025), ",", quantile(uacap, 0.975), "]")
@@ -128,7 +128,7 @@ let rng = MersenneTwister(SEED + 1)
         f    = sample_f(rng; impute_f2 = true)
         v    = solve_flux(urea_cycle_model(; kcat=kcat, e0=e0, dG=dG, f=f))
         v === nothing && continue
-        push!(f2s, f[2]); push!(ub_export, -v[b4idx])
+        push!(f2s, f[2]); push!(ub_export, v[b4idx])
     end
 
     # Sensitivity CSV: Config A (f2=1) and Config B (sampled f2) urea export
