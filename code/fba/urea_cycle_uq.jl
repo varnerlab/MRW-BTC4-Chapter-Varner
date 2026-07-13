@@ -38,22 +38,28 @@ function sample_f(rng; impute_f2::Bool=false)
     return f
 end
 
-"Draw one parameter set and return the optimal flux vector (or nothing)."
-function sample_flux(rng; impute_f2::Bool=false)
+"""
+Draw one parameter set and return the optimal flux vector (or nothing).
+If `sample_saturation` is false, the saturation vector is held at `ones(5)`
+(no substrate/Km draws at all) so kcat, e0, and dG alone set the capacity;
+this isolates the capacity-only reference ensemble from the saturation-gateway
+effect tested by Config A/B.
+"""
+function sample_flux(rng; impute_f2::Bool=false, sample_saturation::Bool=true)
     kcat = KCAT0 .* exp.(SIGMA_LN .* randn(rng, 5))
     e0   = lognrand(rng, E0, SIGMA_LN)          # one shared draw per sample
     dG   = DG0 .+ DG_SIGMA .* randn(rng, 5)
-    f    = sample_f(rng; impute_f2 = impute_f2)
+    f    = sample_saturation ? sample_f(rng; impute_f2 = impute_f2) : ones(5)
     solve_flux(urea_cycle_model(; kcat = kcat, e0 = e0, dG = dG, f = f))
 end
 
 "Run N draws; return an (kept x nreactions) flux matrix."
-function run_ensemble(seed; impute_f2::Bool=false)
+function run_ensemble(seed; impute_f2::Bool=false, sample_saturation::Bool=true)
     rng = MersenneTwister(seed)
     m0  = urea_cycle_model()
     rows = Vector{Vector{Float64}}()
     for _ in 1:N
-        v = sample_flux(rng; impute_f2 = impute_f2)
+        v = sample_flux(rng; impute_f2 = impute_f2, sample_saturation = sample_saturation)
         v === nothing && continue
         push!(rows, v)
     end
@@ -93,6 +99,17 @@ println("configA_urea_export mean=", mean(ua), " sd=", std(ua),
 println("configA_v5 mean=", mean(F[:, findfirst(==("v5"), m0.reactions)]))
 @assert isapprox(quantile(ua, 0.5), 0.0328; rtol=0.15) "Config A urea median should stay near 0.0328"
 
+# ---- Capacity-only reference ensemble (no saturation sampling at all) ----
+# Same kcat/e0/dG sampling as Config A, but f held at ones(5) throughout, so
+# this isolates the "min of sampled capacities" effect from the saturation-
+# gateway effect that Config A/B probe. Not plotted; reported in prose only.
+Fcap, _ = run_ensemble(SEED; sample_saturation=false)
+cap_kept = size(Fcap, 1)
+uacap = -Fcap[:, b4]  # urea export magnitude, capacity-only
+println("configCap_kept=", cap_kept)
+println("configCap_urea_export mean=", mean(uacap), " sd=", std(uacap),
+        " median=", quantile(uacap, 0.5), " ci=[", quantile(uacap, 0.025), ",", quantile(uacap, 0.975), "]")
+
 # ---- Config B: impute and sample f_2 (argininosuccinate unmeasured) ----
 # Re-run the ensemble capturing f_2 and urea export per draw.
 let rng = MersenneTwister(SEED + 1)
@@ -122,8 +139,9 @@ let rng = MersenneTwister(SEED + 1)
 
     # Figure: overlaid urea-export densities, Config A vs Config B (log-x for skew)
     fig = Figure()
-    ax = Axis(fig[1,1], xlabel="urea export (mmol gDW^-1 h^-1)", ylabel="density",
-              xscale=log10)
+    ax = Axis(fig[1,1],
+              xlabel = rich("urea export (mmol gDW", superscript("-1"), " h", superscript("-1"), ")"),
+              ylabel="density", xscale=log10)
     # Explicit positive `boundary` keeps each KDE support off the automatic
     # padding that can dip below zero (fatal once the axis is log10-scaled).
     density!(ax, ua;        boundary=(0.5 * minimum(ua), 2 * maximum(ua)),

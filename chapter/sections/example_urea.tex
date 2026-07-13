@@ -123,15 +123,21 @@ from database estimates that carry their own uncertainty, and propagating that
 uncertainty turns the point prediction into a distribution. Assigning each
 turnover number and the reference abundance a lognormal factor of roughly two,
 each standard free energy a normal spread of a few kilojoules per mole, and
-each saturation factor a substrate concentration and Michaelis constant drawn
-from the compilation of Park and coworkers \cite{Park2016}, and re-solving the
-linear program over ten thousand parameter draws by the parametric bootstrap of
-Algorithm~\ref{alg:uq}, spreads urea export over a right-skewed band with median
-$0.029$ and mean $0.044$ mmol\,gDW$^{-1}$\,h$^{-1}$ and a central
-ninety-five percent interval of $0.005$ to $0.17$. The width traces almost
-entirely to the capacity of argininosuccinate lyase: the reversibility switches
-never bind, because the cycle runs forward at the optimum, and the four
-saturation factors that Park and coworkers do constrain, for
+four of the five saturation factors (the fifth, $f_2$ at argininosuccinate
+lyase, held fixed at one for lack of a measured substrate) a substrate
+concentration and Michaelis constant drawn from the compilation of Park and
+coworkers \cite{Park2016}, and re-solving the linear program over ten thousand
+parameter draws by the parametric bootstrap of Algorithm~\ref{alg:uq}, spreads
+urea export over a right-skewed band with median $0.029$ and mean $0.044$
+mmol\,gDW$^{-1}$\,h$^{-1}$ and a central ninety-five percent interval of
+$0.005$ to $0.17$. A capacity-only bootstrap, holding every saturation factor
+at one and letting only the turnover numbers, the reference abundance, and the
+standard free energies vary, gives a median urea export of $0.031$
+mmol\,gDW$^{-1}$\,h$^{-1}$, and restoring the four measured saturation factors
+leaves the median at $0.029$, demonstrating their inertness. The width traces
+almost entirely to the capacity of argininosuccinate lyase: the reversibility
+switches never bind, because the cycle runs forward at the optimum, and the
+four saturation factors that Park and coworkers do constrain, for
 argininosuccinate synthetase, arginase, ornithine transcarbamylase, and nitric
 oxide synthase, each leave their reaction with capacity to spare above the $v_2$
 bottleneck, so the sampled bound on $v_2$ alone carries the uncertainty and the
@@ -220,11 +226,12 @@ not from more data in general but from data on the reaction that binds.
   \caption{Saturation-gateway sensitivity for urea export. Configuration A
     (blue) samples the four saturation factors that Park and coworkers
     \cite{Park2016} constrain and holds $f_2 = 1$ at the argininosuccinate
-    lyase bottleneck, whose substrate is unmeasured; the urea-export
-    distribution is unchanged from the capacity-only bootstrap. Configuration B
-    (red) imputes $f_2$ from a physiological argininosuccinate concentration and
-    a BRENDA Michaelis constant and samples it as well, shifting the
-    distribution toward zero. The horizontal axis is logarithmic.}
+    lyase bottleneck, whose substrate is unmeasured, giving a median urea
+    export of $0.029$ mmol\,gDW$^{-1}$\,h$^{-1}$. Configuration B (red)
+    imputes $f_2$ from a physiological argininosuccinate concentration and a
+    BRENDA Michaelis constant and samples it as well, pulling the median down
+    to $0.014$ mmol\,gDW$^{-1}$\,h$^{-1}$ and widening the band toward zero.
+    The horizontal axis is logarithmic.}
   \label{fig:urea_uq}
 \end{figure}
 
