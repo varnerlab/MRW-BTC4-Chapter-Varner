@@ -118,6 +118,39 @@ on the uptake side, urea and fumarate on the secretion side, scaled to
 match it, giving the full optimal flux distribution
 (right panel, Fig.~\ref{fig:urea}).
 
+The single answer above treats every bound as exact, but each was assembled
+from database estimates that carry their own uncertainty, and propagating that
+uncertainty turns the point prediction into a distribution. Assigning each
+turnover number and the reference abundance a lognormal factor of roughly two,
+each standard free energy a normal spread of a few kilojoules per mole, and
+each saturation factor a substrate concentration and Michaelis constant drawn
+from the compilation of Park and coworkers \cite{Park2016}, and re-solving the
+linear program over ten thousand parameter draws by the parametric bootstrap of
+Algorithm~\ref{alg:uq}, spreads urea export over a right-skewed band with median
+$0.029$ and mean $0.044$ mmol\,gDW$^{-1}$\,h$^{-1}$ and a central
+ninety-five percent interval of $0.005$ to $0.17$. The width traces almost
+entirely to the capacity of argininosuccinate lyase: the reversibility switches
+never bind, because the cycle runs forward at the optimum, and the four
+saturation factors that Park and coworkers do constrain, for
+argininosuccinate synthetase, arginase, ornithine transcarbamylase, and nitric
+oxide synthase, each leave their reaction with capacity to spare above the $v_2$
+bottleneck, so the sampled bound on $v_2$ alone carries the uncertainty and the
+nitric oxide synthase branch stays silent across the ensemble.
+
+That the saturation gateway barely moves the prediction is itself the result.
+Opening $f_j$ with every substrate concentration the database supplies leaves
+the urea forecast where the capacity scale put it, because the one reaction that
+sets the answer, argininosuccinate lyase, has no measured substrate:
+argininosuccinate is a committed cycle intermediate absent from the
+central-metabolism compilation, so its saturation factor stays at the
+information-free default while the four measured factors prove inert. Imputing
+that missing factor from a physiological argininosuccinate concentration and a
+BRENDA Michaelis constant, and sampling it alongside the rest, drags the urea
+median down to $0.014$ mmol\,gDW$^{-1}$\,h$^{-1}$ and widens the band toward
+zero (Fig.~\ref{fig:urea_uq}), the shift and the spread both governed by the
+single quantity the model never measured. A sharper prediction here would come
+not from more data in general but from data on the reaction that binds.
+
 \begin{figure}[htbp]
   \centering
   \begin{minipage}[c]{0.52\textwidth}
@@ -139,7 +172,9 @@ match it, giving the full optimal flux distribution
     Equation~\eqref{eq:fba-lp}, with bounds set by the thermodynamic
     and kinetic gateways and the objective $c_{b_4}=-1$ maximizing urea
     export; bar heights give the flux $\hat v_j$
-    (mmol\,gDW$^{-1}$\,h$^{-1}$) at the optimum. The enzymatic backbone
+    (mmol\,gDW$^{-1}$\,h$^{-1}$) at the optimum, and the whiskers span the
+    $2.5$--$97.5$ percentile band of the parametric bootstrap of
+    Algorithm~\ref{alg:uq}. The enzymatic backbone
     $v_1$ through $v_4$ saturates at $0.0328$, the capacity of
     argininosuccinate lyase ($v_2$), while the nitric oxide synthase
     branch $v_5$ carries zero flux. Exchange fluxes $b_1$ through
@@ -147,6 +182,50 @@ match it, giving the full optimal flux distribution
     denote net secretion; $b_4$ (urea) shows the maximized export flux
     of $-0.0328$ mmol\,gDW$^{-1}$\,h$^{-1}$.}
   \label{fig:urea}
+\end{figure}
+
+\begin{algorithm}[htbp]
+  \caption{Parametric bootstrap for urea-cycle flux uncertainty}
+  \label{alg:uq}
+  \begin{algorithmic}[1]
+    \Require nominal $k^{\circ}_{\mathrm{cat}}$, $e^{\circ}$, $\Delta G^{\circ}$;
+      saturation inputs $[S_j], K_{M,j}$; spreads $\sigma_{\ln}, \sigma_{\Delta G}$;
+      threshold $\Delta G^{*}$; draws $N$; seed
+    \State seed the random generator
+    \For{$i = 1$ to $N$}
+      \State $e \gets e^{\circ}\exp(\sigma_{\ln} Z)$
+        \Comment{one shared abundance draw, $Z\sim\mathcal N(0,1)$}
+      \For{each enzymatic reaction $j$}
+        \State $k_{\mathrm{cat},j} \gets k^{\circ}_{\mathrm{cat},j}\exp(\sigma_{\ln} Z)$,
+          \quad $\Delta G_j \gets \Delta G^{\circ}_j + \sigma_{\Delta G} Z$
+        \State $\delta_j \gets \mathbb{1}[\Delta G_j > \Delta G^{*}]$
+        \State $f_j \gets [S_j]/(K_{M,j}+[S_j])$ with $[S_j], K_{M,j}$ sampled,
+          or $f_j \gets 1$ if no substrate data
+        \State $V_{\max,j} \gets k_{\mathrm{cat},j}\,e$;
+          \quad $u_j \gets V_{\max,j} f_j$,
+          \quad $\ell_j \gets -\delta_j V_{\max,j} f_j$
+      \EndFor
+      \State $\hat{\mathbf v}^{(i)} \gets
+        \arg\max\{\mathbf c^{\top}\mathbf v : \mathbf S\mathbf v = \mathbf 0,\
+        \boldsymbol\ell \le \mathbf v \le \mathbf u\}$
+    \EndFor
+    \State \Return per-reaction mean, standard deviation, and $2.5/50/97.5$
+      percentiles of $\{\hat{\mathbf v}^{(i)}\}_{i=1}^{N}$
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\linewidth]{urea_saturation.pdf}
+  \caption{Saturation-gateway sensitivity for urea export. Configuration A
+    (blue) samples the four saturation factors that Park and coworkers
+    \cite{Park2016} constrain and holds $f_2 = 1$ at the argininosuccinate
+    lyase bottleneck, whose substrate is unmeasured; the urea-export
+    distribution is unchanged from the capacity-only bootstrap. Configuration B
+    (red) imputes $f_2$ from a physiological argininosuccinate concentration and
+    a BRENDA Michaelis constant and samples it as well, shifting the
+    distribution toward zero. The horizontal axis is logarithmic.}
+  \label{fig:urea_uq}
 \end{figure}
 
 This result was reached without a single concentration, expression
