@@ -1,0 +1,16 @@
+# Urea-cycle enzyme substrate concentration / Km pairs
+# Source: Park et al. 2016, Nat. Chem. Biol. 12:482-489 (PMC4912430),
+#   Supplementary Data Set 'Comparison of absolute concentrations to Km',
+#   file 41589_2016_BFnchembio2077_MOESM585_ESM.xlsx (concentration + BRENDA Km, in M).
+# NOTE: EC 4.3.2.1 (v2) lists only the reverse-direction PRODUCTS (arginine, fumarate);
+#   the forward substrate argininosuccinate is absent from the supplement.
+reaction,ec,substrate,conc_M,km_M,organism
+v1,6.3.4.5,ATP,0.0046729612916725,0.000392333154234199,Mus musculus
+v1,6.3.4.5,aspartate,0.0149223204061994,0.000154276895439494,Mus musculus
+v2,4.3.2.1,arginine,0.000255461883107884,0.003,Homo sapiens
+v2,4.3.2.1,fumarate,0.000485075251893972,0.0053,Homo sapiens
+v3,3.5.3.1,arginine,0.000255461883107884,0.00154608643830104,Homo sapiens
+v3,3.5.3.1,arginine,0.021824117422412,0.0157,Saccharomyces cerevisiae
+v4,2.1.3.3,ornithine,0.00448942660807892,0.0016,Saccharomyces cerevisiae
+v4,2.1.3.3,ornithine,1.01e-05,0.00085,Escherichia coli
+v5,1.14.13.39,arginine,0.000255461883107884,3.49694159840394e-06,Mus musculus

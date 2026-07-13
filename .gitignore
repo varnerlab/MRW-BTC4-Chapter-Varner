@@ -35,3 +35,9 @@ chapter/*.blg
 chapter/*.log
 chapter/*.out
 texput.log
+
+# Third-party downloaded supplements (raw), not committed; derived subsets live in code/data
+/data/
+
+# Local Python venv for one-off supplement extraction
+.venv/
