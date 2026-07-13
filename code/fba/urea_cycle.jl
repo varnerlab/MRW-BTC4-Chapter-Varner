@@ -11,7 +11,7 @@ Network (VFF format, from data/Network.net):
   v2  EC 4.3.2.1  N-(L-Arginino)succinate → Fumarate + Arginine                               [reversible]
   v3  EC 3.5.3.1  Arginine + H2O → Ornithine + Urea                                            [irreversible]
   v4  EC 2.1.3.3  Carbamoyl_phosphate + Ornithine → Orthophosphate + Citrulline                [irreversible]
-  v5  EC 1.15.13.39  2 Arginine + 4 O2 + 3 NADPH + 3 H → 2 NO + 2 Citrulline + 3 NADP + 4 H2O [reversible, but ΔG ≪ −10 kJ/mol → treated irreversible]
+  v5  EC 1.14.13.39  2 Arginine + 4 O2 + 3 NADPH + 3 H → 2 NO + 2 Citrulline + 3 NADP + 4 H2O [reversible, but ΔG ≪ −10 kJ/mol → treated irreversible]
   b1–b14  exchange reactions (±1000 default)
 
 Flux bounds:
@@ -42,7 +42,11 @@ Fields:
   ub           upper flux bounds
   c            objective coefficients (c[b4] = -1.0; maximises urea export)
 """
-function urea_cycle_model()::NamedTuple
+const KCAT0 = [10.0, 3.28, 190.0, 410.0, 10.0]   # 1/s, from BRENDA (v1..v5)
+const E0    = 0.01                                # mmol/gDW, reference enzyme abundance
+const DG0   = [-4.3, -5.5, -51.0, -30.3, -1220.0] # kJ/mol, from eQuilibrator (v1..v5)
+
+function urea_cycle_model(; kcat=KCAT0, e0=E0, dG=DG0, dG_threshold=-10.0, f=ones(5))::NamedTuple
 
     # ------------------------------------------------------------------ #
     # Metabolites (alphabetically sorted, 18 total)
@@ -124,53 +128,18 @@ function urea_cycle_model()::NamedTuple
     ]
 
     # ------------------------------------------------------------------ #
-    # Flux bounds
-    # Enzymatic reactions: lb = -δ*Vmax, ub = Vmax
-    # Exchange reactions:  lb = -1000, ub = 1000
+    # Flux bounds, built from parameters (Eq. general-bound with e/e0 = theta = 1)
+    #   delta_j = 1 if dG_j > threshold (reversible), else 0 (irreversible)
+    #   Vmax_j  = kcat_j * e0 ;  cap_j = Vmax_j * f_j
+    #   lb_j = -delta_j * cap_j ,  ub_j = cap_j   (enzymatic)
+    #   exchange reactions: lb = -1000, ub = 1000
     # ------------------------------------------------------------------ #
-    lb = Float64[
-        -0.1,     # v1  reversible (δ=1), Vmax=0.1
-        -0.0328,  # v2  reversible (δ=1), Vmax=0.0328
-         0.0,     # v3  irreversible (δ=0), Vmax=1.9
-         0.0,     # v4  irreversible (δ=0), Vmax=4.1
-         0.0,     # v5  irreversible (δ=0), Vmax=0.1
-        -1000.0,  # b1
-        -1000.0,  # b2
-        -1000.0,  # b3
-        -1000.0,  # b4
-        -1000.0,  # b5
-        -1000.0,  # b6
-        -1000.0,  # b7
-        -1000.0,  # b8
-        -1000.0,  # b9
-        -1000.0,  # b10
-        -1000.0,  # b11
-        -1000.0,  # b12
-        -1000.0,  # b13
-        -1000.0,  # b14
-    ]
-
-    ub = Float64[
-         0.1,     # v1
-         0.0328,  # v2
-         1.9,     # v3
-         4.1,     # v4
-         0.1,     # v5
-         1000.0,  # b1
-         1000.0,  # b2
-         1000.0,  # b3
-         1000.0,  # b4
-         1000.0,  # b5
-         1000.0,  # b6
-         1000.0,  # b7
-         1000.0,  # b8
-         1000.0,  # b9
-         1000.0,  # b10
-         1000.0,  # b11
-         1000.0,  # b12
-         1000.0,  # b13
-         1000.0,  # b14
-    ]
+    delta = Float64[g > dG_threshold ? 1.0 : 0.0 for g in dG]
+    Vmax  = kcat .* e0
+    cap   = Vmax .* f
+    n_ex  = 14
+    lb = vcat(-delta .* cap, fill(-1000.0, n_ex))
+    ub = vcat(cap,           fill( 1000.0, n_ex))
 
     # ------------------------------------------------------------------ #
     # Objective: maximise urea *export* through b4 (column 9).
@@ -198,3 +167,26 @@ function urea_cycle_model()::NamedTuple
         c           = c,
     )
 end
+
+"""
+    solve_flux(m) -> Union{Vector{Float64},Nothing}
+
+Solve the FBA linear program for model `m` (Max c'v s.t. Sv=0, lb<=v<=ub).
+Return the optimal flux vector, or `nothing` if the solve is not optimal/feasible.
+"""
+function solve_flux(m)
+    model = Model(HiGHS.Optimizer); set_silent(model)
+    n = length(m.reactions)
+    @variable(model, m.lb[i] <= v[i=1:n] <= m.ub[i])
+    @constraint(model, m.S * v .== 0)
+    @objective(model, Max, sum(m.c[i] * v[i] for i in 1:n))
+    optimize!(model)
+    is_solved_and_feasible(model) ? value.(v) : nothing
+end
+
+"""
+    solve_fba(m) -> DataFrame
+
+Solve `m` and return a DataFrame with columns `reaction, flux`.
+"""
+solve_fba(m) = DataFrame(reaction = m.reactions, flux = solve_flux(m))

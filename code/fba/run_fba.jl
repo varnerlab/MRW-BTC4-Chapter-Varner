@@ -3,16 +3,6 @@ include(joinpath(@__DIR__, "urea_cycle.jl"))
 
 m = urea_cycle_model()
 
-function solve_fba(m)
-    model = Model(HiGHS.Optimizer); set_silent(model)
-    n = length(m.reactions)
-    @variable(model, m.lb[i] <= v[i=1:n] <= m.ub[i])
-    @constraint(model, m.S * v .== 0)
-    @objective(model, Max, sum(m.c[i]*v[i] for i in 1:n))
-    optimize!(model)
-    DataFrame(reaction=m.reactions, flux=value.(v))
-end
-
 res = solve_fba(m)
 CSV.write(datapath("urea_fba_solution.csv"), res)
 
