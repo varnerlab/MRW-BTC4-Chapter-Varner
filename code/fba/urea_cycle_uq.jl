@@ -82,12 +82,17 @@ for (j, r) in enumerate(m0.reactions)
 end
 CSV.write(datapath("urea_fba_uq.csv"), stats)
 
-# Figure: nominal flux bars with 2.5-97.5 percentile range bars
+# Figure: nominal flux bars. Because the cycle is linear, every nonzero flux
+# equals the single throughput up to sign, so all bootstrap bands are identical;
+# drawing the 2.5-97.5 percentile whisker on b4 (urea export, the objective)
+# alone shows that one uncertainty without cloning it across 13 correlated fluxes.
 let fig = Figure()
     ax = Axis(fig[1,1], xticks=(1:nrow(stats), stats.reaction), ylabel="flux",
               xticklabelrotation=pi/4)
     barplot!(ax, 1:nrow(stats), stats.nominal)
-    rangebars!(ax, 1:nrow(stats), stats.q025, stats.q975; color=:black, whiskerwidth=8)
+    b4row = findfirst(==("b4"), stats.reaction)
+    rangebars!(ax, [b4row], [stats.q025[b4row]], [stats.q975[b4row]];
+               color=:black, whiskerwidth=8)
     save(figpath("urea_fba.pdf"), fig)
 end
 
