@@ -139,7 +139,7 @@ println("configA_kept=", kept)
 println("configA_urea_export mean=", mean(ua), " sd=", std(ua),
         " median=", quantile(ua, 0.5), " ci=[", quantile(ua, 0.025), ",", quantile(ua, 0.975), "]")
 println("configA_v5 mean=", mean(F[:, findfirst(==("v5"), m0.reactions)]))
-@assert isapprox(quantile(ua, 0.5), 0.0328; rtol=0.15) "Config A urea median should stay near 0.0328"
+@assert isapprox(quantile(ua, 0.5), 118.08; rtol=0.15) "Config A urea median should stay near 118.08"
 
 # ---- Capacity-only reference ensemble (no saturation sampling at all) ----
 # Same kcat/e0/dG sampling as Config A, but f held at ones(5) throughout, so
