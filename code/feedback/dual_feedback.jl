@@ -112,3 +112,65 @@ function feedback_truth()
     vss = reaction_fluxes(model, Xss)
     return (species=species, Xss=Xss, reactions=reactions, vss=vss, model=model, seq=sp)
 end
+
+# =========================================================================== #
+# Constraint-based recovery. The SAME linear chain as a flux-balance model; the
+# feedback enters ONLY through the committed-step bound, as the product
+#   ub[r0] = Vmax0 * (e/e0) * theta
+# with each gateway switchable so its marginal effect is visible.
+# =========================================================================== #
+
+# Metabolic stoichiometry (rows X1,X2,X3 ; cols r0,r1,r2,r3). Asserted equal to
+# the metabolic submatrix of the BST model's S in the test.
+const S_FEEDBACK = [
+     1.0 -1.0  0.0  0.0    # X1: r0 in, r1 out
+     0.0  1.0 -1.0  0.0    # X2: r1 in, r2 out
+     0.0  0.0  1.0 -1.0    # X3: r2 in, r3 out
+]
+const GENEROUS_CAPACITY = 100.0
+const METAB_REACTIONS   = ["r0","r1","r2","r3"]
+
+# Reference capacity Vmax0, activity control theta, and expression ratio (e/e0)
+# at the MEASURED steady state.
+#   Vmax0 = alpha[r0]            reference capacity (E0=1, no repression, no allostery)
+#   theta = X3^{-A_ACT}          computed rate-with / rate-without the X3 order on r0
+#   e_e0  = E0*                  measured enzyme abundance (reference e0 = 1 by normalization)
+function gateway_factors(truth)
+    model  = truth.model
+    idx    = Dict(truth.reactions .=> eachindex(truth.reactions))
+    sidx   = Dict(truth.species   .=> eachindex(truth.species))
+    col_r0 = idx["r0"]
+    row_X3 = findfirst(==("X3"), model.total_species_list)
+
+    state       = vcat(truth.Xss, model.static_factors_array)
+    rate_with   = BSTModelKit._powerlaw(state, model.α, model.G)[col_r0]   # Vmax0*E0*X3^{-a}
+    G0          = copy(model.G); G0[row_X3, col_r0] = 0.0
+    rate_noallo = BSTModelKit._powerlaw(state, model.α, G0)[col_r0]        # Vmax0*E0
+    θ     = rate_with / rate_noallo                                        # = X3^{-a}
+    Vmax0 = model.α[col_r0]                                                # reference capacity
+    e_e0  = truth.Xss[sidx["E0"]]                                          # measured (e/e0)
+    return (Vmax0 = Vmax0, θ = θ, e_e0 = e_e0)
+end
+
+# Metabolic throughput fluxes [r0,r1,r2,r3] read out of the BST truth.
+function truth_metabolic_fluxes(truth)
+    idx = Dict(truth.reactions .=> eachindex(truth.reactions))
+    return [truth.vss[idx[r]] for r in METAB_REACTIONS]
+end
+
+# Solve the constraint-based problem; `expression`/`activity` gate each factor on
+# the committed-step bound. Every other bound is identical between runs.
+function feedback_fba(gw; expression::Bool, activity::Bool)
+    n   = length(METAB_REACTIONS)
+    idx = Dict(METAB_REACTIONS .=> eachindex(METAB_REACTIONS))
+    ub  = fill(GENEROUS_CAPACITY, n)
+    ub[idx["r0"]] = gw.Vmax0 * (expression ? gw.e_e0 : 1.0) * (activity ? gw.θ : 1.0)
+    lb  = zeros(n)                             # all irreversible
+
+    m = Model(HiGHS.Optimizer); set_silent(m)
+    @variable(m, lb[i] <= v[i=1:n] <= ub[i])
+    @constraint(m, S_FEEDBACK * v .== 0)
+    @objective(m, Max, v[idx["r3"]])           # maximize export = throughput
+    optimize!(m)
+    return value.(v)
+end
