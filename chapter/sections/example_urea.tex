@@ -130,7 +130,9 @@ four of the five saturation factors (the fifth, $f_2$ at argininosuccinate
 lyase, held fixed at one for lack of a measured substrate) a substrate
 concentration and Michaelis constant drawn from the compilation of Park and
 coworkers \cite{Park2016}, and re-solving the linear program over ten thousand
-parameter draws by the parametric bootstrap of Algorithm~\ref{alg:uq}, spreads
+parameter draws by the procedure of Algorithm~\ref{alg:uq}, a Monte Carlo
+propagation of assumed parameter distributions rather than a bootstrap
+resampled from replicate measurements, spreads
 urea export over a right-skewed band with median $105$ and mean $156$
 mmol\,gDW$^{-1}$\,h$^{-1}$ and a central ninety-five percent interval of
 $17$ to $614$. A capacity-only bootstrap, holding every saturation factor
@@ -201,18 +203,26 @@ not from more data in general but from data on the reaction that binds.
   \label{alg:uq}
   \begin{algorithmic}[1]
     \Require nominal $k^{\circ}_{\mathrm{cat}}$, $e^{\circ}$, $\Delta G^{\circ}$;
-      saturation inputs $[S_j], K_{M,j}$; spreads $\sigma_{\ln}, \sigma_{\Delta G}$;
+      nominal saturation inputs $\overline{[S_j]}, \overline{K_{M,j}}$ where measured;
+      spreads $\sigma_{\ln}, \sigma_{\Delta G}$;
       threshold $\Delta G^{*}$; draws $N$; seed
     \State seed the random generator
     \For{$i = 1$ to $N$}
-      \State $e \gets e^{\circ}\exp(\sigma_{\ln} Z)$
-        \Comment{one shared abundance draw, $Z\sim\mathcal N(0,1)$}
+      \State $e \gets e^{\circ}\exp(\sigma_{\ln} Z_e)$
+        \Comment{one shared abundance draw, $Z_e\sim\mathcal N(0,1)$}
       \For{each enzymatic reaction $j$}
-        \State $k_{\mathrm{cat},j} \gets k^{\circ}_{\mathrm{cat},j}\exp(\sigma_{\ln} Z)$,
-          \quad $\Delta G_j \gets \Delta G^{\circ}_j + \sigma_{\Delta G} Z$
+        \State $k_{\mathrm{cat},j} \gets k^{\circ}_{\mathrm{cat},j}\exp(\sigma_{\ln} Z_{k,j})$,
+          \quad $\Delta G_j \gets \Delta G^{\circ}_j + \sigma_{\Delta G} Z_{\Delta G,j}$
+          \Comment{independent $Z_{k,j}, Z_{\Delta G,j}\sim\mathcal N(0,1)$ per reaction}
         \State $\delta_j \gets \mathbb{1}[\Delta G_j > \Delta G^{*}]$
-        \State $f_j \gets [S_j]/(K_{M,j}+[S_j])$ with $[S_j], K_{M,j}$ sampled,
-          or $f_j \gets 1$ if no substrate data
+        \If{substrate data measured for reaction $j$}
+          \State $[S_j] \gets \overline{[S_j]}\exp(\sigma_{\ln} Z_{S,j})$,
+            \quad $K_{M,j} \gets \overline{K_{M,j}}\exp(\sigma_{\ln} Z_{K,j})$
+            \Comment{independent per reaction}
+          \State $f_j \gets [S_j]/(K_{M,j}+[S_j])$
+        \Else
+          \State $f_j \gets 1$
+        \EndIf
         \State $V_{\max,j} \gets k_{\mathrm{cat},j}\,e$;
           \quad $u_j \gets V_{\max,j} f_j$,
           \quad $\ell_j \gets -\delta_j V_{\max,j} f_j$
