@@ -4,10 +4,12 @@
 #   expression (e/e0)  : X3 transcriptionally represses gene(E0)   (slow)
 #
 # The "truth" is an extended BSTModelKit S-system over [X1,X2,X3,m,E0]. The FBA
-# layer (below) recovers it through the product bound Vmax0*(e/e0)*theta on r0.
-# Nothing is copied from the integrated fluxes: (e/e0) is the MEASURED enzyme
-# abundance (reference e0 = 1 by the nondimensional normalization), and theta is
-# computed rate-with / rate-without on the allosteric order.
+# layer (below) approximates it, to within about 6%, through the product bound
+# Vmax0*(e/e0)*theta on r0. Nothing is copied from the integrated fluxes: (e/e0)
+# is the MEASURED enzyme abundance (reference e0 = 1 by the nondimensional
+# normalization), and theta is a bounded, independent Hill occupancy
+# K^n/(K^n+X3^n) evaluated at the measured X3 -- not the truth model's own
+# X3^-a allosteric kinetics.
 #
 # Expression states are nondimensional ratios normalized to their de-repressed
 # reference (mhat = m/m_ref, ehat = E0/e0, both = 1 when repression is off), so

@@ -2,7 +2,7 @@ include(joinpath(@__DIR__, "..", "Include.jl"))
 include(joinpath(@__DIR__, "dual_feedback.jl"))
 
 # --------------------------------------------------------------------------- #
-# Example 2 driver: integrate the dual-feedback truth, recover it through the
+# Example 2 driver: integrate the dual-feedback truth, approximate it through the
 # committed-step bound in four escalating cases, and emit the CSV + figure.
 # --------------------------------------------------------------------------- #
 t  = feedback_truth()
