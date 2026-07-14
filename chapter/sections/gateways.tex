@@ -223,6 +223,38 @@ Equation~\eqref{eq:general-bound} records precisely which assumptions
 that baseline makes and which gateway must be reopened to relax each of
 them.
 
+Each gateway just described has a named, established predecessor in the
+constraint-based modeling literature, and this chapter's contribution is
+the unifying notation and workflow that connects them, not the invention
+of any individual constraint. The thermodynamic gateway $\delta_j$ is the
+central device of thermodynamics-based flux analysis, which propagates
+standard free energies and metabolite activity ranges through the whole
+network to rule out infeasible flux and concentration profiles together
+\cite{Henry2007}. The kinetic gateway, $V^{\circ}_{\max,j}$ built from a
+turnover number and an enzyme abundance together with the saturation
+factor $f_j$, is the organizing idea behind enzyme-constrained flux
+balance analysis, most fully realized in the GECKO framework, which
+folds a proteome-wide capacity constraint into a genome-scale
+reconstruction \cite{Sanchez2017}. The expression gateway $(e/e^{\circ})$,
+transcript and protein balances entered as a modeled quantity rather
+than a fixed parameter, is the metabolism-and-expression (ME) model
+construction, which couples the transcription and translation machinery
+directly to the metabolic network at genome scale
+\cite{OBrien2013}. The regulatory gateway $\theta_j$ has two established
+lines of descent: regulatory flux balance analysis, which gates
+reactions on and off with Boolean rules derived from a transcriptional
+regulatory network \cite{Covert2001}, and PROM, which replaces the
+Boolean rule with a continuous, data-derived probability of an
+interaction being active \cite{Chandrasekaran2010}, the same move from a
+binary switch to a graded control fraction that the partition-function
+construction of Equations~\eqref{eq:partition}
+and~\eqref{eq:control-split} makes explicit. What the gateway
+factorization of Equation~\eqref{eq:general-bound} adds is not a fifth
+constraint class but a common accounting of where each of these four
+already-established devices sits inside one bound, so that a single
+notation and a single worked derivation carry across all four rather
+than requiring a separate formalism, and a separate paper, for each.
+
 The expression and regulatory gateways lumped transcription and
 translation into aggregate capacities $r_{X,j}$ and $r_{L,j}$, but these
 processes can themselves be resolved to the level of the sequences they
