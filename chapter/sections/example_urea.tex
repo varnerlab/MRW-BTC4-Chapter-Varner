@@ -145,8 +145,10 @@ switches never bind, because the cycle runs forward at the optimum, and the
 four saturation factors that Park and coworkers do constrain, for
 argininosuccinate synthetase, arginase, ornithine transcarbamylase, and nitric
 oxide synthase, each leave their reaction with capacity to spare above the $v_2$
-bottleneck, so the sampled bound on $v_2$ alone carries the uncertainty and the
-nitric oxide synthase branch stays silent across the ensemble.
+bottleneck, so the sampled bound on $v_2$ dominates the uncertainty in most draws,
+and the nitric oxide synthase branch, though it carries a small positive
+mean and a nonzero spread in the rare draws where it turns on, remains
+negligible overall.
 
 That the saturation gateway barely moves the prediction is itself the result.
 Opening $f_j$ with every substrate concentration the database supplies leaves
@@ -184,9 +186,12 @@ not from more data in general but from data on the reaction that binds.
     and kinetic gateways and the objective $c_{b_4}=1$ maximizing urea
     export; bar heights give the flux $\hat v_j$
     (mmol\,gDW$^{-1}$\,h$^{-1}$) at the optimum. Because the cycle is linear,
-    every nonzero flux equals the single throughput up to sign, so the
-    parametric-bootstrap uncertainty of Algorithm~\ref{alg:uq} is one quantity
-    common to them all; it is drawn as the $2.5$--$97.5$ percentile whisker on
+    every nonzero backbone flux nearly equals the single throughput up to
+    sign ($v_1$/$v_2$ and $v_3$/$v_4$ differ from each other only in the
+    rare draws where the nitric oxide synthase branch activates), so the
+    parametric-bootstrap uncertainty of Algorithm~\ref{alg:uq} is
+    essentially one quantity common to them all; it is drawn as the
+    $2.5$--$97.5$ percentile whisker on
     the urea-export flux $b_4$, the reported objective, rather than repeated
     identically on every bar. The enzymatic backbone
     $v_1$ through $v_4$ saturates at $118.08$, the capacity of
@@ -259,7 +264,8 @@ textbook reference enzyme abundance. Two of the four gateways in
 Equation~\eqref{eq:general-bound} were opened, and two were left at
 their default of unity, and the flux distribution of
 Figure~\ref{fig:urea} is the direct consequence: a single hard
-bottleneck at $v_2$ and a silent competing branch at $v_5$, both
+bottleneck at $v_2$ and a competing branch at $v_5$ that remains
+negligible in typical draws, both
 explainable entirely from the reversibility and capacity assigned
 above. Reopening the regulatory gateway $\theta_j$, so that a
 reaction's capacity depends on the cell's own control state rather
