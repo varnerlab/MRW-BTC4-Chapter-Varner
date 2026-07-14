@@ -1,0 +1,32 @@
+[metadata]
+author = "jdv27@cornell.edu"
+version = "0.1"
+date = "2026-07-14"
+description = "Linear pathway under dual end-product control: expression (e/e0) + activity (theta) on one committed enzyme (chapter Example 2)"
+
+[model]
+list_of_static_species = ["E"]
+list_of_dynamic_species = ["X1", "X2", "X3", "m", "E0"]
+list_of_connection_records = [
+    "rTX::{} --> m",
+    "rTXb::{} --> m",
+    "rMdeg::m --> {}",
+    "rTL::{} --> E0",
+    "rEdeg::E0 --> {}",
+    "r0::{} --> X1",
+    "r1::X1 --> X2",
+    "r2::X2 --> X3",
+    "r3::X3 --> {}"
+]
+list_of_kinetics_records = [
+    "rTX::{X3}",
+    "rTXb::{E}",
+    "rMdeg::{m}",
+    "rTL::{m}",
+    "rEdeg::{E0}",
+    "r0::{E0, X3}",
+    "r1::{X1}",
+    "r2::{X2}",
+    "r3::{X3}"
+]
+list_of_stoichiometry_records = []
