@@ -4,7 +4,9 @@
 The urea-cycle and feedback examples opened the gateways of
 Equation~\eqref{eq:general-bound} one at a time, on networks small
 enough that a hand calculation could check the result against a
-known truth. Two published systems show the same gateways opened
+known truth: one degree of freedom in each case, $n-m=1$, far short of
+the large right null space that motivates the gateway framework at
+genome scale (Section~\ref{sec:lp}). Two reported systems show the same gateways opened
 together, at a scale no hand calculation could reach, and driven by
 measurement rather than by a modeler's guess at what a bound should
 be. The first couples metabolism and regulation into one dynamic
@@ -36,8 +38,7 @@ recomputed as the reaction proceeds, so that the thermodynamic,
 kinetic, expression, and regulatory gateways are opened together
 rather than in isolation. This integration is checked against denser
 data: time-resolved measurement of the
-intracellular state over the course of a batch reaction, on the
-order of sixty metabolites tracked through the reaction, together
+intracellular state over the course of a batch reaction, 63 metabolites tracked through the reaction, together
 with time courses of mRNA, protein abundance, and enzyme activity.
 Every worked example earlier in this chapter compared a flux
 prediction to a single steady-state target; here the comparison runs
@@ -88,24 +89,33 @@ to reach into a bound;
 the same gateway can in principle be narrowed by attenuating an
 enzyme's expression or widened by over-expressing it, moving the
 $(e/e^{\circ})$ factor of Equation~\eqref{eq:general-bound} down or up
-rather than collapsing it to zero. The deletions this campaign
-screened were sufficient on their own: the best single knockout
-identified by the model raised glycan production roughly threefold
-over the unmodified strain once built, an outcome the model predicted
-by re-solving the same linear program under the modified bound rather
-than by any change to the stoichiometry $\mathbf S$. The bounds are,
-in this use, not a report of what the cell is doing but a lever for
-what the cell is made to do.
+rather than collapsing it to zero. The deletions this campaign screened were sufficient on their own: the
+best single knockout the model identified, chosen for its predicted
+growth-coupling among the candidate deletions, raised glycan production
+roughly threefold over the unmodified strain once built and measured;
+the linear program re-solved under each candidate's modified bound
+predicted which deletion to make, not the magnitude of the yield
+increase eventually observed. The bounds are, in this use, not a report
+of what the cell is doing but a lever for what the cell is made to do.
 
-Read together, the two capstones are the same operation on
-Equation~\eqref{eq:general-bound} run in opposite directions. In the
+Read together, the two capstones run the same operation on
+Equation~\eqref{eq:general-bound} in opposite directions, once the
+intervention itself has been chosen. In the
 cell-free system, measurement narrows the gateways and the flux
 distribution is estimated; in the glycan strain, the engineer narrows
-a gateway and the flux distribution is designed. Nothing about the
-linear program distinguishes the two uses,
-since both amount to fixing the bounds $\boldsymbol\ell$ and
-$\mathbf u$ and solving the same constrained optimization; only the
-direction in which information moves through the gateway, from data
-inward for estimation, from intention outward for design, changes.
-Estimation and design are, at bottom, the same operation on the
-bounds, run in two directions.
+a gateway and the flux distribution is designed. Once a set of bound
+changes is specified, both problems solve the identical linear program
+under the modified box, since fixing $\boldsymbol\ell$ and $\mathbf u$
+and re-solving the same constrained optimization is all either use
+requires; only the direction in which information moves through the
+gateway, from data inward for estimation, from intention outward for
+design, changes. Choosing which bounds to change is not itself part of
+that shared operation, though: for design, searching a combinatorial
+space of candidate deletions or expression changes for one that
+couples the desired product to growth is a discrete optimization
+problem in its own right, solved by frameworks such as bilevel
+programming \cite{Burgard2003} rather than by the continuous linear
+program each candidate is then checked against. Estimation and design
+are, at bottom, the same evaluation of the bounds, run in two
+directions; only design additionally requires searching for which
+bounds to move.
