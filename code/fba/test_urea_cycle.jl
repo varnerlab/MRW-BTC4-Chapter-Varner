@@ -43,4 +43,12 @@ infeasible = (; infeasible..., lb = infeasible.lb .+ 1.0, ub = infeasible.ub)  #
 
 println("test_urea_cycle (Task 2): validation and solve-failure checks passed")
 
+# ---- Task 3: FVA confirms the nominal optimum is unique ------------------- #
+m0  = urea_cycle_model()
+rng = fva(m0)
+@assert nrow(rng) == length(m0.reactions)
+@assert maximum(abs.(rng.vmax .- rng.vmin)) < 1e-4 "nominal optimum is not unique: $(rng)"
+
+println("test_urea_cycle (Task 3): FVA uniqueness check passed")
+
 println("test_urea_cycle: all checks passed")

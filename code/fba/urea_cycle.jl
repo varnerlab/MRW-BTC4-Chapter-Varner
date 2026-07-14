@@ -215,3 +215,35 @@ function solve_fba(m)
     v === nothing && error("solve_fba: linear program did not solve to optimality (infeasible or unbounded)")
     DataFrame(reaction = m.reactions, flux = v)
 end
+
+"""
+    fva(m; tol=1e-6) -> DataFrame
+
+Flux variability analysis: for each reaction, minimize and maximize its flux subject to
+`Sv=0`, `lb<=v<=ub`, and the objective held within `tol` of its optimal value. Returns a
+DataFrame with columns `reaction, vmin, vmax`.
+"""
+function fva(m; tol=1e-6)
+    vopt = solve_flux(m)
+    vopt === nothing && error("fva: nominal model did not solve to optimality")
+    zopt = sum(m.c[i] * vopt[i] for i in eachindex(m.c))
+    n = length(m.reactions)
+    vmin = zeros(n); vmax = zeros(n)
+    for i in 1:n
+        for sense in (:min, :max)
+            model = Model(HiGHS.Optimizer); set_silent(model)
+            @variable(model, m.lb[k] <= v[k=1:n] <= m.ub[k])
+            @constraint(model, m.S * v .== 0)
+            @constraint(model, sum(m.c[k] * v[k] for k in 1:n) >= zopt - tol)
+            if sense == :min
+                @objective(model, Min, v[i])
+            else
+                @objective(model, Max, v[i])
+            end
+            optimize!(model)
+            val = is_solved_and_feasible(model) ? value(v[i]) : NaN
+            sense == :min ? (vmin[i] = val) : (vmax[i] = val)
+        end
+    end
+    DataFrame(reaction = m.reactions, vmin = vmin, vmax = vmax)
+end
