@@ -145,7 +145,7 @@ function urea_cycle_model(; kcat=KCAT0, e0=E0, dG=DG0, dG_threshold=-10.0, f=one
     #   exchange reactions: lb = -1000, ub = 1000
     # ------------------------------------------------------------------ #
     delta = Float64[g > dG_threshold ? 1.0 : 0.0 for g in dG]
-    Vmax  = kcat .* e0
+    Vmax  = kcat .* e0 .* 3600.0   # kcat is s^-1 (BRENDA); convert to h^-1 to match e0 (mmol/gDW)
     cap   = Vmax .* f
     n_ex  = 14
     lb = vcat(-delta .* cap, fill(-1000.0, n_ex))
