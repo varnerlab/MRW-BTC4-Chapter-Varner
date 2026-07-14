@@ -51,11 +51,11 @@ text!(axS, 2.35,3.0; text="catalysis", fontsize=10, color=:seagreen, align=(:lef
 # two repression arrows from X3 (dashed, crimson): slow expression + fast activity
 lines!(axS, [6.0,6.0],[1.6,4.2]; color=:crimson, linestyle=:dash)                               # X3 -| gene (expression)
 lines!(axS, [5.7,2.3],[1.5,4.2]; color=:crimson, linestyle=:dash)                               # X3 -| E0   (activity)
-text!(axS, 6.15,3.0; text="(e/e0)\nexpression, slow", color=:crimson, fontsize=10, align=(:left,:center))
-text!(axS, 3.7,2.4; text="theta\nactivity, fast", color=:crimson, fontsize=10, align=(:left,:center))
+text!(axS, 6.15,3.0; text="(e/e°)\nexpression, slow", color=:crimson, fontsize=10, align=(:left,:center))
+text!(axS, 3.7,2.4; text="θ\nactivity, fast", color=:crimson, fontsize=10, align=(:left,:center))
 
 # panel (b): capacity ledger
-axL = Axis(fig[1,2], xticks=(1:4, ["Vmax0","x(e/e0)","x theta","both"]),
+axL = Axis(fig[1,2], xticks=(1:4, ["V°max","×(e/e°)","×θ","both"]),
            ylabel="committed-step capacity (AU)",
            title="Capacity ledger: the two gateways multiply")
 barplot!(axL, 1:4, ledger; color=[:gray70,:steelblue,:orange,:seagreen])
