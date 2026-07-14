@@ -121,7 +121,7 @@ transcript $m_j$ and the protein $p_j$ of the gene encoding the enzyme,
 \begin{align}
   \dot m_j &= r_{X,j}\,u_j - (\theta_{m,j}+\mu)\,m_j + \lambda_j,
   \label{eq:mrna}\\
-  \dot p_j &= r_{L,j}\,w_j - (\theta_{p,j}+\mu)\,p_j,
+  \dot p_j &= r_{L,j}\,w_j\,m_j - (\theta_{p,j}+\mu)\,p_j,
   \label{eq:protein}
 \end{align}
 where $r_{X,j}$ and $r_{L,j}$ are transcription and translation rate
@@ -144,7 +144,7 @@ abundances,
 \begin{equation}\label{eq:expression-ss}
   m^{\star}_j = \frac{r_{X,j}u_j+\lambda_j}{\theta_{m,j}+\mu},
   \qquad
-  p^{\star}_j = \frac{r_{L,j}w_j}{\theta_{p,j}+\mu},
+  p^{\star}_j = \frac{r_{L,j}w_j\,m^{\star}_j}{\theta_{p,j}+\mu},
   \qquad
   (e/e^{\circ}) = \frac{p^{\star}_j}{e^{\circ}},
 \end{equation}
