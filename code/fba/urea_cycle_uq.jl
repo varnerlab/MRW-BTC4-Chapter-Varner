@@ -84,23 +84,29 @@ function sample_flux(rng; impute_f2::Bool=false, sample_saturation::Bool=true)
     solve_flux(urea_cycle_model(; kcat = kcat, e0 = e0, dG = dG, f = f))
 end
 
-"Run N draws; return an (kept x nreactions) flux matrix."
+"Run N draws; return an (kept x nreactions) flux matrix, the nominal model, and the count of
+draws that failed to solve (infeasible/unbounded), which are dropped rather than kept."
 function run_ensemble(seed; impute_f2::Bool=false, sample_saturation::Bool=true)
     rng = MersenneTwister(seed)
     m0  = urea_cycle_model()
     rows = Vector{Vector{Float64}}()
+    n_failed = 0
     for _ in 1:N
         v = sample_flux(rng; impute_f2 = impute_f2, sample_saturation = sample_saturation)
-        v === nothing && continue
+        if v === nothing
+            n_failed += 1
+            continue
+        end
         push!(rows, v)
     end
-    return reduce(vcat, (r' for r in rows)), m0
+    return reduce(vcat, (r' for r in rows)), m0, n_failed
 end
 
 # ---- Config A ----
-F, m0 = run_ensemble(SEED; impute_f2 = false)
+F, m0, nfail_A = run_ensemble(SEED; impute_f2 = false)
 kept = size(F, 1)
 @assert kept > 0.99 * N "too many infeasible draws: kept $kept of $N"
+println("configA_failed=", nfail_A)
 vnom = solve_flux(m0)
 
 stats = DataFrame(reaction=String[], nominal=Float64[], mean=Float64[],
@@ -139,8 +145,9 @@ println("configA_v5 mean=", mean(F[:, findfirst(==("v5"), m0.reactions)]))
 # Same kcat/e0/dG sampling as Config A, but f held at ones(5) throughout, so
 # this isolates the "min of sampled capacities" effect from the saturation-
 # gateway effect that Config A/B probe. Not plotted; reported in prose only.
-Fcap, _ = run_ensemble(SEED; sample_saturation=false)
+Fcap, _, nfail_cap = run_ensemble(SEED; sample_saturation=false)
 cap_kept = size(Fcap, 1)
+println("configCap_failed=", nfail_cap)
 uacap = Fcap[:, b4]  # urea export (secretion-positive), capacity-only
 println("configCap_kept=", cap_kept)
 println("configCap_urea_export mean=", mean(uacap), " sd=", std(uacap),
