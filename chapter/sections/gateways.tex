@@ -44,11 +44,15 @@ Equation~\eqref{eq:general-bound} negative and the reaction free to run
 backward, while $\delta_j=0$ collapses the lower bound to zero and pins
 the reaction to the forward direction. The assignment follows the sign
 of $\Delta G^{\circ}_j-\Delta G^{*}_j$, the standard free energy of
-reaction measured against a threshold $\Delta G^{*}_j$ fixed by the
-physiological concentration range, or equivalently a cutoff on the
-equilibrium constant $K_{\mathrm{eq},j}$: a reaction whose driving force
-cannot plausibly change sign anywhere in that range is declared
-irreversible, and its reverse flux is forbidden. Standard free energies
+reaction measured against a threshold $\Delta G^{*}_j$ meant to
+represent the physiological concentration range, or equivalently a
+cutoff on the equilibrium constant $K_{\mathrm{eq},j}$: a reaction whose
+driving force cannot plausibly change sign anywhere in that range is
+declared irreversible, and its reverse flux is forbidden. This is a
+heuristic directionality rule, a stand-in for propagating a stated
+concentration range through $\Delta G=\Delta G^{\circ}+RT\ln Q$ and
+checking directly whether the sign can flip, not a substitute for that
+calculation where the range is actually known. Standard free energies
 for this test are drawn from group- and component-contribution
 estimates, for which eQuilibrator provides genome-scale coverage
 \cite{Beber2022}.
