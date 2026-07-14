@@ -155,7 +155,7 @@ println("configCap_urea_export mean=", mean(uacap), " sd=", std(uacap),
 
 # ---- Config B: impute and sample f_2 (argininosuccinate unmeasured) ----
 # Re-run the ensemble capturing f_2 and urea export per draw.
-let rng = MersenneTwister(SEED + 1)
+let rng = MersenneTwister(SEED)  # common random numbers with Config A: vary only f2
     b4idx = findfirst(==("b4"), m0.reactions)
     f2s = Float64[]; ub_export = Float64[]
     for _ in 1:N
