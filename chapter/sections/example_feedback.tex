@@ -62,9 +62,9 @@ Equations~\eqref{eq:mrna} and~\eqref{eq:protein}, where an intracellular
 macromolecule is cleared both by its own turnover and by dilution into
 the growing culture. The committed-step rate carries both controls,
 \begin{equation}\label{eq:feedback-rate}
-  v_{r_0} = V^{\circ}_{\max,r_0}\,(e/e^{\circ})\,\theta,
+  v_{r_0} = V^{\circ}_{\max,r_0}\,(e/e^{\circ})\,\theta_{\mathrm{true}},
   \qquad
-  \theta = X_3^{-a},\quad a = 0.4,\qquad
+  \theta_{\mathrm{true}} = X_3^{-a},\quad a = 0.4,\qquad
   \text{transcription} \propto X_3^{-b},\quad b = 0.6.
 \end{equation}
 
@@ -102,13 +102,14 @@ Because the chain is linear, conservation forces every metabolic
 reaction to carry one common throughput $T$, and because the export step
 $r_3$ is first order in $X_3$, that throughput pins the end-product level
 at $X_3 = T/k_3$. Substituting the two controls back into the
-committed-step rate, the activity factor $\theta=X_3^{-a}$ and the
-expression ratio the transcriptional repression sets through
+committed-step rate, the truth model's own allosteric term
+$\theta_{\mathrm{true}}=X_3^{-a}$ and the expression ratio the
+transcriptional repression sets through
 Equation~\eqref{eq:expression-ss}, reduces the coupled five-state system
 to a single self-consistency condition in $X_3$ alone, and the value
 that condition selects is the value the full numerical integration
-confirms: $X_3^{\star}\approx4$, an activity factor
-$\theta^{\star}\approx0.574$, an expression ratio
+confirmed: $X_3^{\star}\approx4$, an allosteric term
+$\theta_{\mathrm{true}}^{\star}\approx0.574$, an expression ratio
 $(e/e^{\circ})^{\star}\approx0.464$, and a throughput
 $T^{\star}\approx2.66$, less than a third of the uninhibited capacity of
 the committed step (Fig.~\ref{fig:feedback}). The control scheme behind
@@ -125,38 +126,54 @@ factor alone accounts for the observed throttling, and a model that
 opened one and defaulted the other would miss the mark by a visible
 margin.
 
-The flux-balance model keeps the chain's stoichiometry unchanged and
-places the entire dual-control content on the single bound of the
+The flux-balance model kept the chain's stoichiometry unchanged and
+placed the entire dual-control content on the single bound of the
 committed step,
 \begin{equation}\label{eq:feedback-bound}
   0 \;\le\; \hat v_{r_0} \;\le\;
-  V^{\circ}_{\max,r_0}\,(e/e^{\circ})\,\theta(X_3),
+  V^{\circ}_{\max,r_0}\,(e/e^{\circ})\,\theta_{\mathrm{FBA}}(X_3),
   \qquad V^{\circ}_{\max,r_0} = 10,
 \end{equation}
 the expression and regulatory instance of the general bound of
 Equation~\eqref{eq:general-bound}, with the thermodynamic switch and the
 saturation factor left at their defaults and the two remaining gateways,
-expression $(e/e^{\circ})$ and activity $\theta(X_3)$, both in play. Both
-factors were evaluated from the measured steady state, the enzyme
-abundance and the end-product level read off the integrated model, and
-not copied from the integrated flux the linear program is meant to
-reproduce. Four solves of the linear program of
-Equation~\eqref{eq:fba-lp} differ in nothing but this one bound. A
-feedback-blind solve, holding both factors at unity, overshoots to the
-uninhibited capacity of $10$, roughly $3.8$ times the true throughput;
-opening the expression gateway alone throttles the committed step to
-$4.64$; opening the activity gateway alone throttles it to $5.74$; and
-only opening both together lands on $2.66$, recovering the BST truth to
-numerical tolerance (Fig.~\ref{fig:feedback}). The escalation is the
-whole point. Nothing about either feedback loop appears anywhere in the
+expression $(e/e^{\circ})$ and activity $\theta_{\mathrm{FBA}}(X_3)$,
+both in play. The activity gateway does not reuse the truth model's own
+kinetic exponent $\theta_{\mathrm{true}}$ from Equation~\eqref{eq:feedback-rate};
+a bound built from the exact functional form that generates the
+quantity it is meant to predict would make the recovery an identity
+rather than a check. Instead $\theta_{\mathrm{FBA}}$ is a bounded,
+two-state Hill occupancy,
+\begin{equation}\label{eq:feedback-theta-fba}
+  \theta_{\mathrm{FBA}}(X_3) \;=\; \frac{K^{n}}{K^{n}+X_3^{\,n}},
+  \qquad K = 5,\quad n = 2,
+\end{equation}
+the same partition-function-motivated form used for $f_s$ in
+Equation~\eqref{eq:partition}, with $K$ and $n$ chosen independently of
+the truth model's allosteric order $a$ rather than fit to reproduce it,
+and with no basal-leak floor: unlike the transcriptional loop, a direct
+allosteric on/off switch has no leaky analog, so
+$\theta_{\mathrm{FBA}}\to0$ as $X_3\to\infty$. Both gateway factors were
+evaluated from the measured steady state, the enzyme abundance and the
+end-product level read off the integrated model, and not copied from
+the integrated flux the linear program is meant to reproduce. Four
+solves of the linear program of Equation~\eqref{eq:fba-lp} differed in
+nothing but this one bound. A feedback-blind solve, holding both factors
+at unity, overshot to the uninhibited capacity of $10$, roughly $3.8$
+times the true throughput; opening the expression gateway alone
+throttled the committed step to $4.64$; opening the activity gateway
+alone throttled it to $6.10$; and only opening both together landed on
+$2.83$, approximating the BST truth of $2.66$ to within about six
+percent (Fig.~\ref{fig:feedback}). The escalation is the whole point.
+Nothing about either feedback loop appears anywhere in the
 stoichiometric matrix, which is identical whether $X_3$ closes a single
 loop, both loops, or none; the entire dual-control fact lives in the one
 bound on $r_0$, where the two gateways enter as independent
 multiplicative factors and each removes a distinct, quantifiable slice
-of the capacity. Read as a ledger, the uninhibited capacity of $10$ is
-marked down once by expression to $4.64$ and once by activity to $5.74$,
-and only the product of the two markdowns settles on the throughput the
-cell actually runs.
+of the capacity. Read as a ledger, the uninhibited capacity of $10$ was
+marked down once by expression to $4.64$ and once by activity to $6.10$,
+and only the product of the two markdowns approached the throughput the
+cell actually ran.
 
 \begin{figure}[htbp]
   \centering
@@ -167,12 +184,12 @@ cell actually runs.
     step $r_0$, repressing transcription of the enzyme's gene, the slow
     expression loop acting through $(e/e^{\circ})$, and inhibiting the
     activity of the enzyme $E_0$ already present, the fast allosteric
-    loop acting through $\theta$. Right: the capacity ledger for the
+    loop acting through $\theta_{\mathrm{FBA}}$. Right: the capacity ledger for the
     committed-step bound of Equation~\eqref{eq:feedback-bound}. The
     uninhibited capacity $V^{\circ}_{\max,r_0}=10$ is reduced by the
     expression gateway alone to $4.64$ and by the activity gateway alone
-    to $5.74$, and only the two gateways together land on the throughput
-    of the Biochemical Systems Theory truth, $T^{\star}\approx2.66$; the
-    dashed line marks the uninhibited capacity.}
+    to $6.10$, and only the two gateways together approach the throughput
+    of the Biochemical Systems Theory truth, $T^{\star}\approx2.66$, landing
+    at $2.83$; the dashed line marks the uninhibited capacity.}
   \label{fig:feedback}
 \end{figure}
