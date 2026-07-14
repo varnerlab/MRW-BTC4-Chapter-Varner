@@ -10,10 +10,12 @@ intracellular flux distribution, the rates at which the reactions of
 metabolism actually run under a given condition \cite{Bordbar2014}.
 That distribution is what a quantitative model is asked to predict, and
 it is also what is hardest to observe. A genome sequence and the
-stoichiometry of its annotated reactions are knowable in full, but the
-internal fluxes, the kinetic parameters that would set them, and the
-metabolite concentrations that drive them are, at genome scale, largely
-unmeasured. The problem is therefore to predict a metabolic phenotype
+stoichiometry of its annotated reactions are knowable in broad outline,
+though real reconstructions carry their own uncertainty in reaction
+membership, directionality, compartmentalization, and biomass
+composition; the internal fluxes, the kinetic parameters that would set
+them, and the metabolite concentrations that drive them are, at genome
+scale, far less constrained still. The problem is therefore to predict a metabolic phenotype
 from what can be known rather than from what a direct calculation would
 require.
 
@@ -35,8 +37,10 @@ program over the flux vector \cite{Orth2010,Heirendt2019}. Conservation
 alone, however, does not determine a flux distribution; it fixes a
 whole subspace of them, and what selects a prediction from that
 subspace is the box of upper and lower bounds placed on each reaction.
-The bounds, not the stoichiometry, are where biological information
-enters, and the question this chapter takes up is how it enters:
+Flux bounds are a major interface through which condition-specific
+thermodynamic, kinetic, expression, and regulatory information enters a
+constraint-based model, and the question this chapter takes up is how
+it enters:
 through which bound does a thermodynamic estimate, a turnover number,
 an expression measurement, or a regulatory signal actually change a
 flux prediction?
@@ -57,11 +61,13 @@ urea-cycle metabolic network whose flux distribution is pinned by
 thermodynamic and kinetic data drawn entirely from public databases,
 and a feedback-inhibited pathway whose regulatory truth, generated
 independently from a kinetic model, is recovered by opening the
-regulatory gateway on a single bound. Two published systems then show
+regulatory gateway on a single bound. Two reported systems then show
 the same gateways opened together at a scale no hand calculation could
 reach, one estimating fluxes in a dynamic cell-free reaction
 \cite{Vilkhovoy2023} and one designing a glycan-producing strain by
 model-guided gene deletion \cite{Wayman2019}. Read across these cases,
 estimating a flux distribution from data and designing one by
-intervention are the same operation on the bounds, run in opposite
-directions.
+intervention evaluate the bounds the same way once an intervention is
+chosen; design differs in also requiring a combinatorial search, over
+candidate deletions or expression changes, for which bounds to move
+\cite{Burgard2003}.
