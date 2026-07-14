@@ -9,16 +9,47 @@ const SEED     = 20260713
 const SIGMA_LN = 0.69     # lognormal spread for kcat, e0, conc, Km
 const DG_SIGMA = 2.0      # kJ/mol, normal spread for dG
 
-# Nominal saturation inputs (conc_M, Km_M) per reaction, reduced from
-# code/data/park_saturation.csv by the aggregation rule (least-saturated
-# substrate; prefer Homo sapiens row, else geometric mean across organisms).
-# v2 has no forward-substrate data -> f_2 = 1 in Config A.
-const SAT_NOMINAL = Dict(
-    1 => (4.673e-3, 3.923e-4),  # v1 ATP (Mus musculus)
-    3 => (2.555e-4, 1.546e-3),  # v3 arginine (Homo sapiens)
-    4 => (2.129e-4, 1.166e-3),  # v4 ornithine (geometric mean, yeast + E. coli)
-    5 => (2.555e-4, 3.497e-6),  # v5 arginine (Mus musculus)
-)
+"""
+    load_park_saturation(path) -> Dict{Int,Tuple{Float64,Float64}}
+
+Load `code/data/park_saturation.csv` and reduce to one (conc_M, km_M) pair per enzymatic
+reaction index (1-based, matching KCAT0/DG0 ordering):
+  1. group rows by (reaction, substrate);
+  2. within a substrate, prefer the Homo sapiens row, else the geometric mean of conc_M and
+     km_M across organism rows;
+  3. across substrates for the same reaction, keep the least-saturated substrate (smallest
+     conc_M / (km_M + conc_M)).
+Reaction v2 has no forward-substrate data in the source (only reverse-direction products) and
+is excluded; f_2 defaults to 1 unless imputed (see `sample_f`).
+"""
+function load_park_saturation(path=joinpath(_PATH_TO_DATA, "park_saturation.csv"))
+    df = CSV.read(path, DataFrame; comment="#")
+    reaction_index = Dict("v1" => 1, "v3" => 3, "v4" => 4, "v5" => 5)
+    result = Dict{Int,Tuple{Float64,Float64}}()
+    for (rxn, ridx) in reaction_index
+        sub = df[df.reaction .== rxn, :]
+        best = nothing
+        for s in unique(sub.substrate)
+            rows = sub[sub.substrate .== s, :]
+            hs = rows[rows.organism .== "Homo sapiens", :]
+            conc, km = if nrow(hs) > 0
+                hs.conc_M[1], hs.km_M[1]
+            else
+                exp(mean(log.(rows.conc_M))), exp(mean(log.(rows.km_M)))
+            end
+            f = conc / (km + conc)
+            if best === nothing || f < best[3]
+                best = (conc, km, f)
+            end
+        end
+        result[ridx] = (best[1], best[2])
+    end
+    return result
+end
+
+# Nominal saturation inputs (conc_M, Km_M) per reaction; see `load_park_saturation` docstring
+# for the aggregation rule.
+const SAT_NOMINAL = load_park_saturation()
 
 lognrand(rng, median, sln) = median * exp(sln * randn(rng))
 
