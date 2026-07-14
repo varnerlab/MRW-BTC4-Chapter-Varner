@@ -21,12 +21,12 @@ Flux bounds:
     v3: ΔG = −51.0 kJ/mol  → δ = 0 (irreversible)
     v4: ΔG = −30.3 kJ/mol  → δ = 0 (irreversible)
     v5: ΔG = −1220 kJ/mol  → δ = 0 (irreversible)
-  Vmax = kcat × eₒ  (eₒ = 0.01 mmol/gDW; kcat from BRENDA, default 10 1/s):
-    v1: kcat = 10.0  → Vmax = 0.100
-    v2: kcat =  3.28 → Vmax = 0.0328
-    v3: kcat = 190.0 → Vmax = 1.9
-    v4: kcat = 410.0 → Vmax = 4.1
-    v5: kcat = 10.0  → Vmax = 0.100
+  Vmax = kcat × eₒ × 3600  (eₒ = 0.01 mmol/gDW; kcat from BRENDA in s⁻¹, ×3600 converts to h⁻¹):
+    v1: kcat = 10.0  → Vmax = 360
+    v2: kcat =  3.28 → Vmax = 118.08
+    v3: kcat = 190.0 → Vmax = 6840
+    v4: kcat = 410.0 → Vmax = 14760
+    v5: kcat = 10.0  → Vmax = 360
   lb = −δVmax, ub = Vmax for enzymatic reactions; ±1000 for exchange reactions.
 
 Objective: maximise urea export through b4.  Under the secretion-positive
@@ -140,7 +140,7 @@ function urea_cycle_model(; kcat=KCAT0, e0=E0, dG=DG0, dG_threshold=-10.0, f=one
     # ------------------------------------------------------------------ #
     # Flux bounds, built from parameters (Eq. general-bound with e/e0 = theta = 1)
     #   delta_j = 1 if dG_j > threshold (reversible), else 0 (irreversible)
-    #   Vmax_j  = kcat_j * e0 ;  cap_j = Vmax_j * f_j
+    #   Vmax_j  = kcat_j * e0 * 3600 ;  cap_j = Vmax_j * f_j
     #   lb_j = -delta_j * cap_j ,  ub_j = cap_j   (enzymatic)
     #   exchange reactions: lb = -1000, ub = 1000
     # ------------------------------------------------------------------ #
