@@ -59,3 +59,15 @@ let t = feedback_truth()
     @assert !isapprox(Ee, Aa; atol=0.2) "the two partial cases must be visibly distinct: $Ee vs $Aa"
     println("test_dual_feedback (Task 3): naive=$N expr=$Ee act=$Aa both=$(v_both[j]) truth=$T")
 end
+
+# ---- Task 4: feedback_fba input validation ---------------------------------- #
+let gw_bad = (Vmax0 = -1.0, θ = 0.5, e_e0 = 0.5)
+    threw = false
+    try
+        feedback_fba(gw_bad; expression=true, activity=true)
+    catch e
+        threw = e isa ArgumentError
+    end
+    @assert threw "feedback_fba must reject a negative Vmax0"
+    println("test_dual_feedback (Task 4): feedback_fba validation OK")
+end

@@ -51,11 +51,16 @@ function sequence_params()::SeqParams
     return SeqParams(L_prot, L_gene, tau_X, tau_L, theta_m, theta_p, mu)
 end
 
+# BSTModelKit.jl is pinned in code/Manifest.toml; this wrapper isolates the one remaining
+# dependency on the private `_powerlaw` kernel so a future package upgrade fails here, at a
+# single named call site, rather than silently inside a private API call.
+bst_powerlaw_rates(state, α, G) = BSTModelKit._powerlaw(state, α, G)
+
 # Per-reaction rate vector from BSTModelKit's own power-law kernel, so extracted
 # fluxes are identical to what the solver integrated. state = [dynamic; static].
 function reaction_fluxes(model::BSTModel, X::Vector{Float64})::Vector{Float64}
     state_array = vcat(X, model.static_factors_array)
-    return BSTModelKit._powerlaw(state_array, model.α, model.G)
+    return bst_powerlaw_rates(state_array, model.α, model.G)
 end
 
 # Build the 5-species dual-feedback S-system and integrate to steady state.
@@ -158,6 +163,10 @@ end
 # Solve the constraint-based problem; `expression`/`activity` gate each factor on
 # the committed-step bound. Every other bound is identical between runs.
 function feedback_fba(gw; expression::Bool, activity::Bool)
+    gw.Vmax0 >= 0 || throw(ArgumentError("Vmax0 must be nonnegative, got $(gw.Vmax0)"))
+    0 <= gw.θ    || throw(ArgumentError("θ must be nonnegative, got $(gw.θ)"))
+    0 <= gw.e_e0 || throw(ArgumentError("e_e0 must be nonnegative, got $(gw.e_e0)"))
+
     n   = length(METAB_REACTIONS)
     idx = Dict(METAB_REACTIONS .=> eachindex(METAB_REACTIONS))
     ub  = fill(GENEROUS_CAPACITY, n)
