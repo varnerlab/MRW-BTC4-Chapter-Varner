@@ -132,23 +132,20 @@ const METAB_REACTIONS   = ["r0","r1","r2","r3"]
 
 # Reference capacity Vmax0, activity control theta, and expression ratio (e/e0)
 # at the MEASURED steady state.
-#   Vmax0 = alpha[r0]            reference capacity (E0=1, no repression, no allostery)
-#   theta = X3^{-A_ACT}          computed rate-with / rate-without the X3 order on r0
-#   e_e0  = E0*                  measured enzyme abundance (reference e0 = 1 by normalization)
-function gateway_factors(truth)
-    model  = truth.model
-    idx    = Dict(truth.reactions .=> eachindex(truth.reactions))
-    sidx   = Dict(truth.species   .=> eachindex(truth.species))
-    col_r0 = idx["r0"]
-    row_X3 = findfirst(==("X3"), model.total_species_list)
+#   Vmax0 = alpha[r0]                  reference capacity (E0=1, no repression, no allostery)
+#   theta = K_THETA^N_THETA / (K_THETA^N_THETA + X3^N_THETA)   bounded two-state Hill occupancy,
+#           independent of the truth model's own X3^{-a} kinetics (not fit to match it)
+#   e_e0  = E0*                        measured enzyme abundance (reference e0 = 1 by normalization)
+const K_THETA = 5.0
+const N_THETA = 2.0
 
-    state       = vcat(truth.Xss, model.static_factors_array)
-    rate_with   = BSTModelKit._powerlaw(state, model.α, model.G)[col_r0]   # Vmax0*E0*X3^{-a}
-    G0          = copy(model.G); G0[row_X3, col_r0] = 0.0
-    rate_noallo = BSTModelKit._powerlaw(state, model.α, G0)[col_r0]        # Vmax0*E0
-    θ     = rate_with / rate_noallo                                        # = X3^{-a}
-    Vmax0 = model.α[col_r0]                                                # reference capacity
-    e_e0  = truth.Xss[sidx["E0"]]                                          # measured (e/e0)
+function gateway_factors(truth)
+    sidx = Dict(truth.species .=> eachindex(truth.species))
+    X3   = truth.Xss[sidx["X3"]]
+
+    Vmax0 = truth.model.α[findfirst(==("r0"), truth.reactions)]  # reference capacity
+    θ     = K_THETA^N_THETA / (K_THETA^N_THETA + X3^N_THETA)     # bounded Hill occupancy
+    e_e0  = truth.Xss[sidx["E0"]]                                 # measured (e/e0)
     return (Vmax0 = Vmax0, θ = θ, e_e0 = e_e0)
 end
 
