@@ -35,6 +35,7 @@ using Test
 @test_throws ArgumentError urea_cycle_model(; kcat = [1.0, 2.0])          # wrong length
 @test_throws ArgumentError urea_cycle_model(; dG = fill(NaN, 5))          # non-finite
 @test_throws ArgumentError urea_cycle_model(; f = [-0.1, 1.0, 1.0, 1.0, 1.0])  # negative saturation
+@test_throws ArgumentError urea_cycle_model(; e0 = -0.01)                 # lb > ub (negative e0)
 
 infeasible = urea_cycle_model(; kcat = zeros(5))  # zero capacity everywhere -> b4 forced to 0, still feasible;
 infeasible = (; infeasible..., lb = infeasible.lb .+ 1.0, ub = infeasible.ub)  # lb > ub -> infeasible
