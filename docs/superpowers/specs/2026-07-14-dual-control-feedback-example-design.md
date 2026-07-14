@@ -146,11 +146,18 @@ response is carried by the exponent `b`.
 | `kcat0` | `30` /s | committed-enzyme turnover |
 | `e0` | `= r_L m_ref/(theta_p+mu)` | reference enzyme abundance |
 
-**The mu signature, made concrete.** `theta_m + mu = 0.277 + 0.012 = 0.289` /min
-(mu ~ 4% of transcript clearance) but `theta_p + mu = 0.020 + 0.012 = 0.032` /min
-(**mu ~ 36% of enzyme clearance**). For the stable enzyme, growth dilution is a
-dominant clearance term -- the strongest single illustration of why the chapter
-carries `mu` in every intracellular balance. Emphasize this in the prose.
+**The mu signature, made concrete.** `mu` is one number, the same in both
+denominators (it is the culture's specific growth rate, not a per-species
+quantity). What differs between transcript and enzyme is each species' own
+first-order turnover `theta`, so the *same* `mu` is a different fraction of the
+total clearance `theta + mu`:
+`theta_m + mu = 0.277 + 0.012 = 0.289` /min (the same `mu` is ~4% of the
+fast-degrading transcript's clearance) but `theta_p + mu = 0.020 + 0.012 = 0.032`
+/min (**that same `mu` is ~36% of the stable enzyme's clearance**). For the stable
+enzyme, growth dilution is a dominant clearance term -- the strongest single
+illustration of why the chapter carries `mu` in every intracellular balance. The
+prose must state that `mu` is identical for both and that only the intrinsic
+turnover differs; do not imply a species-dependent `mu`.
 
 `Vmax0 = kcat0 * e0` is the reference capacity; it is fixed at `10` in the
 arbitrary units of the metabolic chain (the sequence numbers calibrate the scale,
