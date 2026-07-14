@@ -1,0 +1,89 @@
+%% linearprogram.tex
+\section{The Linear Program and Its Geometry}\label{sec:lp}
+
+The honest constraint of Equation~\eqref{eq:honest-constraint},
+together with its steady-state special case
+Equation~\eqref{eq:sv0}, is a statement of conservation and
+nothing more: it does not by itself pick out any particular flux
+distribution among all those consistent with it. Turning conservation
+into a prediction requires two further ingredients. The first is a box of
+flux bounds, $\boldsymbol\ell\le\hat{\mathbf v}\le\mathbf u$, one lower and
+one upper bound per reaction, encoding thermodynamic reversibility
+($\ell_j<0$ permitted), enzyme capacity, and substrate availability; how
+those bounds are set is taken up next. The
+second is an objective, a linear functional $\mathbf c^\top\hat{\mathbf
+v}$ of the flux vector that states what the cell, or the modeler, is
+presumed to optimize. With both in hand the mole-balance constraint
+becomes a linear program:
+\begin{equation}\label{eq:fba-lp}
+\begin{aligned}
+  \max_{\hat{\mathbf v}\,\in\,\mathbb R^n}\quad & \mathbf c^\top\hat{\mathbf v}\\
+  \text{subject to}\quad & \mathbf S\hat{\mathbf v} = \mathbf 0\ \ (\text{or }\mu\mathbf x),\\
+  & \boldsymbol\ell \le \hat{\mathbf v} \le \mathbf u.
+\end{aligned}
+\end{equation}
+Equation~\eqref{eq:fba-lp} is flux balance analysis in its complete,
+textbook form \cite{Orth2010}. The objective vector $\mathbf c$ is a
+choice, not a derived quantity: setting $c_j=1$ at the index of a biomass
+pseudo-reaction, one that drains precursors in the ratios required to
+build new cell mass, casts the LP as growth-rate maximization, the
+default assumption for a cell under selection pressure to divide. Setting
+$c_j=1$ instead at the index of a product-export exchange reaction casts
+the same LP as yield maximization for a chosen metabolite, the framing
+relevant to a bioprocess engineer optimizing a production strain rather
+than modeling wild-type physiology. Nothing in Equation~\eqref{eq:fba-lp}
+distinguishes these cases mechanistically; the constraint set is
+identical, and only $\mathbf c$ changes.
+
+The linear-programming machinery is necessary, rather than a matter of
+convenience, because the constraint set alone is almost always
+underdetermined. A genome-scale reconstruction lists every reaction
+annotated to a genome, and the reaction count $n$ exceeds the metabolite
+count $m$ by a wide margin, often an order of magnitude or more, because
+a single metabolite typically participates in several reactions while a
+single reaction typically touches only a handful of metabolites. The
+stoichiometric matrix $\mathbf S\in\mathbb R^{m\times n}$ therefore has
+many more columns than rows, and its null space $\mathcal N(\mathbf S) =
+\{\hat{\mathbf v}\in\mathbb R^n : \mathbf S\hat{\mathbf v}=\mathbf 0\}$ is
+nontrivial: a whole subspace, not a point, satisfies the steady-state
+constraint. Every flux vector in $\mathcal N(\mathbf S)$ conserves mass at
+every internal node exactly as well as every other; conservation alone
+cannot distinguish among them. The flux bounds cut this unbounded
+subspace down to a bounded polytope, and the objective in
+Equation~\eqref{eq:fba-lp} selects a single vertex, or a face, of that
+polytope, but the underlying indeterminacy, that most of the space
+allowed by stoichiometry is not resolved by stoichiometry, does not go
+away merely because an optimum has been found.
+
+The singular value decomposition makes the geometry of that
+indeterminacy explicit. Writing $\mathbf S = \mathbf U\boldsymbol\Sigma
+\mathbf V^\top$, with $\mathbf U\in\mathbb R^{m\times m}$ and $\mathbf
+V\in\mathbb R^{n\times n}$ orthogonal and $\boldsymbol\Sigma\in\mathbb
+R^{m\times n}$ diagonal with nonnegative entries, the columns of $\mathbf
+V$ associated with zero singular values span $\mathcal N(\mathbf S)$, the
+right null space: every feasible steady-state flux mode is a linear
+combination of these columns, and reading Equation~\eqref{eq:fba-lp}
+through this lens, the LP is a search over coefficients of that
+combination rather than over the raw flux vector. The columns of $\mathbf
+U$ associated with zero singular values span the left null space of
+$\mathbf S$, equivalently the null space of $\mathbf S^\top$; a vector
+$\mathbf y$ in this space defines a conserved moiety, a linear combination
+$\mathbf y^\top\mathbf x$ of metabolite concentrations, such as a bound
+cofactor pair sharing a fixed pool total, that is invariant under the
+reaction network regardless of which flux vector in $\mathcal N(\mathbf
+S)$ is realized. For a genome-scale reconstruction the rank of $\mathbf S$
+is smaller than the reaction count, $\mathrm{rank}(\mathbf S)\ll n$,
+so the right null space, and with it the space of flux distributions the
+constraints alone cannot distinguish, is large \cite{Bordbar2014}.
+That indeterminacy can be read reaction by reaction. Because an LP
+optimum need not be unique, and because many reactions can
+vary freely without changing the objective value at all, flux variability
+analysis reports a range rather than a point for each flux: with the
+objective fixed at its optimal value $Z^\star$ (or at a specified
+fraction of it), each $v_j$ is in turn minimized and maximized subject to
+Equation~\eqref{eq:fba-lp}'s constraints \cite{Heirendt2019}. A reaction
+whose minimum and maximum coincide is pinned by the network topology and
+bounds regardless of objective choice, while a reaction with a wide range
+is left essentially free, and the pattern of which fluxes fall into which
+category is exactly the information that a single optimal flux vector,
+taken alone, cannot report.

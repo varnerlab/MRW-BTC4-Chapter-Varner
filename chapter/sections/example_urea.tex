@@ -1,0 +1,255 @@
+%% example_urea.tex
+\section{Worked Example: Urea-Cycle Metabolism}\label{sec:urea}
+
+The general bound of Equation~\eqref{eq:general-bound} carries four
+gateways, and a genome-scale reconstruction may in principle open all
+four at once. The urea cycle in HL-60 cells is small enough to make the
+opposite case concretely: two gateways, thermodynamic and kinetic,
+filled entirely from public databases, already pin down a sharp
+prediction without a single measurement taken on the cells themselves.
+The network retains the same steady-state constraint
+$\mathbf S\hat{\mathbf v}=\mathbf 0$, Equation~\eqref{eq:sv0}, and the
+same linear program, Equation~\eqref{eq:fba-lp}, established earlier.
+What changes from one
+application to the next is only the content poured into $\mathbf S$,
+$\boldsymbol\ell$, $\mathbf u$, and $\mathbf c$.
+
+The reconstruction couples the four canonical urea-cycle enzymes to a
+fifth, competing branch and to the extracellular environment (left
+panel, Fig.~\ref{fig:urea}). Argininosuccinate synthetase ($v_1$, EC 6.3.4.5) condenses citrulline
+with aspartate and ATP to argininosuccinate, releasing AMP and
+diphosphate; argininosuccinate lyase ($v_2$, EC 4.3.2.1) cleaves that
+intermediate to arginine and fumarate; arginase I ($v_3$, EC 3.5.3.1)
+hydrolyzes arginine to ornithine and urea; and ornithine
+transcarbamylase ($v_4$, EC 2.1.3.3) recombines ornithine with
+carbamoyl phosphate to regenerate citrulline, closing the cycle. A
+fifth reaction, nitric oxide synthase ($v_5$, EC 1.14.13.39), draws on
+the same arginine pool consumed by $v_3$ and oxidizes it with NADPH
+and oxygen to nitric oxide and citrulline, diverting flux away from
+urea production toward signaling chemistry. These five enzymatic
+reactions act on eighteen metabolites. Fourteen of the eighteen,
+carbamoyl phosphate, aspartate, ATP, water, oxygen, NADPH, and protons
+on the uptake side, urea, fumarate, AMP, diphosphate, orthophosphate,
+NADP$^{+}$, and nitric oxide on the secretion side, cross the system
+boundary through fourteen exchange reactions, $b_1$ through $b_{14}$,
+written in the standard secretion-positive convention
+$M_i\to\emptyset$, a positive flux denoting secretion and a negative
+flux uptake. The remaining four,
+arginine, citrulline, ornithine, and argininosuccinate, are pure cycle
+intermediates with no exchange reaction of their own: each is produced
+and consumed entirely inside the network. Collecting five enzymatic
+and fourteen exchange fluxes against eighteen metabolite balances gives
+$\mathbf S\in\mathbb R^{18\times19}$, $m=18$ intracellular balances and
+$n=19$ reactions.
+
+The thermodynamic gateway of Equation~\eqref{eq:thermo-gate} was
+opened first. Standard Gibbs free energies of reaction for all five enzymatic
+steps were evaluated by eQuilibrator \cite{Beber2022}:
+$\Delta G^{\circ}_{v_1}=-4.3$, $\Delta G^{\circ}_{v_2}=-5.5$,
+$\Delta G^{\circ}_{v_3}=-51.0$, $\Delta G^{\circ}_{v_4}=-30.3$, and
+$\Delta G^{\circ}_{v_5}=-1220$ kJ/mol. The threshold
+$\Delta G^{*}_j$ of Equation~\eqref{eq:thermo-gate} was fixed here at
+$-10$ kJ/mol: a reaction whose standard free energy falls below that
+cutoff is declared irreversible and its reverse flux forbidden
+($\delta_j=0$), while a reaction whose free energy sits above it is
+left reversible ($\delta_j=1$). Only $v_1$ and $v_2$ cleared the
+threshold and remained reversible; $v_3$, $v_4$, and $v_5$ fell
+below it, $v_5$ the furthest at $-1220$ kJ/mol, and were pinned
+irreversible. Every exchange reaction was left unconstrained by this
+test and kept a wide default bound in both directions, since the
+direction of nutrient uptake or product secretion is a matter of
+medium composition rather than of standard free energy. The kinetic
+gateway of Equation~\eqref{eq:vmax} was opened next.
+Turnover numbers for the five enzymes were taken from BRENDA
+\cite{Chang2021} and combined with a common reference enzyme abundance
+$e^{\circ}=0.01$ mmol/gDW, a characteristic order of magnitude for
+intracellular enzyme concentration drawn from compilations such as
+BioNumbers \cite{Milo2010}. Argininosuccinate synthetase and nitric
+oxide synthase share $k^{\circ}_{\mathrm{cat}}=10.0$ s$^{-1}$, giving, after
+converting the per-second turnover number to the per-hour basis the rest of the
+chapter uses,
+$V^{\circ}_{\max,v_1}=V^{\circ}_{\max,v_5}=360$ mmol\,gDW$^{-1}$\,h$^{-1}$;
+arginase I has $k^{\circ}_{\mathrm{cat}}=190.0$ s$^{-1}$, giving
+$V^{\circ}_{\max,v_3}=6840$ mmol\,gDW$^{-1}$\,h$^{-1}$; and ornithine
+transcarbamylase has $k^{\circ}_{\mathrm{cat}}=410.0$ s$^{-1}$, giving
+$V^{\circ}_{\max,v_4}=14760$ mmol\,gDW$^{-1}$\,h$^{-1}$. Argininosuccinate
+lyase is the outlier: $k^{\circ}_{\mathrm{cat},v_2}=3.28$ s$^{-1}$, an
+order of magnitude below the other four turnover numbers, gives
+$V^{\circ}_{\max,v_2}=118.08$ mmol\,gDW$^{-1}$\,h$^{-1}$, the smallest
+of the five capacities by more than threefold. Every exchange reaction
+was again left with a wide capacity bound, since a boundary reaction
+represents bulk transport rather than a single characterized enzyme.
+
+With the thermodynamic and kinetic gateways open and the other two
+left shut, the general bound of Equation~\eqref{eq:general-bound}
+collapses to the two-parameter box of Equation~\eqref{eq:simplified-bound}
+for every enzymatic reaction: no substrate-concentration data enters
+the model, so the saturation factor is held at its information-free
+default $f_j=1$; enzyme abundance is fixed at the reference value
+itself, so $(e/e^{\circ})=1$; and no regulatory information is
+imposed, so $\theta_j=1$. The bound used in the linear program is
+therefore $-\delta_j V^{\circ}_{\max,j}\le\hat v_j\le V^{\circ}_{\max,j}$
+for $v_1$ through $v_5$, with $\delta_j$ and $V^{\circ}_{\max,j}$ as
+assigned above, and $-1000\le\hat v_j\le1000$ mmol\,gDW$^{-1}$\,h$^{-1}$
+for the fourteen exchange reactions, wide enough to be effectively
+unconstrained. With the feasible box fixed, the one remaining
+ingredient is the objective, here the maximization of urea export.
+Exchange reaction $b_4$
+represents urea crossing the system boundary and, following the
+same secretion-positive convention, is written
+$\text{urea}\to\emptyset$, so that positive $\hat v_{b_4}$ denotes
+secretion and negative $\hat v_{b_4}$ denotes uptake. Maximizing urea
+export is therefore maximizing $\hat v_{b_4}$ directly, so the objective
+coefficient is set to $c_{b_4}=1$ and every other entry of $\mathbf c$
+to zero: maximizing $\mathbf c^{\top}\hat{\mathbf v}=\hat v_{b_4}$
+drives urea secretion as high as the constraints allow.
+Solving Equation~\eqref{eq:fba-lp} by linear programming
+\cite{Orth2010} with these bounds and this objective gave a single,
+sharply determined answer. The entire enzymatic backbone, $v_1$
+through $v_4$, saturated at $118.08$ mmol\,gDW$^{-1}$\,h$^{-1}$, the
+capacity imposed by argininosuccinate lyase, and the nitric oxide
+synthase branch $v_5$ carried zero flux: with arginine supply capped
+by the same $v_2$ bottleneck that limits the rest of the cycle, none
+of it was left over to spend on the competing NOS reaction once urea
+export is the sole objective. The optimal urea export was
+$118.08$ mmol\,gDW$^{-1}$\,h$^{-1}$, attained at
+$\hat v_{b_4}=118.08$, and every exchange flux carrying carbon or
+nitrogen into or out of the cycle, carbamoyl phosphate and aspartate
+on the uptake side, urea and fumarate on the secretion side, scaled to
+match it, giving the full optimal flux distribution
+(right panel, Fig.~\ref{fig:urea}).
+
+The single answer above treats every bound as exact, but each was assembled
+from database estimates that carry their own uncertainty, and propagating that
+uncertainty turns the point prediction into a distribution. Assigning each
+turnover number and the reference abundance a lognormal factor of roughly two,
+each standard free energy a normal spread of a few kilojoules per mole, and
+four of the five saturation factors (the fifth, $f_2$ at argininosuccinate
+lyase, held fixed at one for lack of a measured substrate) a substrate
+concentration and Michaelis constant drawn from the compilation of Park and
+coworkers \cite{Park2016}, and re-solving the linear program over ten thousand
+parameter draws by the parametric bootstrap of Algorithm~\ref{alg:uq}, spreads
+urea export over a right-skewed band with median $105$ and mean $156$
+mmol\,gDW$^{-1}$\,h$^{-1}$ and a central ninety-five percent interval of
+$17$ to $614$. A capacity-only bootstrap, holding every saturation factor
+at one and letting only the turnover numbers, the reference abundance, and the
+standard free energies vary, gives a median urea export of $113$
+mmol\,gDW$^{-1}$\,h$^{-1}$, and restoring the four measured saturation factors
+leaves the median at $105$, demonstrating their inertness. The width traces
+almost entirely to the capacity of argininosuccinate lyase: the reversibility
+switches never bind, because the cycle runs forward at the optimum, and the
+four saturation factors that Park and coworkers do constrain, for
+argininosuccinate synthetase, arginase, ornithine transcarbamylase, and nitric
+oxide synthase, each leave their reaction with capacity to spare above the $v_2$
+bottleneck, so the sampled bound on $v_2$ alone carries the uncertainty and the
+nitric oxide synthase branch stays silent across the ensemble.
+
+That the saturation gateway barely moves the prediction is itself the result.
+Opening $f_j$ with every substrate concentration the database supplies leaves
+the urea forecast where the capacity scale put it, because the one reaction that
+sets the answer, argininosuccinate lyase, has no measured substrate:
+argininosuccinate is a committed cycle intermediate absent from the
+central-metabolism compilation, so its saturation factor stays at the
+information-free default while the four measured factors prove inert. Imputing
+that missing factor from a physiological argininosuccinate concentration and a
+BRENDA Michaelis constant, and sampling it alongside the rest, drags the urea
+median down to $51$ mmol\,gDW$^{-1}$\,h$^{-1}$ and widens the band toward
+zero (Fig.~\ref{fig:urea_uq}), the shift and the spread both governed by the
+single quantity the model never measured. A sharper prediction here would come
+not from more data in general but from data on the reaction that binds.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}[c]{0.52\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{urea_network.pdf}
+  \end{minipage}\hfill
+  \begin{minipage}[c]{0.46\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{urea_fba.pdf}
+  \end{minipage}
+  \caption{The urea-cycle worked example. Left: the reaction network,
+    with the four cyclic enzymes $v_1$ through $v_4$ and the competing
+    nitric oxide synthase branch $v_5$ labeled by EC number, and the
+    boundary exchanges (carbamoyl phosphate $b_1$ and aspartate $b_2$
+    entering, fumarate $b_3$ and urea $b_4$ leaving) crossing the
+    dashed system boundary; arginine, citrulline, ornithine, and
+    argininosuccinate remain internal to the cycle. Right: the optimal
+    flux distribution for the linear program of
+    Equation~\eqref{eq:fba-lp}, with bounds set by the thermodynamic
+    and kinetic gateways and the objective $c_{b_4}=1$ maximizing urea
+    export; bar heights give the flux $\hat v_j$
+    (mmol\,gDW$^{-1}$\,h$^{-1}$) at the optimum. Because the cycle is linear,
+    every nonzero flux equals the single throughput up to sign, so the
+    parametric-bootstrap uncertainty of Algorithm~\ref{alg:uq} is one quantity
+    common to them all; it is drawn as the $2.5$--$97.5$ percentile whisker on
+    the urea-export flux $b_4$, the reported objective, rather than repeated
+    identically on every bar. The enzymatic backbone
+    $v_1$ through $v_4$ saturates at $118.08$, the capacity of
+    argininosuccinate lyase ($v_2$), while the nitric oxide synthase
+    branch $v_5$ carries zero flux. Exchange fluxes $b_1$ through
+    $b_{14}$ follow the secretion-positive convention, so positive bars
+    denote net secretion and negative bars net uptake; $b_4$ (urea)
+    shows the maximized export flux of $118.08$ mmol\,gDW$^{-1}$\,h$^{-1}$.}
+  \label{fig:urea}
+\end{figure}
+
+\begin{algorithm}[htbp]
+  \caption{Parametric bootstrap for urea-cycle flux uncertainty}
+  \label{alg:uq}
+  \begin{algorithmic}[1]
+    \Require nominal $k^{\circ}_{\mathrm{cat}}$, $e^{\circ}$, $\Delta G^{\circ}$;
+      saturation inputs $[S_j], K_{M,j}$; spreads $\sigma_{\ln}, \sigma_{\Delta G}$;
+      threshold $\Delta G^{*}$; draws $N$; seed
+    \State seed the random generator
+    \For{$i = 1$ to $N$}
+      \State $e \gets e^{\circ}\exp(\sigma_{\ln} Z)$
+        \Comment{one shared abundance draw, $Z\sim\mathcal N(0,1)$}
+      \For{each enzymatic reaction $j$}
+        \State $k_{\mathrm{cat},j} \gets k^{\circ}_{\mathrm{cat},j}\exp(\sigma_{\ln} Z)$,
+          \quad $\Delta G_j \gets \Delta G^{\circ}_j + \sigma_{\Delta G} Z$
+        \State $\delta_j \gets \mathbb{1}[\Delta G_j > \Delta G^{*}]$
+        \State $f_j \gets [S_j]/(K_{M,j}+[S_j])$ with $[S_j], K_{M,j}$ sampled,
+          or $f_j \gets 1$ if no substrate data
+        \State $V_{\max,j} \gets k_{\mathrm{cat},j}\,e$;
+          \quad $u_j \gets V_{\max,j} f_j$,
+          \quad $\ell_j \gets -\delta_j V_{\max,j} f_j$
+      \EndFor
+      \State $\hat{\mathbf v}^{(i)} \gets
+        \arg\max\{\mathbf c^{\top}\mathbf v : \mathbf S\mathbf v = \mathbf 0,\
+        \boldsymbol\ell \le \mathbf v \le \mathbf u\}$
+    \EndFor
+    \State \Return per-reaction mean, standard deviation, and $2.5/50/97.5$
+      percentiles of $\{\hat{\mathbf v}^{(i)}\}_{i=1}^{N}$
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\linewidth]{urea_saturation.pdf}
+  \caption{Saturation-gateway sensitivity for urea export. Configuration A
+    (blue) samples the four saturation factors that Park and coworkers
+    \cite{Park2016} constrain and holds $f_2 = 1$ at the argininosuccinate
+    lyase bottleneck, whose substrate is unmeasured, giving a median urea
+    export of $105$ mmol\,gDW$^{-1}$\,h$^{-1}$. Configuration B (red)
+    imputes $f_2$ from a physiological argininosuccinate concentration and a
+    BRENDA Michaelis constant and samples it as well, pulling the median down
+    to $51$ mmol\,gDW$^{-1}$\,h$^{-1}$ and widening the band toward zero.
+    The horizontal axis is logarithmic.}
+  \label{fig:urea_uq}
+\end{figure}
+
+This result was reached without a single concentration, expression
+level, or regulatory parameter measured in HL-60 cells: every bound
+came from a public database, eQuilibrator for the sign of $\delta_j$
+and BRENDA for the scale of $V^{\circ}_{\max,j}$, read against a
+textbook reference enzyme abundance. Two of the four gateways in
+Equation~\eqref{eq:general-bound} were opened, and two were left at
+their default of unity, and the flux distribution of
+Figure~\ref{fig:urea} is the direct consequence: a single hard
+bottleneck at $v_2$ and a silent competing branch at $v_5$, both
+explainable entirely from the reversibility and capacity assigned
+above. Reopening the regulatory gateway $\theta_j$, so that a
+reaction's capacity depends on the cell's own control state rather
+than sitting fixed at its database-derived ceiling, is the subject of
+the feedback-inhibition example that follows.

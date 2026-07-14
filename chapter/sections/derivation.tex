@@ -1,0 +1,122 @@
+%% derivation.tex
+\section{From Mole Balances to the Flux Constraint}\label{sec:derivation}
+
+Flux balance analysis (FBA) rests on an algebraic constraint rather than a
+differential equation, and that constraint is a mole balance in disguise.
+Writing the balance out, instead of asserting metabolic steady state by
+fiat, makes explicit what is assumed away when the constraint is reduced to
+its familiar textbook form, and which operating conditions the reduction
+cannot cover. Consider a well-mixed bioreactor of volume $V$ holding a growing cell
+culture. The culture exchanges mass with its surroundings through a set of
+physical streams $s$ (feed, harvest, gas sparging) and hosts an
+intracellular reaction network with $n$ fluxes $\hat v_j$, $j=1,\dots,n$,
+acting on $m$ metabolite species. For a species $i$ present at
+concentration $C_i$, an open mole balance over the whole culture accounts
+for material entering and leaving through the streams together with
+material produced or consumed by the reaction network:
+\begin{equation}\label{eq:mole-balance}
+  \sum_{s} d_s\, C_{i,s}\,\dot V_s \;+\; \sum_j \sigma_{ij}\hat v_j\, V
+  \;=\; \frac{d}{dt}\bigl(C_i V\bigr),
+\end{equation}
+where $d_s=+1$ for streams entering the reactor and $d_s=-1$ for streams
+leaving it, $C_{i,s}$ is the concentration of species $i$ in stream $s$,
+$\dot V_s$ is the volumetric flow rate of that stream, and $\sigma_{ij}$ is
+the stoichiometric coefficient of species $i$ in reaction $j$, the $(i,j)$
+entry of the stoichiometric matrix $\mathbf S\in\mathbb R^{m\times n}$.
+Equation~\eqref{eq:mole-balance} is exact: it presumes nothing about
+growth rate, feeding strategy, or steady state, and it is the starting
+point for the reduction carried out below.
+
+Two steps turn Equation~\eqref{eq:mole-balance} into a statement about
+fluxes alone. First, write the reactor volume in specific units,
+$V=B\bar V$, with $B$ the total biomass in the reactor and $\bar V$ the
+culture volume per unit biomass; this ties the extensive balance to the
+biomass that is actually growing, and the specific growth rate follows
+as $\mu\equiv(1/B)\,dB/dt$. Second, expand the accumulation term by the
+product rule,
+\begin{equation}\label{eq:product-rule}
+  \frac{d}{dt}\bigl(C_iV\bigr)=\frac{d}{dt}\bigl(C_iB\bar V\bigr)
+  = B\bar V\,\frac{dC_i}{dt}
+  + C_i\bar V\,\frac{dB}{dt}
+  + C_iB\,\frac{d\bar V}{dt}.
+\end{equation}
+Dividing Equation~\eqref{eq:mole-balance} through by $V=B\bar V$ and
+substituting Equation~\eqref{eq:product-rule} isolates the intensive
+balance for species $i$,
+\begin{equation}\label{eq:intensive-balance}
+  \frac{1}{B\bar V}\sum_{s} d_s\, C_{i,s}\,\dot V_s
+  \;+\; \sum_j \sigma_{ij}\hat v_j
+  \;=\; \frac{dC_i}{dt} \;+\; \mu\,C_i
+  \;+\; \frac{C_i}{\bar V}\,\frac{d\bar V}{dt},
+\end{equation}
+where the middle term on the right, $\mu C_i$ with
+$\mu=(1/B)\,dB/dt$, is the growth-dilution term produced by the product
+rule. Three assumptions each remove one of the remaining terms. If the
+intracellular pool of species $i$ is at pseudo-steady state
+($dC_i/dt=0$, the usual separation-of-timescales argument, since
+metabolite turnover on the order of seconds to minutes is fast relative
+to a doubling time of hours), if the specific culture volume is constant
+($d\bar V/dt=0$, so the working volume tracks the growing biomass rather
+than drifting relative to it), and if species $i$ crosses no physical
+stream (the sum over $s$ vanishes for this species), Equation
+\eqref{eq:intensive-balance} collapses to
+\begin{equation}\label{eq:honest-constraint}
+  C_i\,\mu \;=\; \sum_j \sigma_{ij}\hat v_j
+  \qquad\Longleftrightarrow\qquad
+  \boxed{\mathbf S\hat{\mathbf v} \;=\; \mu\mathbf x},
+\end{equation}
+where $\mathbf x=(C_1,\dots,C_m)^\top$ collects the intracellular
+concentrations and $\hat{\mathbf v}\in\mathbb R^n$ collects the fluxes.
+Equation~\eqref{eq:honest-constraint} is the honest flux constraint: net
+metabolic production of every intracellular species is balanced not
+against zero, but against the rate at which that species is diluted by
+its own growing culture.
+
+The form used throughout the constraint-based modeling literature is
+obtained by discarding the right-hand side of
+Equation~\eqref{eq:honest-constraint} outright:
+\begin{equation}\label{eq:sv0}
+  \mathbf S\hat{\mathbf v} \;=\; \mathbf 0.
+\end{equation}
+Equation~\eqref{eq:sv0} is a labeled special case of
+Equation~\eqref{eq:honest-constraint}, not an independent starting point
+\cite{Orth2010}. It is a good approximation exactly when the two
+conditions that justify dropping $\mu\mathbf x$ hold together: growth is
+slow relative to metabolic turnover, and intracellular pools are dilute
+enough that $\mu\mathbf x$ stays small in absolute terms even when $\mu$
+itself is not negligible. Both conditions can fail in operating regimes
+of real interest. In fed-batch culture the feed is metered to increase
+the working volume over the course of a run, so the specific volume
+drifts ($d\bar V/dt\neq0$); the assumption used to reach
+Equation~\eqref{eq:honest-constraint} no longer holds, and the discarded
+term carries information about the feed schedule that
+Equation~\eqref{eq:sv0} cannot see. In cell-free systems there is no
+growing cell to dilute into ($\mu=0$), yet the reaction mixture is
+manifestly not at steady state: transcript, protein, and metabolite pools
+accumulate and decay over the course of a batch reaction ($d\mathbf
+x/dt\neq0$), so the pseudo-steady-state assumption fails from the other
+direction. Neither shortfall is a corner case; a cell-free capstone
+example later in this chapter returns to exactly this setting, where the
+term Equation~\eqref{eq:sv0} discards is not a formal nuisance but a
+quantity under direct experimental measurement.
+
+Equation~\eqref{eq:honest-constraint} and its special case
+Equation~\eqref{eq:sv0} are, as written, statements about a closed
+system: every species that appears has its production and consumption
+accounted for entirely by the internal network $\mathbf S\hat{\mathbf v}$,
+with the physical stream terms of Equation~\eqref{eq:mole-balance}
+already discarded along the way. Real metabolism is open, since cells
+take up substrates and secrete products across the boundary of whatever
+system is being modeled. Constraint-based reconstructions restore that
+openness without reintroducing the stream terms explicitly: hypothetical
+exchange, or boundary, reactions are added to the network itself, one
+pseudo-reaction $\emptyset\rightleftharpoons M_i$ for each boundary
+metabolite $M_i$, entering $\mathbf S$ as an isolated nonzero column with
+no reaction partner \cite{Bordbar2014}. Flux through an exchange reaction
+enters Equation~\eqref{eq:honest-constraint} or
+Equation~\eqref{eq:sv0} exactly as any metabolic flux does, but it is now
+interpretable as uptake or secretion across the system boundary rather
+than as a step of intracellular chemistry. A closed algebraic statement
+can thereby represent a genuinely open system: openness becomes entirely
+a matter of which reactions are admitted into $\mathbf S$ and how their
+bounds are set, the question taken up next.
