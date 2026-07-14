@@ -29,4 +29,17 @@ m2 = urea_cycle_model(; kcat = kcat_test, e0 = e0_test)
 @assert isapprox(m2.ub[1], 7.0 * 0.02 * 3600.0; atol=1e-9) "Vmax not converted s^-1 -> h^-1: got $(m2.ub[1])"
 @assert !isapprox(m2.ub[1], 7.0 * 0.02; atol=1e-9) "Vmax still in per-second units"
 
+# ---- Task 2: input validation and explicit solve-failure handling ---------- #
+using Test
+
+@test_throws ArgumentError urea_cycle_model(; kcat = [1.0, 2.0])          # wrong length
+@test_throws ArgumentError urea_cycle_model(; dG = fill(NaN, 5))          # non-finite
+@test_throws ArgumentError urea_cycle_model(; f = [-0.1, 1.0, 1.0, 1.0, 1.0])  # negative saturation
+
+infeasible = urea_cycle_model(; kcat = zeros(5))  # zero capacity everywhere -> b4 forced to 0, still feasible;
+infeasible = (; infeasible..., lb = infeasible.lb .+ 1.0, ub = infeasible.ub)  # lb > ub -> infeasible
+@test_throws ErrorException solve_fba(infeasible)
+
+println("test_urea_cycle (Task 2): validation and solve-failure checks passed")
+
 println("test_urea_cycle: all checks passed")

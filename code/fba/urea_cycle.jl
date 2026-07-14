@@ -138,6 +138,18 @@ function urea_cycle_model(; kcat=KCAT0, e0=E0, dG=DG0, dG_threshold=-10.0, f=one
     S[:, 6:end] = -S[:, 6:end]
 
     # ------------------------------------------------------------------ #
+    # Input validation
+    # ------------------------------------------------------------------ #
+    length(kcat) == 5 || throw(ArgumentError("kcat must have length 5, got $(length(kcat))"))
+    length(dG)   == 5 || throw(ArgumentError("dG must have length 5, got $(length(dG))"))
+    length(f)    == 5 || throw(ArgumentError("f must have length 5, got $(length(f))"))
+    all(isfinite, kcat)   || throw(ArgumentError("kcat must be finite: $kcat"))
+    all(isfinite, dG)     || throw(ArgumentError("dG must be finite: $dG"))
+    all(isfinite, f)      || throw(ArgumentError("f must be finite: $f"))
+    isfinite(e0)          || throw(ArgumentError("e0 must be finite: $e0"))
+    all(f .>= 0)          || throw(ArgumentError("saturation factors f must be nonnegative: $f"))
+
+    # ------------------------------------------------------------------ #
     # Flux bounds, built from parameters (Eq. general-bound with e/e0 = theta = 1)
     #   delta_j = 1 if dG_j > threshold (reversible), else 0 (irreversible)
     #   Vmax_j  = kcat_j * e0 * 3600 ;  cap_j = Vmax_j * f_j
@@ -165,6 +177,7 @@ function urea_cycle_model(; kcat=KCAT0, e0=E0, dG=DG0, dG_threshold=-10.0, f=one
     @assert length(lb) == length(reactions)
     @assert length(ub) == length(reactions)
     @assert length(c)  == length(reactions)
+    all(lb .<= ub) || throw(ArgumentError("lower bounds must not exceed upper bounds: lb=$lb, ub=$ub"))
 
     return (
         S           = S,
@@ -197,4 +210,8 @@ end
 
 Solve `m` and return a DataFrame with columns `reaction, flux`.
 """
-solve_fba(m) = DataFrame(reaction = m.reactions, flux = solve_flux(m))
+function solve_fba(m)
+    v = solve_flux(m)
+    v === nothing && error("solve_fba: linear program did not solve to optimality (infeasible or unbounded)")
+    DataFrame(reaction = m.reactions, flux = v)
+end
