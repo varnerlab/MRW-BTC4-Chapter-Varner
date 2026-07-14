@@ -38,8 +38,8 @@ identical, and only $\mathbf c$ changes.
 The linear-programming machinery is necessary, rather than a matter of
 convenience, because the constraint set alone is almost always
 underdetermined. A genome-scale reconstruction lists every reaction
-annotated to a genome, and the reaction count $n$ exceeds the metabolite
-count $m$ by a wide margin, often an order of magnitude or more, because
+annotated to a genome, and the reaction count $n$ typically exceeds the
+metabolite count $m$, because
 a single metabolite typically participates in several reactions while a
 single reaction typically touches only a handful of metabolites. The
 stoichiometric matrix $\mathbf S\in\mathbb R^{m\times n}$ therefore has
@@ -83,7 +83,10 @@ objective fixed at its optimal value $Z^\star$ (or at a specified
 fraction of it), each $v_j$ is in turn minimized and maximized subject to
 Equation~\eqref{eq:fba-lp}'s constraints \cite{Heirendt2019}. A reaction
 whose minimum and maximum coincide is pinned by the network topology and
-bounds regardless of objective choice, while a reaction with a wide range
-is left essentially free, and the pattern of which fluxes fall into which
+bounds at the optimal objective value used for that calculation, while a
+reaction with a wide range
+is left essentially free; a different objective can produce a different
+feasible face and a different range for the same reaction, and the
+pattern of which fluxes fall into which
 category is exactly the information that a single optimal flux vector,
 taken alone, cannot report.
