@@ -1,155 +1,174 @@
 %% example_feedback.tex
 \section{Worked Example: A Feedback-Inhibited Linear Pathway}\label{sec:feedback}
 
-The urea-cycle example opened two of the four gateways in
-Equation~\eqref{eq:general-bound}, thermodynamic and kinetic, and left
-the regulatory factor $\theta_j$ at its information-free default of
-unity. This example opens that third gateway, and it does so on a
-pathway simple enough that the correct answer can be obtained two
-different ways and checked against itself: once from an explicit
-kinetic model integrated to steady state, and once from the linear
-program of Equation~\eqref{eq:fba-lp}, with the kinetic result standing
-in as the truth the flux-balance calculation must reproduce. The
-pathway is a linear chain,
+The urea-cycle example opened the thermodynamic and kinetic gateways of
+Equation~\eqref{eq:general-bound} and held both the expression ratio
+$(e/e^{\circ})$ and the regulatory factor $\theta_j$ at their
+information-free default of unity. A first pass at feedback exercises
+$\theta_j$ alone: the fast allosteric inhibition in which the
+accumulating end product binds the committed enzyme and throttles the
+catalytic activity of the molecules already present, the classical
+picture of end-product inhibition, with the expression ratio still
+sitting at unity. A committed biosynthetic step, though, is controlled
+by its own end product at two levels and on two timescales at once.
+Alongside the fast allosteric loop the same product represses
+transcription of the gene encoding the enzyme, a slow loop that lowers
+the number of enzyme molecules the cell builds rather than the activity
+of the molecules on hand, and this transcriptional loop is a canonical
+negative-feedback motif of gene-regulatory circuits, the operon
+repressed by its own pathway product exactly as the tryptophan operon is
+repressed by tryptophan. The two loops draw on different currencies, one
+on catalytic activity and one on enzyme abundance, and they relax on
+different timescales, so an honest capacity for the committed step has to
+carry both. The pathway kept for the comparison is the same abstract
+linear chain that isolates a single control point,
 \begin{equation}\label{eq:feedback-network}
   \emptyset \xrightarrow{\,r_0\,} X_1 \xrightarrow{\,r_1\,} X_2
   \xrightarrow{\,r_2\,} X_3 \xrightarrow{\,r_3\,} \emptyset,
 \end{equation}
-with $r_0$ the uptake step, $r_1$ and $r_2$ interconversions, and $r_3$
-the export step, and the end product $X_3$ inhibits the input reaction
-$r_0$: a high steady-state level of $X_3$ throttles its own supply.
-This is textbook end-product inhibition, and it is deliberately the
-simplest network that can carry it, a single control point acting on a
-single upstream step.
+with $r_0$ the committed uptake step, $r_1$ and $r_2$ interconversions,
+and $r_3$ the export step, and the end product $X_3$ now closing both
+loops onto $r_0$ at once: a high steady-state $X_3$ simultaneously
+inhibits the activity of the enzyme that catalyzes $r_0$ and represses
+transcription of its gene. Opening both gateways together on that single
+step is the whole of the construction.
 
-The truth was generated from a Biochemical Systems Theory (BST)
-S-system, the power-law formalism in which every reaction rate is
-written as a product of the participating species raised to real-valued
-kinetic orders, $v_j=\alpha_j\prod_i X_i^{\,g_{ij}}$
-\cite{Savageau1976,SavageauVoit1987}. Ordinary mass-action kinetics
-recovers integer orders; feedback inhibition is written just as
-naturally with a negative order, so that increasing the inhibiting
-species lowers rather than raises the rate. Here $r_0$ carries a
-negative kinetic order in $X_3$,
+The truth was generated from a Biochemical Systems Theory S-system, the
+power-law formalism in which every reaction rate is a product of the
+participating species raised to real-valued kinetic orders
+\cite{Savageau1976,SavageauVoit1987}, but now the committed enzyme is no
+longer a fixed parameter. Its transcript $m$ and the enzyme protein
+$E_0$ are dynamic species carried alongside the three metabolites $X_1$,
+$X_2$, and $X_3$, five state variables integrated together to a single
+self-consistent steady state with BSTModelKit.jl \cite{Vadhin2026}. The
+end product enters the kinetics twice. In the rate of the committed step
+it appears with a negative kinetic order $-a$, the allosteric activity
+loop, so that a higher $X_3$ lowers the throughput the enzyme molecules
+already present can sustain; in the rate of transcription of the
+enzyme's gene it appears with a second negative kinetic order $-b$, the
+expression loop, so that a higher $X_3$ lowers the rate at which new
+message, and with it new enzyme, is made. Each power law is the concrete
+operating-point instance of the partition-function control of
+Equations~\eqref{eq:partition} and~\eqref{eq:control-split}
+\cite{Adhikari2020}: the Boltzmann sum over regulatory microstates,
+evaluated near the working point of a single corepressing effector,
+collapses to a power of that effector, the same reduction made earlier
+for the control factor $\theta$. The two families of balance follow the
+convention established earlier, the three metabolite balances enforcing
+$\mathbf S\hat{\mathbf v}=\mathbf 0$ with no growth-dilution term while
+the growth rate $\mu$ lives in the transcript and protein balances of
+Equations~\eqref{eq:mrna} and~\eqref{eq:protein}, where an intracellular
+macromolecule is cleared both by its own turnover and by dilution into
+the growing culture. The committed-step rate carries both controls,
 \begin{equation}\label{eq:feedback-rate}
-  v_{r_0} = \alpha_{r_0}\,X_3^{-1/2}, \qquad \alpha_{r_0}=10,
+  v_{r_0} = V^{\circ}_{\max,r_0}\,(e/e^{\circ})\,\theta,
+  \qquad
+  \theta = X_3^{-a},\quad a = 0.4,\qquad
+  \text{transcription} \propto X_3^{-b},\quad b = 0.6.
 \end{equation}
-with $\alpha_{r_0}$ the uninhibited capacity of the uptake step and the
-exponent $-1/2$ the strength of the feedback, while $r_1$, $r_2$, and
-$r_3$ are ordinary first-order steps with rate constants $100$, $100$,
-and $1$ respectively, the first two set fast enough that they never
-limit throughput. The model was built and integrated to steady state
-with BSTModelKit.jl \cite{Vadhin2026}. Because the chain of
-Equation~\eqref{eq:feedback-network} is linear, every reaction shares a
-single steady-state flux, the throughput $T=v_{r_0}=v_{r_1}=v_{r_2}=v_{r_3}$,
-and because $r_3$ is first order with unit rate constant, $X_3=T$ at
-steady state. Substituting into Equation~\eqref{eq:feedback-rate} gives
-a self-consistency condition on $T$ alone,
-\begin{equation}\label{eq:feedback-throughput}
-  T = \alpha_{r_0}\,T^{-1/2}
-  \;\;\Longrightarrow\;\;
-  T = \alpha_{r_0}^{2/3} = 10^{2/3} \approx 4.64,
-\end{equation}
-the value confirmed by direct numerical integration of the S-system.
-Feedback has throttled the pathway to a throughput less than half of
-the uninhibited capacity $\alpha_{r_0}=10$, and it is precisely that
-gap, between what the input step could do unregulated and what it
-actually does once its own product pushes back, that the flux-balance
-side of this example must recover without ever being told the answer.
 
-The same regulatory fact admits two representations, and making that
-duality explicit is the point of this example. In the S-system it is
-the negative kinetic order in Equation~\eqref{eq:feedback-rate}: the
-exponent on $X_3$ in the rate law for $r_0$. In the flux-balance
-picture it is the control function $\theta_j$ of
-Equation~\eqref{eq:general-bound}, the same object introduced
-earlier through the partition-function accounting
-of Equations~\eqref{eq:partition} and~\eqref{eq:control-split}
-\cite{Adhikari2020}. There $\theta_j$ was built from a Boltzmann sum
-over regulatory microstates; here, for a single allosteric step acting
-on a single effector, that general machinery collapses to the concrete
-power law $\theta(X_3)=X_3^{-1/2}$, the same exponent that appears in
-Equation~\eqref{eq:feedback-rate}. The two formalisms are not
-independent descriptions that happen to agree. They are the same
-biology, end-product inhibition of the uptake step, written once as a
-kinetic order inside a dynamic rate law and once as a control factor
-multiplying a static capacity, and the worked comparison below shows
-that either route, when driven by the same measured $X_3$, lands on
-the same throughput.
+The expression ratio $(e/e^{\circ})$ was not read from a table but
+computed from the sequences the enzyme is made from. The transcription
+and translation capacities $r_{X}$ and $r_{L}$ follow from a
+$330$-residue enzyme and its $990$-nucleotide gene, the polymerase
+elongating at $60$ nucleotides per second and the ribosome at $16$ amino
+acids per second; together with an mRNA half-life of $2.5$ minutes, a
+protein half-life of $35$ minutes, and a $60$-minute culture doubling
+time, these fix the residence times of message and enzyme in the
+steady-state balances of Equations~\eqref{eq:mrna} and~\eqref{eq:protein},
+and hence the abundance ratio $(e/e^{\circ})$ through
+Equation~\eqref{eq:expression-ss}. The growth rate enters those balances
+in a way that repays stating precisely, because it is easy to misread.
+There is one $\mu$, the specific growth rate of the culture, and it is
+identical in both denominators, $\theta_{m}+\mu$ for the transcript and
+$\theta_{p}+\mu$ for the enzyme; what differs between the two is never
+$\mu$ but only each species' own first-order turnover $\theta$. The
+consequence is a clean signature. The transcript turns over fast, so
+that same $\mu$ is only about four percent of its total clearance
+$\theta_{m}+\mu\approx0.289~\mathrm{min}^{-1}$; the enzyme is stable, so
+the identical $\mu$ is more than a third, about thirty-seven percent, of
+its total clearance $\theta_{p}+\mu\approx0.032~\mathrm{min}^{-1}$.
+Growth dilution is therefore a dominant clearance term for the enzyme
+and a negligible one for its message, though the number diluting them is
+one and the same, and it is exactly this asymmetry that justifies
+carrying $\mu$ in every intracellular balance rather than folding it
+into a degradation constant.
 
-The flux-balance model retains the stoichiometry of
-Equation~\eqref{eq:feedback-network} in a matrix
-$\mathbf S\in\mathbb R^{3\times4}$, rows $X_1,X_2,X_3$ and columns
-$r_0,\dots,r_3$, and the same steady-state constraint
-$\mathbf S\hat{\mathbf v}=\mathbf 0$ established earlier and carried
-into the linear program. The three downstream steps $r_1$, $r_2$, and
-$r_3$ were left with a generous constant capacity, above the
-uptake ceiling, so that they never bind and the input reaction remains
-the sole determinant of throughput, exactly as it is in the S-system.
-All the regulatory content sits on the single bound that matters,
+Because the chain is linear, conservation forces every metabolic
+reaction to carry one common throughput $T$, and because the export step
+$r_3$ is first order in $X_3$, that throughput pins the end-product level
+at $X_3 = T/k_3$. Substituting the two controls back into the
+committed-step rate, the activity factor $\theta=X_3^{-a}$ and the
+expression ratio the transcriptional repression sets through
+Equation~\eqref{eq:expression-ss}, reduces the coupled five-state system
+to a single self-consistency condition in $X_3$ alone, and the value
+that condition selects is the value the full numerical integration
+confirms: $X_3^{\star}\approx4$, an activity factor
+$\theta^{\star}\approx0.574$, an expression ratio
+$(e/e^{\circ})^{\star}\approx0.464$, and a throughput
+$T^{\star}\approx2.66$, less than a third of the uninhibited capacity of
+the committed step (Fig.~\ref{fig:feedback}). The control scheme behind
+those numbers is the standard negative one: a repressor that $X_3$
+corepresses binds the operator of the enzyme's gene and throttles
+transcription downward as the end product accumulates, but only down to
+a basal leak floor, the residual expression $\lambda$ set by the basal
+occupancy $u^{\dagger}$ of Equations~\eqref{eq:mrna}
+and~\eqref{eq:control-split}, so that the gene is never silenced
+completely and a trickle of enzyme is always made. The two feedback
+strengths were chosen so that each gateway is individually load-bearing,
+$a=0.4$ on the activity loop and $b=0.6$ on the expression loop: neither
+factor alone accounts for the observed throttling, and a model that
+opened one and defaulted the other would miss the mark by a visible
+margin.
+
+The flux-balance model keeps the chain's stoichiometry unchanged and
+places the entire dual-control content on the single bound of the
+committed step,
 \begin{equation}\label{eq:feedback-bound}
-  0 \;\le\; \hat v_{r_0} \;\le\; V^{\circ}_{\max,r_0}\,\theta(X_3),
-  \qquad V^{\circ}_{\max,r_0}=10,
+  0 \;\le\; \hat v_{r_0} \;\le\;
+  V^{\circ}_{\max,r_0}\,(e/e^{\circ})\,\theta(X_3),
+  \qquad V^{\circ}_{\max,r_0} = 10,
 \end{equation}
-the regulatory instance of Equation~\eqref{eq:general-bound} with the
-thermodynamic, expression, and saturation gateways left at their
-defaults and only $\theta$ in play. The objective maximizes export,
-$\hat v_{r_3}$, so that the optimal throughput is read directly off the
-bound on the single reaction that constrains it.
-
-Two experiments were run against Equation~\eqref{eq:feedback-bound},
-differing in nothing but $\theta$. With the regulatory gateway closed,
-$\theta$ was forced to its information-free default of unity and the
-input bound sat at the full uninhibited capacity, $\hat
-v_{r_0}\le10$. Solving the linear program under that bound drove every
-flux in the chain to $10$, the naive optimum overshooting the true
-throughput of $4.64$ by more than a factor of two, because a
-feedback-blind model has no way to know that the cell itself would
-never let $X_3$ climb high enough to sustain that rate. With the
-regulatory gateway open, $\theta$ was instead evaluated at the measured
-steady-state end-product level, $\theta=X_3^{-1/2}\approx0.46$,
-computed from $X_3\approx4.64$ through the same control-function
-machinery that produced Equation~\eqref{eq:feedback-rate}, not copied
-from the throughput
-answer itself. The input bound tightens to $\hat
-v_{r_0}\le10\times0.464\approx4.64$, and the linear program, maximizing
-the same objective under the same stoichiometry and the same
-downstream capacities, now returned a throughput of $4.64$ across all
-four reactions, matching the BST truth to within numerical tolerance.
-Because the two runs differ in exactly one number, the value of
-$\theta$ multiplying the input capacity, and that single change is what
-separates a threefold overshoot from the correct answer, the
-regulatory gateway was shown to be load-bearing rather than decorative:
-turning it off provably changes the prediction, and turning it back on
-provably restores the truth. The per-reaction fluxes for all three
-cases, the BST truth, the gateway-closed overshoot, and the
-gateway-open recovery, appear alongside the uninhibited capacity line
-at $10$ (Fig.~\ref{fig:feedback}).
+the expression and regulatory instance of the general bound of
+Equation~\eqref{eq:general-bound}, with the thermodynamic switch and the
+saturation factor left at their defaults and the two remaining gateways,
+expression $(e/e^{\circ})$ and activity $\theta(X_3)$, both in play. Both
+factors were evaluated from the measured steady state, the enzyme
+abundance and the end-product level read off the integrated model, and
+not copied from the integrated flux the linear program is meant to
+reproduce. Four solves of the linear program of
+Equation~\eqref{eq:fba-lp} differ in nothing but this one bound. A
+feedback-blind solve, holding both factors at unity, overshoots to the
+uninhibited capacity of $10$, roughly $3.8$ times the true throughput;
+opening the expression gateway alone throttles the committed step to
+$4.64$; opening the activity gateway alone throttles it to $5.74$; and
+only opening both together lands on $2.66$, recovering the BST truth to
+numerical tolerance (Fig.~\ref{fig:feedback}). The escalation is the
+whole point. Nothing about either feedback loop appears anywhere in the
+stoichiometric matrix, which is identical whether $X_3$ closes a single
+loop, both loops, or none; the entire dual-control fact lives in the one
+bound on $r_0$, where the two gateways enter as independent
+multiplicative factors and each removes a distinct, quantifiable slice
+of the capacity. Read as a ledger, the uninhibited capacity of $10$ is
+marked down once by expression to $4.64$ and once by activity to $5.74$,
+and only the product of the two markdowns settles on the throughput the
+cell actually runs.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.85\textwidth]{feedback_gateway.pdf}
-  \caption{Per-reaction steady-state fluxes for the linear
-    feedback-inhibited pathway of Equation~\eqref{eq:feedback-network}.
-    Bars compare the BST S-system truth (throughput $T\approx4.64$),
-    the flux-balance solution with the regulatory gateway closed
-    ($\theta=1$, overshooting to the uninhibited capacity of $10$ on
-    every reaction), and the flux-balance solution with the gateway
-    open ($\theta=X_3^{-1/2}\approx0.46$ computed from the measured
-    end-product level, recovering the truth). The dashed line marks
-    the uninhibited capacity $V^{\circ}_{\max,r_0}=10$.}
+  \includegraphics[width=0.95\textwidth]{feedback_gateway.pdf}
+  \caption{The dual-control feedback worked example. Left: the wiring of
+    the linear chain of Equation~\eqref{eq:feedback-network}, in which
+    the end product $X_3$ closes two negative loops onto the committed
+    step $r_0$, repressing transcription of the enzyme's gene, the slow
+    expression loop acting through $(e/e^{\circ})$, and inhibiting the
+    activity of the enzyme $E_0$ already present, the fast allosteric
+    loop acting through $\theta$. Right: the capacity ledger for the
+    committed-step bound of Equation~\eqref{eq:feedback-bound}. The
+    uninhibited capacity $V^{\circ}_{\max,r_0}=10$ is reduced by the
+    expression gateway alone to $4.64$ and by the activity gateway alone
+    to $5.74$, and only the two gateways together land on the throughput
+    of the Biochemical Systems Theory truth, $T^{\star}\approx2.66$; the
+    dashed line marks the uninhibited capacity.}
   \label{fig:feedback}
 \end{figure}
-
-The mole-balance constraint alone leaves flux underdetermined, a
-subspace rather than a point, and it is the bound, not the
-stoichiometric matrix, that carries whatever biology narrows that
-subspace to a prediction. This example makes both statements concrete
-for regulation specifically. Nothing about end-product inhibition
-appears anywhere in $\mathbf S$: the stoichiometry of
-Equation~\eqref{eq:feedback-network} is the same whether or not $X_3$
-feeds back on $r_0$. The entire regulatory fact, encoded in the S-system
-as a negative kinetic order and in the flux-balance model as the
-control function $\theta$ on the input bound, is restored through
-Equation~\eqref{eq:feedback-bound} alone, and the two representations,
-checked against each other on this pathway, agree.
