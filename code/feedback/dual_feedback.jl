@@ -100,6 +100,11 @@ function feedback_truth()
     @assert model.G[trow("E0"), idx["r0"]]   == 1.0 "E0 order in r0 not default +1"
     @assert model.G[trow("m"),  idx["rTL"]]  == 1.0 "m order in rTL not default +1"
     @assert model.G[trow("E"),  idx["rTXb"]] == 1.0 "E order in rTXb not default +1"
+    @assert model.G[trow("m"),  idx["rMdeg"]] == 1.0 "m order in rMdeg not default +1"
+    @assert model.G[trow("E0"), idx["rEdeg"]] == 1.0 "E0 order in rEdeg not default +1"
+    @assert model.G[trow("X1"), idx["r1"]]    == 1.0 "X1 order in r1 not default +1"
+    @assert model.G[trow("X2"), idx["r2"]]    == 1.0 "X2 order in r2 not default +1"
+    @assert model.G[trow("X3"), idx["r3"]]    == 1.0 "X3 order in r3 not default +1"
 
     # Stiff system (metabolic alpha ~100 vs expression ~0.03): integrate long
     # enough for the slow protein mode (tau ~ 1/(theta_p+mu) ~ 31 min).
