@@ -60,6 +60,22 @@ let t = feedback_truth()
     println("test_dual_feedback (Task 3): naive=$N expr=$Ee act=$Aa both=$(v_both[j]) truth=$T")
 end
 
+# ---- Task 5: the recovery brackets the truth across surrogate shapes -------- #
+let t = feedback_truth()
+    gw = gateway_factors(t)
+    T  = truth_metabolic_fluxes(t)[findfirst(==("r3"), METAB_REACTIONS)]
+    sw = theta_shape_sweep(t, gw)
+    Tlo, Thi = extrema(sw.Tboth)
+    @assert Tlo < T < Thi "both-open sweep must bracket the truth: [$Tlo, $Thi] vs $T"
+    # only the dual-gateway configuration reaches the truth; neither single one does
+    @assert minimum(sw.Tact) > T "activity-only must stay above the truth for every shape: $(minimum(sw.Tact)) vs $T"
+    @assert sw.Texpr > T "expression-only must stay above the truth: $(sw.Texpr) vs $T"
+    # the chosen (5,2) point is an interior, non-privileged member of the bracket
+    T_chosen = gw.Vmax0 * gw.e_e0 * gw.θ
+    @assert Tlo <= T_chosen <= Thi "chosen (K,n)=(5,2) throughput must lie in the bracket: $T_chosen not in [$Tlo, $Thi]"
+    println("test_dual_feedback (Task 5): T_both in [$(round(Tlo,digits=3)), $(round(Thi,digits=3))] brackets truth $(round(T,digits=3)) ; single-gateway min act=$(round(minimum(sw.Tact),digits=3)) expr=$(round(sw.Texpr,digits=3))")
+end
+
 # ---- Task 4: feedback_fba input validation ---------------------------------- #
 let gw_bad = (Vmax0 = -1.0, θ = 0.5, e_e0 = 0.5)
     threw = false

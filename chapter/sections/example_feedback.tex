@@ -193,3 +193,55 @@ cell actually ran.
     at $2.83$; the dashed line marks the uninhibited capacity.}
   \label{fig:feedback}
 \end{figure}
+
+A single choice of surrogate shape, though, invites the wrong question. The
+activity gateway was handed the two-state Hill occupancy of
+Equation~\eqref{eq:feedback-theta-fba}, a functional form that bears no
+relation to the power law $X_3^{-a}$ the truth model actually runs, and its
+half-saturation $K=5$ and cooperativity $n=2$ were named rather than fit, so
+there is no reason a constraint-based model of different structure, carrying a
+fabricated control shape, should reproduce the integrated throughput to the
+digit. The honest question is not whether one shape lands on the truth but
+whether the reconstruction brackets it as the shape is varied across a
+plausible window. Sweeping the surrogate over $K\in[3,8]$ and $n\in[1,3]$,
+recomputing $\theta_{\mathrm{FBA}}$ at the measured $X_3$, and re-solving the
+committed-step program at each grid point with both gateways open and every
+other bound held, spread the recovered throughput from about $1.4$ to about
+$4.1$ and placed the Biochemical Systems Theory truth $T^{\star}\approx2.66$
+well inside that band (Fig.~\ref{fig:feedback_robust}). The pair $(K,n)=(5,2)$
+that the rest of the construction carries, which returned $2.83$, is one
+interior point of the bracket and not a privileged one, and a different guess
+at the shape would have landed elsewhere in the same band, still around the
+truth. What the band never did was close onto the truth from a single gateway.
+Across the entire window the activity gateway opened alone held the committed
+step above about $2.97$ and the expression gateway opened alone held it at
+$4.64$ irrespective of $K$ and $n$, so each single-gateway reconstruction sat
+above the true throughput for every shape while only the two gateways together
+reached down far enough to straddle it. The reassurance the sweep offers is
+therefore structural rather than numerical: the capacity ledger recovered the
+right throughput not because the guessed control shape happened to be correct,
+which it was not, but because opening both gateways placed the true value
+inside the range the reconstruction could reach at all, and opening either one
+alone did not.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.62\textwidth]{feedback_robustness.pdf}
+  \caption{Robustness of the dual-gateway recovery to the fabricated
+    activity-gateway shape. The committed-step throughput with both gateways
+    open, $\hat v_{r_0}=V^{\circ}_{\max,r_0}\,(e/e^{\circ})\,\theta_{\mathrm{FBA}}$,
+    is shown as the made-up Hill shape
+    $\theta_{\mathrm{FBA}}=K^{n}/(K^{n}+X_3^{n})$ of
+    Equation~\eqref{eq:feedback-theta-fba} is swept over its half-saturation
+    $K$ and cooperativity $n$, with the measured $X_3$, the expression ratio,
+    and every other bound held. The color scale diverges about the Biochemical
+    Systems Theory truth $T^{\star}\approx2.66$, red below and blue above, and
+    the black contour is the locus where the reconstruction equals the truth
+    exactly; the recovered throughput runs from about $1.4$ to about $4.1$, so
+    the truth lies inside the reachable band. The marked point is the shape the
+    rest of the construction carries, $(K,n)=(5,2)$, returning $2.83$. Neither
+    single gateway reaches the truth for any shape in the window: opened alone
+    the expression gateway holds the step at $4.64$ and the activity gateway
+    stays above about $2.97$, so only the two together bracket $T^{\star}$.}
+  \label{fig:feedback_robust}
+\end{figure}

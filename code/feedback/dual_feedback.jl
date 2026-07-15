@@ -182,3 +182,36 @@ function feedback_fba(gw; expression::Bool, activity::Bool)
     optimize!(m)
     return value.(v)
 end
+
+# =========================================================================== #
+# Structural-robustness sweep of the FABRICATED activity-gateway shape.
+#
+# theta_FBA is a made-up Hill occupancy K^n/(K^n+X3^n) with no relation to the
+# truth model's own X3^-a kinetics, and K, n were named rather than fit. So the
+# meaningful test is NOT whether one shape reproduces the integrated throughput
+# but whether the reconstruction brackets it as the shape is swept over a
+# plausible window. Re-solving the both-open program across a (K,n) grid, the
+# recovered throughput straddles the BST truth; and only the dual-gateway
+# configuration reaches down to it -- either gateway alone stays above the truth
+# for every shape in the window.
+# =========================================================================== #
+gateway_theta(X3, K, n) = K^n / (K^n + X3^n)   # bounded two-state Hill occupancy
+
+# Sweep theta_FBA's shape (K, n) with the measured X3, (e/e0), and every other
+# bound held. Returns the both-open throughput surface T_both[i,j] at (Ks[i],ns[j])
+# (oriented for Makie's heatmap(Ks, ns, T_both)), the activity-only surface Tact
+# over the same grid, and the shape-independent expression-only throughput Texpr.
+function theta_shape_sweep(truth, gw; Krange=3.0:0.25:8.0, nrange=1.0:0.1:3.0)
+    sidx = Dict(truth.species .=> eachindex(truth.species))
+    X3   = truth.Xss[sidx["X3"]]
+    r3   = findfirst(==("r3"), METAB_REACTIONS)
+    Ks, ns = collect(Krange), collect(nrange)
+    both(K, n) = feedback_fba(merge(gw, (θ = gateway_theta(X3, K, n),));
+                              expression=true, activity=true)[r3]
+    actonly(K, n) = feedback_fba(merge(gw, (θ = gateway_theta(X3, K, n),));
+                                 expression=false, activity=true)[r3]
+    Tboth = [both(K, n)    for K in Ks, n in ns]
+    Tact  = [actonly(K, n) for K in Ks, n in ns]
+    Texpr = feedback_fba(gw; expression=true, activity=false)[r3]   # shape-independent
+    return (Ks=Ks, ns=ns, X3=X3, Tboth=Tboth, Tact=Tact, Texpr=Texpr)
+end

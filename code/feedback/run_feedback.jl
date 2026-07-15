@@ -65,3 +65,36 @@ axislegend(axL; position=:rt, framevisible=false)
 
 save(figpath("feedback_gateway.pdf"), fig)
 println("run_feedback OK: wrote feedback_fba.csv and feedback_gateway.pdf")
+
+# ---- structural robustness: sweep the FABRICATED gateway shape (K,n) ------- #
+# The activity gateway's functional form is a modeling choice, unrelated to the
+# truth's kinetics. Sweeping it shows the recovery brackets the truth rather than
+# hitting it, and that only the dual-gateway model reaches the truth at all.
+sw = theta_shape_sweep(t, gw)
+CSV.write(datapath("feedback_sweep.csv"),
+          DataFrame(K = repeat(sw.Ks, outer=length(sw.ns)),
+                    n = repeat(sw.ns, inner=length(sw.Ks)),
+                    T_both = vec(sw.Tboth), T_act = vec(sw.Tact)))
+
+Tlo, Thi = extrema(sw.Tboth)
+println("shape sweep: T_both in [", round(Tlo,digits=2), ", ", round(Thi,digits=2),
+        "] ; brackets truth ", round(T,digits=2), " = ", Tlo < T < Thi)
+println("single-gateway reach across window: expr=", round(sw.Texpr,digits=2),
+        " (shape-free)  act in [", round(minimum(sw.Tact),digits=2), ", ",
+        round(maximum(sw.Tact),digits=2), "] ; both stay above truth = ",
+        minimum(sw.Tact) > T && sw.Texpr > T)
+
+# figure: both-open throughput over the (K,n) grid, color diverging about the
+# truth so blue/red on either side make the bracketing visible at a glance.
+fig2 = Figure(size=(560, 430))
+ax2  = Axis(fig2[1,1], xlabel="half-saturation K", ylabel="Hill coefficient n",
+            title="A fabricated gateway shape still brackets the truth")
+Δ  = maximum(abs.(sw.Tboth .- T))
+hm = heatmap!(ax2, sw.Ks, sw.ns, sw.Tboth; colormap=:RdBu, colorrange=(T-Δ, T+Δ))
+contour!(ax2, sw.Ks, sw.ns, sw.Tboth; levels=[T], color=:black, linewidth=2)
+scatter!(ax2, [K_THETA], [N_THETA]; color=:white, strokecolor=:black,
+         strokewidth=1.5, markersize=13)
+text!(ax2, K_THETA, N_THETA; text="  (K,n)=(5,2)", align=(:left,:center), fontsize=11)
+Colorbar(fig2[1,2], hm, label="throughput T (both gateways open)")
+save(figpath("feedback_robustness.pdf"), fig2)
+println("run_feedback OK (robustness): wrote feedback_sweep.csv and feedback_robustness.pdf")
