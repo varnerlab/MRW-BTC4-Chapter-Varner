@@ -1,46 +1,29 @@
 %% outlook.tex
 \section{Outlook}\label{sec:outlook}
 
-The worked examples of this chapter populated the gateways of
+The worked examples populated the gateways of
 Equation~\eqref{eq:general-bound} from tabulated sources: standard
 free energies from group-contribution estimates, turnover numbers
-from enzyme databases, a control function built by hand from a
-partition function over a handful of regulatory microstates. None of
-that is required by the construction itself. A turnover number, a
-saturation constant, or a control function $\theta_j$ is,
-mathematically, a parameter or a function fit to data, and where
-time-resolved measurement of the kind reviewed in the capstones is
-available, these quantities can be
-learned directly from the data they are meant to explain rather than
-looked up from a compilation assembled under different conditions,
-with the tabulated values retained as a prior where dynamic
-measurement is not.
-
-The same construction, opened here on networks small enough to check
-by hand, carries without modification to genome-scale reconstructions
-of thousands of reactions: Equation~\eqref{eq:general-bound} is
-applied reaction by reaction regardless of network size. What changes
-with scale is the weight the bounds are asked to carry.
-The null space of $\mathbf S$ grows with
-the excess of reactions over metabolites, so that at genome scale the
-stoichiometric constraint alone leaves an enormous subspace of flux
-vectors indistinguishable, and it is precisely there that a poorly
-constrained gateway, a bound left at its information-free default for
-want of data, does the most damage to a prediction. Closing gateways
-with data matters most exactly where the null-space argument bites
-hardest.
-
-The dynamic, data-rich regime realized in the cell-free capstone
-is the natural home for the
-growth-dilution and accumulation term retained in
+from enzyme databases, and a control function built from regulatory
+microstates. The construction does not require those sources. With
+time-resolved measurements, turnover numbers, saturation constants,
+and control functions $\theta_j$ can instead be learned from the data
+they are meant to explain, while tabulated values remain useful as
+priors when dynamic measurements are unavailable. This approach also
+extends reaction by reaction to genome-scale reconstructions, where
+the growing null space of $\mathbf S$ makes informative bounds most
+important: a gateway left at its information-free default admits a
+large subspace of indistinguishable flux vectors and can therefore
+weaken predictions precisely where stoichiometry constrains them
+least.
+The dynamic, data-rich regime of the cell-free capstone is also the natural
+home for the growth-dilution and accumulation term retained in
 Equation~\eqref{eq:honest-constraint} and dropped in
 Equation~\eqref{eq:sv0}. Cell-free reactions are one setting dense
 enough in time-resolved measurement to estimate fluxes without
 discarding that term, and the same opportunity extends wherever
-intracellular state can be tracked closely enough in time, in
-principle inside a growing culture as readily as in a reaction tube.
-The natural direction is therefore not a retreat to the steady-state
-reduction of Equation~\eqref{eq:sv0} once more data arrives, but the
-opposite: estimating flux directly against
+intracellular state can be tracked closely enough in time, including
+inside a growing culture. The natural direction is therefore to
+estimate flux directly against
 Equation~\eqref{eq:honest-constraint}, with $\mu\mathbf x$ carried
-rather than discarded, wherever the measurement to support it exists.
+rather than discarded, wherever measurements support it.
