@@ -81,20 +81,12 @@ reversibly and turns it over to product,
   \;\overset{k_{\mathrm{cat}}}{\longrightarrow}\; E + P,
 \end{equation}
 with $[ES]$ the enzyme-substrate complex. Holding the complex at
-quasi-steady state, on the argument that it equilibrates fast relative
-to the depletion of substrate,
-\begin{equation}\label{eq:mm-qssa}
-  \frac{d[ES]}{dt}
-  = k_1[E][S_j] - (k_{-1}+k_{\mathrm{cat}})[ES] = 0,
-\end{equation}
-and eliminating the free enzyme through the conservation of total
-enzyme $[E]_T=[E]+[ES]$, gives the complex in terms of the substrate
-alone,
-\begin{equation}\label{eq:mm-complex}
-  [ES] = \frac{[E]_T\,[S_j]}{K_{M,j}+[S_j]},
-  \qquad
-  K_{M,j}\equiv\frac{k_{-1}+k_{\mathrm{cat}}}{k_1}.
-\end{equation}
+quasi-steady state, on the standard argument that it equilibrates fast
+relative to the depletion of substrate, and eliminating the free enzyme
+through the conservation of total enzyme $[E]_T=[E]+[ES]$, gives the
+complex as a hyperbolic function of substrate alone,
+$[ES]=[E]_T\,[S_j]/(K_{M,j}+[S_j])$ with
+$K_{M,j}\equiv(k_{-1}+k_{\mathrm{cat}})/k_1$.
 The reaction velocity is the rate of the turnover step,
 $v_j=k_{\mathrm{cat}}[ES]$, so writing the capacity as
 $V_{\max,j}=k_{\mathrm{cat}}[E]_T$ recovers the Michaelis--Menten rate
