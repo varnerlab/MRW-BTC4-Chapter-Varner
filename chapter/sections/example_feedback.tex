@@ -1,12 +1,11 @@
 %% example_feedback.tex
 \section{Worked Example: A Feedback-Inhibited Linear Pathway}\label{sec:feedback}
 
-The urea-cycle example opened the thermodynamic and kinetic gateways of
+The urea-cycle example incorporated the thermodynamic and kinetic factors of
 Equation~\eqref{eq:general-bound} and held both the expression ratio
-$(e/e^{\circ})$ and the regulatory factor $\theta_j$ at their
-information-free default of unity. A first pass at feedback exercises
+$(e/e^{\circ})$ and the allosteric activity factor $\theta_j$ at unity. A first pass at feedback exercises
 $\theta_j$ alone: the fast allosteric inhibition in which the
-accumulating end product binds the committed enzyme and throttles the
+accumulating end product binds the committed enzyme and reduces the
 catalytic activity of the molecules already present, the classical
 picture of end-product inhibition, with the expression ratio still
 sitting at unity. A committed biosynthetic step, though, is controlled
@@ -19,9 +18,9 @@ negative-feedback motif of gene-regulatory circuits, the operon
 repressed by its own pathway product exactly as the tryptophan operon is
 repressed by tryptophan. The two loops draw on different currencies, one
 on catalytic activity and one on enzyme abundance, and they relax on
-different timescales, so an honest capacity for the committed step has to
-carry both. The pathway kept for the comparison is the same abstract
-linear chain that isolates a single control point,
+different timescales, so the capacity assigned to the committed step
+includes both. The pathway kept for the comparison is the following
+abstract linear chain, which isolates a single control point:
 \begin{equation}\label{eq:feedback-network}
   \emptyset \xrightarrow{\,r_0\,} X_1 \xrightarrow{\,r_1\,} X_2
   \xrightarrow{\,r_2\,} X_3 \xrightarrow{\,r_3\,} \emptyset,
@@ -30,10 +29,11 @@ with $r_0$ the committed uptake step, $r_1$ and $r_2$ interconversions,
 and $r_3$ the export step, and the end product $X_3$ now closing both
 loops onto $r_0$ at once: a high steady-state $X_3$ simultaneously
 inhibits the activity of the enzyme that catalyzes $r_0$ and represses
-transcription of its gene. Opening both gateways together on that single
-step is the whole of the construction.
+transcription of its gene. Incorporating both factors on that single
+step represents the two feedback mechanisms in the constraint-based model.
 
-The truth was generated from a Biochemical Systems Theory S-system, the
+The reference behavior was generated from a Biochemical Systems Theory
+(BST) S-system, the
 power-law formalism in which every reaction rate is a product of the
 participating species raised to real-valued kinetic orders
 \cite{Savageau1976,SavageauVoit1987}, but now the committed enzyme is no
@@ -47,24 +47,24 @@ loop, so that a higher $X_3$ lowers the throughput the enzyme molecules
 already present can sustain; in the rate of transcription of the
 enzyme's gene it appears with a second negative kinetic order $-b$, the
 expression loop, so that a higher $X_3$ lowers the rate at which new
-message, and with it new enzyme, is made. Each power law is the concrete
-operating-point instance of the partition-function control of
-Equations~\eqref{eq:partition} and~\eqref{eq:control-split}
-\cite{Adhikari2020}: the Boltzmann sum over regulatory microstates,
-evaluated near the working point of a single corepressing effector,
-collapses to a power of that effector, the reduction that gives both the
-allosteric term $\theta_{\mathrm{true}}$ and the transcriptional repression their
-power-law form. The two families of balance follow the convention
+message, and with it new enzyme, is made. These power laws are local
+kinetic representations of the two controls. In the notation of
+Equation~\eqref{eq:control-mapping}, the allosteric loop acts through
+$\theta_{\mathrm{BST}}$ and the transcriptional loop acts through the
+control $u_j$. The partition-function construction developed above
+provides a bounded active-state representation of the same regulatory
+roles; the FBA model below uses that representation for its allosteric
+factor. The two families of balance follow the convention
 established earlier, the three metabolite balances enforcing $\mathbf
 S\hat{\mathbf v}=\mathbf 0$ with no growth-dilution term while the
 growth rate $\mu$ lives in the transcript and protein balances of
 Equations~\eqref{eq:mrna} and~\eqref{eq:protein}, where an intracellular
 macromolecule is cleared both by its own turnover and by dilution into
-the growing culture. The committed-step rate carries both controls,
+the growing culture. The committed-step rate carries both controls:
 \begin{equation}\label{eq:feedback-rate}
-  v_{r_0} = V^{\circ}_{\max,r_0}\,(e/e^{\circ})\,\theta_{\mathrm{true}},
+  v_{r_0} = V^{\circ}_{\max,r_0}\,(e/e^{\circ})\,\theta_{\mathrm{BST}},
   \qquad
-  \theta_{\mathrm{true}} = X_3^{-a},\quad a = 0.4,\qquad
+  \theta_{\mathrm{BST}} = X_3^{-a},\quad a = 0.4,\qquad
   \text{transcription} \propto X_3^{-b},\quad b = 0.6.
 \end{equation}
 
@@ -81,54 +81,49 @@ and~\eqref{eq:protein}, and with them the reference enzyme abundance
 $e^{\circ}$ against which Equation~\eqref{eq:expression-ss} normalizes
 the ratio $(e/e^{\circ})$, the response of that ratio to the end product
 being carried by the repression order $b$ rather than by the residence
-times, which cancel from it. The growth rate enters those balances in a
-way that repays stating precisely, because it is easy to misread. There
-is one $\mu$, the specific growth rate of the culture, and it is
+times, which cancel from it. One value of $\mu$, the specific growth
+rate of the culture, enters both balances and is
 identical in both denominators, $\theta_{m}+\mu$ for the transcript and
-$\theta_{p}+\mu$ for the enzyme; what differs between the two is never
-$\mu$ but only each species' own first-order turnover $\theta$. The
-consequence is a clean signature. The transcript turns over fast, so
+$\theta_{p}+\mu$ for the enzyme; the species-specific first-order
+turnover $\theta$ differs between them. The transcript
+turns over fast, so
 that same $\mu$ is only about four percent of its total clearance
 $\theta_{m}+\mu\approx0.289~\mathrm{min}^{-1}$; the enzyme is stable, so
 the identical $\mu$ is more than a third, about thirty-seven percent, of
 its total clearance $\theta_{p}+\mu\approx0.031~\mathrm{min}^{-1}$.
-Growth dilution is therefore a dominant clearance term for the enzyme
-and a negligible one for its message, though the number diluting them is
-one and the same, and it is exactly this asymmetry that justifies
-carrying $\mu$ in every intracellular balance rather than folding it
-into a degradation constant.
+Growth dilution therefore contributes differently to transcript and
+enzyme clearance even though the same $\mu$ appears in both balances.
 
 Because the chain is linear, conservation forces every metabolic
 reaction to carry one common throughput $T$, and because the export step
 $r_3$ is first order in $X_3$, that throughput pins the end-product level
 at $X_3 = T/k_3$. Substituting the two controls back into the
-committed-step rate, the truth model's own allosteric term
-$\theta_{\mathrm{true}}=X_3^{-a}$ and the expression ratio the
+committed-step rate, the BST model's allosteric activity factor
+$\theta_{\mathrm{BST}}=X_3^{-a}$ and the expression ratio the
 transcriptional repression sets through
 Equation~\eqref{eq:expression-ss}, reduces the coupled five-state system
 to a single self-consistency condition in $X_3$ alone, and the value
 that condition selects is the value the full numerical integration
-confirmed: $X_3^{\star}\approx4$, an allosteric term
-$\theta_{\mathrm{true}}^{\star}\approx0.574$, an expression ratio
+confirmed: $X_3^{\star}\approx4$, an allosteric activity factor
+$\theta_{\mathrm{BST}}^{\star}\approx0.574$, an expression ratio
 $(e/e^{\circ})^{\star}\approx0.464$, and a throughput
 $T^{\star}\approx2.66$, less than a third of the uninhibited capacity of
 the committed step (Fig.~\ref{fig:feedback}). The control scheme behind
 those numbers is the standard negative one: a repressor that $X_3$
-corepresses binds the operator of the enzyme's gene and throttles
+corepresses binds the operator of the enzyme's gene and reduces
 transcription downward as the end product accumulates, but only down to
 a basal leak floor, the residual expression $\lambda$ set by the basal
 occupancy $u^{\dagger}$ of Equations~\eqref{eq:mrna}
-and~\eqref{eq:control-split}, so that the gene is never silenced
-completely and a trickle of enzyme is always made. The two feedback
-strengths were chosen so that each gateway is individually load-bearing,
+and~\eqref{eq:control-split}, so that the gene retains nonzero basal
+expression. The two feedback
+strengths were chosen so that each factor is individually load-bearing,
 $a=0.4$ on the activity loop and $b=0.6$ on the expression loop: neither
-factor alone accounts for the observed throttling, and a model that
-opened one and defaulted the other would miss the mark by a visible
-margin.
+factor alone accounts for the observed reduction, and a model that
+included one and defaulted the other would produce a different throughput.
 
 The flux-balance model kept the chain's stoichiometry unchanged and
 placed the entire dual-control content on the single bound of the
-committed step,
+committed step:
 \begin{equation}\label{eq:feedback-bound}
   0 \;\le\; \hat v_{r_0} \;\le\;
   V^{\circ}_{\max,r_0}\,(e/e^{\circ})\,\theta_{\mathrm{FBA}}(X_3),
@@ -136,44 +131,43 @@ committed step,
 \end{equation}
 the expression and regulatory instance of the general bound of
 Equation~\eqref{eq:general-bound}, with the thermodynamic switch and the
-saturation factor left at their defaults and the two remaining gateways,
+saturation factor left at their defaults and the two remaining factors,
 expression $(e/e^{\circ})$ and activity $\theta_{\mathrm{FBA}}(X_3)$,
-both in play. The activity gateway does not reuse the truth model's own
-kinetic exponent $\theta_{\mathrm{true}}$ from Equation~\eqref{eq:feedback-rate};
+both in play. The activity factor does not reuse the BST model's
+kinetic exponent $\theta_{\mathrm{BST}}$ from Equation~\eqref{eq:feedback-rate};
 a bound built from the exact functional form that generates the
 quantity it is meant to predict would make the recovery an identity
-rather than a check. Instead $\theta_{\mathrm{FBA}}$ is a bounded,
-two-state Hill occupancy,
+rather than a check. Instead $\theta_{\mathrm{FBA}}$ is represented by
+the bounded, two-state Hill occupancy:
 \begin{equation}\label{eq:feedback-theta-fba}
   \theta_{\mathrm{FBA}}(X_3) \;=\; \frac{K^{n}}{K^{n}+X_3^{\,n}},
   \qquad K = 5,\quad n = 2,
 \end{equation}
-the same partition-function-motivated form used for $f_s$ in
-Equation~\eqref{eq:partition}, with $K$ and $n$ chosen independently of
-the truth model's allosteric order $a$ rather than fit to reproduce it,
-and with no basal-leak floor: unlike the transcriptional loop, a direct
-allosteric on/off switch has no leaky analog, so
-$\theta_{\mathrm{FBA}}\to0$ as $X_3\to\infty$. Both gateway factors were
-evaluated from the measured steady state, the enzyme abundance and the
-end-product level read off the integrated model, and not copied from
-the integrated flux the linear program is meant to reproduce. Four
-solves of the linear program of Equation~\eqref{eq:fba-lp} differed in
-nothing but this one bound. A feedback-blind solve, holding both factors
-at unity, overshot to the uninhibited capacity of $10$, roughly $3.8$
-times the true throughput; opening the expression gateway alone
-throttled the committed step to $4.64$; opening the activity gateway
-alone throttled it to $6.10$; and only opening both together landed on
-$2.83$, approximating the BST truth of $2.66$ to within about six
-percent (Fig.~\ref{fig:feedback}). The escalation is the whole point.
-Nothing about either feedback loop appears anywhere in the
-stoichiometric matrix, which is identical whether $X_3$ closes a single
-loop, both loops, or none; the entire dual-control fact lives in the one
-bound on $r_0$, where the two gateways enter as independent
+the repressive two-state specialization of
+Equation~\eqref{eq:two-state-control}: the active configuration has
+unit weight and the effector-stabilized inactive configuration has
+weight $(X_3/K)^n$. The parameters $K$ and $n$ were chosen independently of
+the BST model's allosteric order $a$ rather than fit to reproduce it,
+and the model assigns no basal active-state weight to the allosteric
+control, so
+$\theta_{\mathrm{FBA}}\to0$ as $X_3\to\infty$. Both factors were
+evaluated from the steady-state enzyme abundance and end-product level
+of the integrated model rather than from its flux. Four
+solves of the linear program of Equation~\eqref{eq:fba-lp} differed only
+in this bound. A baseline solve, holding both factors
+at unity, returned the uninhibited capacity of $10$, roughly $3.8$
+times the BST reference throughput; including the expression factor alone
+reduced the committed-step capacity to $4.64$; including the activity factor
+alone reduced it to $6.10$; and including both returned
+$2.83$, approximating the BST reference value of $2.66$ to within about six
+percent (Fig.~\ref{fig:feedback}). This sequence quantifies the contribution
+of each factor. The stoichiometric matrix is identical whether $X_3$
+closes a single loop, both loops, or neither. Dual control instead enters
+through the bound on $r_0$, where the two factors are independent
 multiplicative factors and each removes a distinct, quantifiable slice
-of the capacity. Read as a ledger, the uninhibited capacity of $10$ was
-marked down once by expression to $4.64$ and once by activity to $6.10$,
-and only the product of the two markdowns approached the throughput the
-cell actually ran.
+of the capacity. The expression and activity factors reduce the
+uninhibited capacity of $10$ to $4.64$ and $6.10$, respectively, and
+their product approaches the throughput of the BST reference model.
 
 \begin{figure}[htbp]
   \centering
@@ -189,65 +183,62 @@ cell actually ran.
     enzyme's gene, acting through $(e/e^{\circ})$ and drawn in blue, and the
     fast allosteric loop onto the enzyme $E_0$ already present, acting
     through $\theta_{\mathrm{FBA}}$ and drawn in orange, the two colors
-    matching the corresponding capacity markdowns at right. Right: the
+    matching the corresponding capacity reductions at right. Right: the
     capacity ledger for the committed-step bound of
     Equation~\eqref{eq:feedback-bound}. The uninhibited capacity
-    $V^{\circ}_{\max,r_0}=10$ is reduced by the expression gateway alone to
-    $4.64$ (blue) and by the activity gateway alone to $6.10$ (orange), and
-    only the two gateways together approach the throughput of the
-    Biochemical Systems Theory truth, $T^{\star}\approx2.66$, landing at
+    $V^{\circ}_{\max,r_0}=10$ is reduced by the expression factor alone to
+    $4.64$ (blue) and by the activity factor alone to $6.10$ (orange), and
+    only the two factors together approach the throughput of the
+    Biochemical Systems Theory reference, $T^{\star}\approx2.66$, landing at
     $2.83$; the dashed line marks the uninhibited capacity.}
   \label{fig:feedback}
 \end{figure}
 
-A single choice of surrogate shape, though, invites the wrong question. The
-activity gateway was handed the two-state Hill occupancy of
+A single surrogate shape gives one point estimate. The activity factor
+was assigned the two-state Hill occupancy of
 Equation~\eqref{eq:feedback-theta-fba}, a functional form that bears no
-relation to the power law $X_3^{-a}$ the truth model actually runs, and its
-half-saturation $K=5$ and cooperativity $n=2$ were named rather than fit, so
-there is no reason a constraint-based model of different structure, carrying a
-fabricated control shape, should reproduce the integrated throughput to the
-digit. The honest question is not whether one shape lands on the truth but
-whether the reconstruction brackets it as the shape is varied across a
+relation to the power law $X_3^{-a}$ used by the BST reference model, and its
+half-saturation $K=5$ and cooperativity $n=2$ were specified rather than fit.
+The relevant comparison is therefore whether the reconstruction brackets the
+BST reference value as the surrogate shape is varied across a
 plausible window. Sweeping the surrogate over $K\in[3,8]$ and $n\in[1,3]$,
 recomputing $\theta_{\mathrm{FBA}}$ at the measured $X_3$, and re-solving the
-committed-step program at each grid point with both gateways open and every
+committed-step program at each grid point with both factors included and every
 other bound held, spread the recovered throughput from about $1.4$ to about
-$4.1$ and placed the Biochemical Systems Theory truth $T^{\star}\approx2.66$
-well inside that band (Fig.~\ref{fig:feedback_robust}). The pair $(K,n)=(5,2)$
+$4.1$ and placed the Biochemical Systems Theory reference value
+$T^{\star}\approx2.66$
+inside that band (Fig.~\ref{fig:feedback_robust}). The pair $(K,n)=(5,2)$
 that the rest of the construction carries, which returned $2.83$, is one
-interior point of the bracket and not a privileged one, and a different guess
-at the shape would have landed elsewhere in the same band, still around the
-truth. What the band never did was close onto the truth from a single gateway.
-Across the entire window the activity gateway opened alone held the committed
-step above about $2.97$ and the expression gateway opened alone held it at
-$4.64$ irrespective of $K$ and $n$, so each single-gateway reconstruction sat
-above the true throughput for every shape while only the two gateways together
-reached down far enough to straddle it. The reassurance the sweep offers is
-therefore structural rather than numerical: the capacity ledger recovered the
-right throughput not because the guessed control shape happened to be correct,
-which it was not, but because opening both gateways placed the true value
-inside the range the reconstruction could reach at all, and opening either one
-alone did not.
+interior point of the bracket, and a different shape specification
+would have produced another value in the same band. No single-factor
+configuration reached the BST reference value.
+Across the entire window the activity factor alone held the committed
+step above about $2.97$ and the expression factor alone held it at
+$4.64$ irrespective of $K$ and $n$, so each single-factor reconstruction sat
+above the BST reference throughput for every shape while only the two factors together
+reached down far enough to straddle it. The sweep therefore gives a structural
+rather than pointwise comparison: including both factors placed the BST
+reference value inside the reachable range, while including either factor alone
+did not.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.62\textwidth]{feedback_robustness.pdf}
-  \caption{Robustness of the dual-gateway recovery to the fabricated
-    activity-gateway shape. The committed-step throughput with both gateways
-    open, $\hat v_{r_0}=V^{\circ}_{\max,r_0}\,(e/e^{\circ})\,\theta_{\mathrm{FBA}}$,
-    is shown as the made-up Hill shape
+  \caption{Robustness of the dual-factor recovery to the assumed
+    activity-factor shape. The committed-step throughput with both factors
+    included, $\hat v_{r_0}=V^{\circ}_{\max,r_0}\,(e/e^{\circ})\,\theta_{\mathrm{FBA}}$,
+    is evaluated while the assumed Hill shape
     $\theta_{\mathrm{FBA}}=K^{n}/(K^{n}+X_3^{n})$ of
     Equation~\eqref{eq:feedback-theta-fba} is swept over its half-saturation
     $K$ and cooperativity $n$, with the measured $X_3$, the expression ratio,
     and every other bound held. The color scale diverges about the Biochemical
-    Systems Theory truth $T^{\star}\approx2.66$, red below and blue above, and
-    the black contour is the locus where the reconstruction equals the truth
-    exactly; the recovered throughput runs from about $1.4$ to about $4.1$, so
-    the truth lies inside the reachable band. The marked point is the shape the
+    Systems Theory reference value $T^{\star}\approx2.66$, red below and blue
+    above, and the black contour is the locus where the reconstruction equals
+    that value; the recovered throughput runs from about $1.4$ to about $4.1$,
+    so the reference lies inside the reachable band. The marked point is the shape the
     rest of the construction carries, $(K,n)=(5,2)$, returning $2.83$. Neither
-    single gateway reaches the truth for any shape in the window: opened alone
-    the expression gateway holds the step at $4.64$ and the activity gateway
+    single factor reaches the reference value for any shape in the window: included alone
+    the expression factor holds the step at $4.64$ and the activity factor
     stays above about $2.97$, so only the two together bracket $T^{\star}$.}
   \label{fig:feedback_robust}
 \end{figure}

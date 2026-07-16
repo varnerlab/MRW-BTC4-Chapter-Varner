@@ -1,5 +1,5 @@
 %% gateways.tex
-\section{Bounds as Gateways}\label{sec:gateways}
+\section{Integrative Flux Bounds}\label{sec:gateways}
 
 Conservation alone leaves the flux distribution underdetermined: the
 mole-balance constraint fixes a subspace, not a point, and the box of
@@ -8,7 +8,7 @@ prediction. The objective is a modeling choice. The bounds are where
 biology enters, and they
 enter not as numbers to be looked up but as a model in their own right.
 Writing a single upper bound as a product of factors makes that model
-visible. For reaction $j$,
+visible. For reaction $j$, the factorized bound is:
 \begin{equation}\label{eq:general-bound}
   -\delta_j\Bigl[V^{\circ}_{\max,j}\,(e/e^{\circ})\,\theta_j(\cdot)\,f_j(\cdot)\Bigr]
   \;\le\; \hat v_j \;\le\;
@@ -16,22 +16,23 @@ visible. For reaction $j$,
 \end{equation}
 where $V^{\circ}_{\max,j}$ sets a reference capacity carrying the units
 of flux and the remaining factors are dimensionless corrections that
-scale that capacity up or down. Each factor is a gateway for a distinct
-class of biological information: $\delta_j$ admits thermodynamics,
-$V^{\circ}_{\max,j}$ and $f_j$ admit enzyme kinetics, $(e/e^{\circ})$
-admits gene expression, and $\theta_j$ admits regulation. A bound is
-therefore an honest ledger of what is known about a reaction. With no
+scale that capacity up or down. Each factor represents a distinct kind
+and level of biological information: $\delta_j$ encodes thermodynamic
+directionality, $V^{\circ}_{\max,j}$ and $f_j$ encode enzyme kinetics,
+$(e/e^{\circ})$ encodes gene expression, and $\theta_j$ encodes
+allosteric regulation of enzyme activity. A bound therefore provides an
+explicit accounting of what is known about a reaction. With no
 information beyond a capacity scale the correction factors are set to
-unity, and each is reopened, one gateway at a time, as measurements or
-mechanistic models become available. This is also where the underdetermined polytope is finally
-narrowed: not by conservation but by the bounds, and every gateway that closes
-tightens that polytope with information of a particular kind, so that
+unity, and each is refined as measurements or mechanistic models become
+available. This is also where the underdetermined polytope is finally
+narrowed: not by conservation but by the bounds, and every informative
+factor tightens that polytope using evidence of a particular kind, so that
 tracing a prediction back to its cause is a matter of asking which
 factor in Equation~\eqref{eq:general-bound} was responsible.
 
-The thermodynamic gateway is the switch $\delta_j$, which decides
+The thermodynamic factor is the switch $\delta_j$, which decides
 whether the reaction may carry flux in the reverse direction at all. It
-takes one of two values,
+takes one of two values:
 \begin{equation}\label{eq:thermo-gate}
   \delta_j \;=\;
   \begin{cases}
@@ -60,8 +61,8 @@ estimates, for which eQuilibrator provides genome-scale coverage
 When the reaction is allowed to proceed, its capacity is set by enzyme
 kinetics, and this is the role of the reference scale
 $V^{\circ}_{\max,j}$ together with the saturation factor $f_j$. The
-scale is a maximal velocity, the product of a turnover number and a
-characteristic enzyme abundance,
+scale is a maximal velocity, given by the product of a turnover number
+and a characteristic enzyme abundance:
 \begin{equation}\label{eq:vmax}
   V^{\circ}_{\max,j} \;=\; k^{\circ}_{\mathrm{cat},j}\,e^{\circ},
 \end{equation}
@@ -75,7 +76,7 @@ would sustain at reference abundance and saturating substrate, and the
 fraction of that ceiling actually reached at the prevailing substrate
 concentration is the saturation factor. That factor follows from the
 enzyme mechanism itself. A single-substrate enzyme binds substrate
-reversibly and turns it over to product,
+reversibly and turns it over to product according to the mechanism:
 \begin{equation}\label{eq:mm-mechanism}
   E + S_j \;\underset{k_{-1}}{\overset{k_1}{\rightleftharpoons}}\; [ES]
   \;\overset{k_{\mathrm{cat}}}{\longrightarrow}\; E + P,
@@ -90,8 +91,8 @@ $K_{M,j}\equiv(k_{-1}+k_{\mathrm{cat}})/k_1$.
 The reaction velocity is the rate of the turnover step,
 $v_j=k_{\mathrm{cat}}[ES]$, so writing the capacity as
 $V_{\max,j}=k_{\mathrm{cat}}[E]_T$ recovers the Michaelis--Menten rate
-law \cite{MichaelisMenten1913}, and the saturation factor is its
-normalization to that capacity,
+law \cite{MichaelisMenten1913}, and the saturation factor is obtained by
+normalizing the rate to that capacity:
 \begin{equation}\label{eq:mm}
   v_j \;=\; V_{\max,j}\,\frac{[S_j]}{K_{M,j}+[S_j]}
   \qquad\Longrightarrow\qquad
@@ -99,21 +100,21 @@ normalization to that capacity,
   \;=\; \frac{[S_j]}{K_{M,j}+[S_j]}\;\in[0,1],
 \end{equation}
 with $[S_j]$ the substrate concentration and $K_{M,j}$ the Michaelis
-constant. The saturation factor $f_j$ interpolates between an empty
-gateway ($f_j\to0$ as substrate is exhausted) and a fully open one
+constant. The saturation factor $f_j$ interpolates between negligible
+capacity ($f_j\to0$ as substrate is exhausted) and the maximal capacity
 ($f_j\to1$ at saturation), and it is the same hyperbolic law that
 governs single-enzyme assays. Because $f_j$
-depends on the substrate concentration, opening this gateway makes the
+depends on the substrate concentration, incorporating this factor makes the
 bound a function of the metabolic state rather than a fixed number, the
 point at which a static flux balance begins to acquire the
 state-dependence that a dynamic treatment carries to its conclusion.
 
 The scale $V^{\circ}_{\max,j}$ was fixed at a reference enzyme abundance
 $e^{\circ}$, but the abundance actually present is itself a variable set
-by gene expression, and the ratio $(e/e^{\circ})$ is the gateway
-through which that variability enters. To treat abundance as a modeled
+by gene expression, and the ratio $(e/e^{\circ})$ is the factor through
+which that variability enters. To treat abundance as a modeled
 quantity rather than a fixed parameter, write balances for the
-transcript $m_j$ and the protein $p_j$ of the gene encoding the enzyme,
+transcript $m_j$ and the protein $p_j$ of the gene encoding the enzyme:
 \begin{align}
   \dot m_j &= r_{X,j}\,u_j - (\theta_{m,j}+\mu)\,m_j + \lambda_j,
   \label{eq:mrna}\\
@@ -121,8 +122,8 @@ transcript $m_j$ and the protein $p_j$ of the gene encoding the enzyme,
   \label{eq:protein}
 \end{align}
 where $r_{X,j}$ and $r_{L,j}$ are transcription and translation rate
-capacities, $u_j$ and $w_j$ are dimensionless control variables that
-gate those capacities, $\theta_{m,j}$ and $\theta_{p,j}$ are
+capacities, $u_j$ and $w_j$ are dimensionless control functions that
+modulate those capacities, and $\theta_{m,j}$ and $\theta_{p,j}$ are
 first-order degradation rate constants for message and protein, and
 $\lambda_j$ is a basal, or leak, source of transcript. The loss term in
 each balance is not the degradation constant alone but the sum
@@ -130,13 +131,14 @@ $(\theta_{m,j}+\mu)$ or $(\theta_{p,j}+\mu)$: every intracellular
 species is removed both by its own turnover and by dilution into the
 growing culture at the specific growth rate $\mu$. That $\mu$ is not a
 new parameter. It is the very growth-dilution term retained in the
-honest constraint, Equation~\eqref{eq:honest-constraint}, carried
+constraint retaining growth dilution,
+Equation~\eqref{eq:dilution-constraint}, carried
 through consistently: an
 enzyme is diluted by growth exactly as a metabolite is, and the same
 $\mu$ that balances metabolic production in the flux constraint sets
 the residence time of the transcripts and proteins that fix the flux
-bounds. Holding the balances at steady state gives closed-form
-abundances,
+bounds. Holding the balances at steady state gives the closed-form
+abundances:
 \begin{equation}\label{eq:expression-ss}
   m^{\star}_j = \frac{r_{X,j}u_j+\lambda_j}{\theta_{m,j}+\mu},
   \qquad
@@ -149,7 +151,7 @@ catalytic activity for reaction $j$ through the gene-protein-reaction
 (GPR) rules of the reconstruction, which encode whether an activity
 requires a single gene product, several assembled into a complex, or
 any one of several interchangeable isozymes. Through
-Equation~\eqref{eq:expression-ss} the expression gateway couples the
+Equation~\eqref{eq:expression-ss} the expression factor couples the
 flux ceiling to the entire upstream apparatus of transcription and
 translation, with $\mu$ standing in every denominator as the visible
 signature of the growth-aware bookkeeping begun in the mole-balance
@@ -159,99 +161,232 @@ enters here, rescaling the capacity of each reaction by the abundance
 actually observed under a given condition and turning one
 reconstruction into a family of condition-specific models.
 
-The factor $\theta_j$ is a control function, a dimensionless number in
-$[0,1]$ reporting the fraction of a reaction's capacity switched on by
-the regulatory state of the cell, and the same machinery that sets it
-supplies the control variables $u_j$, $w_j$, and the leak $\lambda_j$
-left unspecified in the expression balances. A regulated element, a
-promoter or an allosteric enzyme, visits a discrete set of microstates
-$s$, and the fraction of time spent in each follows a Boltzmann
-distribution over the state energies,
-\begin{equation}\label{eq:partition}
-  p_s = \frac{f_s\,e^{-\beta\epsilon_s}}{Z},
-  \qquad
-  Z = \sum_s f_s\,e^{-\beta\epsilon_s},
-\end{equation}
-where $\epsilon_s$ is the energy of microstate $s$, $\beta=1/(k_{B}T)$,
-$Z$ is the partition function that normalizes the distribution, and
-$f_s$ is a Hill-type function of the effector that stabilizes state
-$s$, $f_s=x^{n}/(K^{n}+x^{n})$ in an activating effector concentration
-$x$. Summing the state probabilities over the microstates that permit
-activity, and splitting that set into states reached through the
-regulated input $\mathcal A$ and states occupied without it $\mathcal
-B$, gives the total occupancy together with its basal part,
-\begin{equation}\label{eq:control-split}
-  \bar u = \sum_{s\in\mathcal A}p_s + \sum_{s\in\mathcal B}p_s
-         = u + u^{\dagger},
-  \qquad
-  \lambda \equiv r_X\,u^{\dagger}.
-\end{equation}
-The regulated occupancy $u$ is the control that appears in
-Equation~\eqref{eq:mrna}, the basal occupancy $u^{\dagger}$ is exactly
-the leak source $\lambda$ of that same balance, and the normalized
-activity $\bar u$ is the control function $\theta_j$ entering the bound:
-the regulatory and expression gateways are two views of one coupled
-process rather than independent knobs. This partition-function control
-function, Equations~\eqref{eq:partition} and~\eqref{eq:control-split},
-is not a phenomenological Hill curve grafted onto a rate law. It is the
-effective biophysical model of Adhikari and coworkers
-\cite{Adhikari2020}, one object in which the Boltzmann weighting over
-states and the control function it produces are derived from the same
-statistical-mechanical accounting rather than assembled from two
-separate parts.
+One statistical mechanical construction can represent allosteric
+activity, transcription, and translation. The common idea is to
+classify configurations by function. Some configurations of an enzyme,
+promoter, or translation-initiation complex permit the process of
+interest; the remaining configurations do not. The physical
+configurations and the criterion for activity differ among the three
+processes, but the calculation is the same: the numerator sums the
+configurations that permit the process, while the denominator sums all
+configurations available to the regulated element.
 
-Every gateway just opened demands data that is often unavailable:
+Let $\mathcal S_q$ denote the set of configurations of a regulated
+element associated with process $q$, where $q$ may be catalysis,
+transcription, or translation. Configuration $s\in\mathcal S_q$ has
+energy $\epsilon_s$, with its statistical weight given by:
+\begin{equation}\label{eq:partition}
+  \omega_s(\mathbf x)
+    = g_s(\mathbf x)e^{-\beta\epsilon_s},
+  \qquad
+  Z_q(\mathbf x)
+    = \sum_{r\in\mathcal S_q}\omega_r(\mathbf x),
+  \qquad
+  p_s(\mathbf x)
+    = \frac{\omega_s(\mathbf x)}{Z_q(\mathbf x)},
+\end{equation}
+where $\beta=1/(k_BT)$ and $Z_q$ is the partition function. The factor
+$g_s(\mathbf x)$ accounts for ligand concentrations, binding
+stoichiometry, and degeneracy. For example, a configuration containing
+$n$ bound molecules of an effector $x$ contributes a concentration
+factor proportional to $(x/K)^n$. The partition function is therefore a
+concentration-dependent sum over every configuration, not only those
+that are functional.
+
+Now let $\mathcal A_q\subseteq\mathcal S_q$ be the configurations that
+permit process $q$, and let $\mathcal I_q=\mathcal S_q\setminus\mathcal
+A_q$ be the configurations that do not. The dimensionless control for
+that process is the probability of occupying the active subset:
+\begin{equation}\label{eq:active-state-control}
+  \Phi_q(\mathbf x)
+    = \sum_{s\in\mathcal A_q}p_s(\mathbf x)
+    = \frac{\displaystyle\sum_{s\in\mathcal A_q}
+        g_s(\mathbf x)e^{-\beta\epsilon_s}}
+      {\displaystyle\sum_{r\in\mathcal S_q}
+        g_r(\mathbf x)e^{-\beta\epsilon_r}}
+    = \frac{Z_{\mathcal A_q}}
+      {Z_{\mathcal A_q}+Z_{\mathcal I_q}}.
+\end{equation}
+Here $Z_{\mathcal B}=\sum_{s\in\mathcal B}\omega_s$ denotes a
+partition sum restricted to the subset $\mathcal B$. This ratio makes
+the functional classification explicit. Every active
+configuration appears in both the numerator and denominator; inactive
+configurations appear only in the denominator. Consequently
+$0\leq\Phi_q\leq1$, and an effector increases or decreases the control
+according to whether it preferentially weights active or inactive
+configurations.
+
+The compact constants used in promoter models can be connected directly
+to these Boltzmann weights. Choose configuration $0$ as a reference and
+write $\Delta\epsilon_s=\epsilon_s-\epsilon_0$. The relative energetic
+weight and the complete state weight are then related by:
+\begin{equation}\label{eq:effective-state-weight}
+  K_{\star,s}
+    \equiv \frac{\omega_s/g_s}{\omega_0/g_0}
+    = e^{-\beta\Delta\epsilon_s},
+  \qquad
+  \frac{\omega_s}{\omega_0}
+    = \frac{g_s(\mathbf x)}{g_0(\mathbf x)}K_{\star,s}.
+\end{equation}
+With the conventional choice $\omega_0=g_0=1$, this becomes
+$\omega_s=g_s(\mathbf x)K_{\star,s}$. Thus, a term such as $K_2f_{TL}$
+combines an energetic factor $K_2=e^{-\beta\Delta\epsilon_2}$ with the
+availability $f_{TL}$ of the ligand-bound transcription factor. In a
+fitted promoter model, however, $K_1$ and $K_2$ are effective,
+dimensionless weights: they may absorb a constant RNA-polymerase
+concentration, standard-state factors, and other lumped contributions,
+and need not equal measured dissociation constants.
+
+Figure~\ref{fig:active-subset} summarizes the construction from molecular
+configurations to process-specific control:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.88\textwidth]{active_subset.pdf}
+  \caption{Active-subset construction of biological control factors.
+  (a) Configuration weights combine relative energetics with regulator
+  availability; blue states permit the process and gray states do not.
+  (b) Active states enter the numerator, while all states enter the
+  partition-function denominator. The promoter shown is schematic.
+  (c) Specifying the relevant configurations gives allosteric activity
+  $\theta_j$, transcriptional control $u_j$, or translational control
+  $w_j$ from the same statistical accounting.}
+  \label{fig:active-subset}
+\end{figure}
+
+The inducible-promoter models of Moon, Voigt, and coworkers provide a
+concrete example of this construction \cite{Moon2012}. Their
+Supplementary Figure~S7 and Equations~3--6 enumerate promoter
+configurations and assign a partition-function term to each one. For
+the Lux promoter, the configurations have weights
+$1$, $K_1$, and $K_2f_{TL}$, corresponding respectively to an empty
+promoter, RNA-polymerase binding, and joint binding of RNA polymerase
+with the ligand-bound LuxR complex. The two RNA-polymerase-bound
+configurations permit transcription and therefore appear in the
+numerator. For the Tac promoter, the empty, RNA-polymerase-bound, and
+repressor-bound configurations have weights $1$, $K_1$, and $K_2f_T$;
+only the RNA-polymerase-bound configuration permits transcription.
+After normalization by the maximal promoter activity, the two controls
+are therefore given by:
+\begin{equation}\label{eq:moon-promoter-control}
+  u_{\mathrm{Lux}}
+    = \frac{K_1+K_2f_{TL}}{1+K_1+K_2f_{TL}},
+  \qquad
+  u_{\mathrm{Tac}}
+    = \frac{K_1}{1+K_1+K_2f_T}.
+\end{equation}
+Here $f_{TL}$ is the ligand-bound fraction of the transcription factor,
+whereas $f_T$ is its ligand-free fraction. The Lux example adds weight
+to an active configuration as inducer increases; the Tac example
+removes weight from an inactive, repressor-bound configuration. Both
+are direct specializations of Equation~\eqref{eq:active-state-control}.
+
+A two-configuration element illustrates the reduction. If an inactive
+configuration has weight $\omega_I=1$ and an effector-stabilized active
+configuration has weight
+$\omega_A=(x/K)^n e^{-\beta\Delta\epsilon}$, then the control becomes:
+\begin{equation}\label{eq:two-state-control}
+  \Phi_q(x)
+    = \frac{(x/K)^n e^{-\beta\Delta\epsilon}}
+      {1+(x/K)^n e^{-\beta\Delta\epsilon}},
+\end{equation}
+where $\Delta\epsilon$ is the active-state energy relative to the
+inactive reference. The familiar Hill-like form is thus a normalized
+active-state weight.
+If the effector instead stabilizes an inactive configuration, its
+concentration-dependent weight enters the denominator but not the
+numerator, and the control decreases with $x$.
+
+The process-specific factors used above are instances of
+Equation~\eqref{eq:active-state-control}:
+\begin{equation}\label{eq:control-mapping}
+  \theta_j = \Phi_{\mathrm{cat},j},
+  \qquad
+  \bar u_j = \Phi_{\mathrm{TX},j},
+  \qquad
+  w_j = \Phi_{\mathrm{TL},j}.
+\end{equation}
+The allosteric factor $\theta_j$ multiplies catalytic capacity directly
+in Equation~\eqref{eq:general-bound}. The total transcriptional control
+$\bar u_j$ is separated below into regulated and basal contributions,
+while $w_j$ multiplies translational capacity in
+Equation~\eqref{eq:protein}. These dimensionless controls are distinct
+from the degradation-rate constants $\theta_{m,j}$ and
+$\theta_{p,j}$.
+
+Basal expression follows by subdividing the transcriptionally active
+set. Let $\mathcal A_{\mathrm{TX}}^{\mathrm{reg}}$ contain active
+configurations reached through the regulated input and let
+$\mathcal A_{\mathrm{TX}}^{\mathrm{basal}}$ contain configurations that
+support transcription without that input. Their contributions are:
+\begin{equation}\label{eq:control-split}
+  \bar u_j
+    = \frac{Z_{\mathcal A_{\mathrm{TX}}^{\mathrm{reg}}}}{Z_{\mathrm{TX}}}
+    + \frac{Z_{\mathcal A_{\mathrm{TX}}^{\mathrm{basal}}}}{Z_{\mathrm{TX}}}
+    = u_j + u_j^{\dagger},
+  \qquad
+  \lambda_j \equiv r_{X,j}u_j^{\dagger}.
+\end{equation}
+The regulated contribution $u_j$ enters the transcription term in
+Equation~\eqref{eq:mrna}, whereas the basal contribution
+$u_j^{\dagger}$ supplies its leak source $\lambda_j$. The promoter-state
+specialization follows the construction used by Moon, Voigt, and
+coworkers \cite{Moon2012}. The effective biophysical model of Adhikari and
+coworkers extends the same active-subset accounting to transcriptional
+and translational control \cite{Adhikari2020}; the factorization here
+places those controls alongside the corresponding allosteric factor.
+
+Each information layer requires data that is often unavailable:
 thermodynamic estimates, turnover numbers, substrate concentrations,
 expression measurements, and regulatory parameters. When that data is
-scarce the correction factors are set to their information-free
-defaults, $f_j\approx1$, $(e/e^{\circ})\approx1$, and
-$\theta_j\approx1$, and the general bound collapses to a two-parameter
-box,
+scarce the correction factors are set to unity,
+$f_j\approx1$, $(e/e^{\circ})\approx1$, and
+$\theta_j\approx1$, and the general bound collapses to the two-parameter
+box:
 \begin{equation}\label{eq:simplified-bound}
   -\delta_j\,V^{\circ}_{\max,j} \;\le\; \hat v_j \;\le\; V^{\circ}_{\max,j}.
 \end{equation}
-Equation~\eqref{eq:simplified-bound} retains only the thermodynamic gate
-and the capacity scale, and it is exactly the reversible or irreversible
+The simplified form in Equation~\eqref{eq:simplified-bound} retains only
+the thermodynamic factor and the capacity scale, and it is the reversible or irreversible
 $\pm V_{\max}$ box used throughout genome-scale flux balance analysis.
-It is the tractable baseline, the honest statement of a bound when
-nothing beyond a capacity estimate is known, and
-Equation~\eqref{eq:general-bound} records precisely which assumptions
-that baseline makes and which gateway must be reopened to relax each of
-them.
+It is the tractable baseline representation of a bound when
+nothing beyond a capacity estimate is known. The factorized form in
+Equation~\eqref{eq:general-bound} records which
+assumptions that baseline makes and which factor requires additional
+information to relax each of them.
 
-Each gateway just described has a named, established predecessor in the
+Each class of information just described has a named, established predecessor in the
 constraint-based modeling literature, and this chapter's contribution is
 the unifying notation and workflow that connects them, not the invention
-of any individual constraint. The thermodynamic gateway $\delta_j$ is the
+of any individual constraint. The thermodynamic factor $\delta_j$ is the
 central device of thermodynamics-based flux analysis, which propagates
 standard free energies and metabolite activity ranges through the whole
 network to rule out infeasible flux and concentration profiles together
-\cite{Henry2007}. The kinetic gateway, $V^{\circ}_{\max,j}$ built from a
+\cite{Henry2007}. The kinetic factors, $V^{\circ}_{\max,j}$ built from a
 turnover number and an enzyme abundance together with the saturation
-factor $f_j$, is the organizing idea behind enzyme-constrained flux
+factor $f_j$, are the organizing idea behind enzyme-constrained flux
 balance analysis, most fully realized in the GECKO framework, which
 folds a proteome-wide capacity constraint into a genome-scale
-reconstruction \cite{Sanchez2017}. The expression gateway $(e/e^{\circ})$,
+reconstruction \cite{Sanchez2017}. The expression factor $(e/e^{\circ})$,
 transcript and protein balances entered as a modeled quantity rather
 than a fixed parameter, is the metabolism-and-expression (ME) model
 construction, which couples the transcription and translation machinery
 directly to the metabolic network at genome scale
-\cite{OBrien2013}. The regulatory gateway $\theta_j$ has two established
-lines of descent: regulatory flux balance analysis, which gates
+\cite{OBrien2013}. The expression control functions $u_j$ and $w_j$
+connect to two established lines of regulatory constraint-based
+modeling: regulatory flux balance analysis, which switches expression-linked
 reactions on and off with Boolean rules derived from a transcriptional
 regulatory network \cite{Covert2001}, and PROM, which replaces the
 Boolean rule with a continuous, data-derived probability of an
-interaction being active \cite{Chandrasekaran2010}, the same move from a
-binary switch to a graded control fraction that the partition-function
-construction of Equations~\eqref{eq:partition}
-and~\eqref{eq:control-split} makes explicit. What the gateway
+interaction being active \cite{Chandrasekaran2010}. The allosteric
+factor $\theta_j$ represents the distinct, direct regulation of enzyme
+activity after the enzyme has been expressed. What the integrative
 factorization of Equation~\eqref{eq:general-bound} adds is not a fifth
-constraint class but a common accounting of where each of these four
-already-established devices sits inside one bound, so that a single
+constraint class but a common accounting of how these four
+already-established devices contribute to one bound, so that a single
 notation and a single worked derivation carry across all four rather
 than requiring a separate formalism, and a separate paper, for each.
 
-The expression and regulatory gateways lumped transcription and
+The expression model above lumped transcription and
 translation into aggregate capacities $r_{X,j}$ and $r_{L,j}$, but these
 processes can themselves be resolved to the level of the sequences they
 read. Transcription of a gene and translation of its protein consume

@@ -1,10 +1,10 @@
 %% capstones.tex
 \section{Integration in Practice}\label{sec:capstones}
 
-The urea-cycle and feedback examples opened the gateways of
+The urea-cycle and feedback examples incorporated the information layers of
 Equation~\eqref{eq:general-bound} one at a time on networks with a
 single degree of freedom, $n-m=1$. Two reported systems show those
-gateways operating together at genome scale, where the large right
+layers operating together at genome scale, where the large right
 null space makes informative bounds essential
 (Section~\ref{sec:lp}). The first uses measurements to couple
 metabolism, expression, and regulation in a dynamic cell-free model;
@@ -14,28 +14,29 @@ Vilkhovoy and coworkers constructed a sequence-specific model of
 \emph{E.~coli} cell-free protein synthesis in which transcription and
 translation reactions derived from the target DNA and mRNA sequences
 enter the stoichiometric matrix alongside metabolism
-\cite{Vilkhovoy2018}. The effective biophysical model of Adhikari and
-coworkers supplies the active fractions of promoter and ribosome
-capacity \cite{Adhikari2020}, extending the control function
-$\theta_j$ of Equations~\eqref{eq:partition}
-and~\eqref{eq:control-split} from one feedback loop to every regulated
-step. The resulting dynamic model recomputes thermodynamic, kinetic,
+\cite{Vilkhovoy2018}. Building on the promoter-state construction used
+by Moon, Voigt, and coworkers \cite{Moon2012}, the effective biophysical model
+of Adhikari and coworkers supplies the control functions $u_j$ and
+$w_j$ for promoter and ribosome capacity \cite{Adhikari2020}. This
+extends the active-subset construction of
+Equations~\eqref{eq:partition} and~\eqref{eq:active-state-control} from
+one feedback loop to every regulated step. The resulting dynamic model recomputes thermodynamic, kinetic,
 expression, and regulatory bounds as the reaction proceeds
 \cite{Vilkhovoy2023} and is evaluated against trajectories of 63
 metabolites together with mRNA, protein, and enzyme-activity data.
-These measurements also expose what ordinary flux balance analysis
-discards. Although cell-free reactions have $\mu=0$, their molecular
+These measurements also resolve terms omitted from ordinary flux balance
+analysis. Although cell-free reactions have $\mu=0$, their molecular
 pools vary throughout the batch, so the pseudo-steady-state reduction
 from Equation~\eqref{eq:mole-balance} to
-Equation~\eqref{eq:honest-constraint} does not apply. With no membrane
+Equation~\eqref{eq:dilution-constraint} does not apply. With no membrane
 separating the reaction volume from an inferred intracellular
 compartment, accumulation is observed directly rather than
 reconstructed from uptake or secretion rates. Cell-free integration
 therefore provides a setting in which the accumulation term omitted
-by Equation~\eqref{eq:sv0} can be measured instead of assumed away.
+by Equation~\eqref{eq:sv0} can be measured directly.
 
 Wayman and coworkers used the framework in the opposite direction.
-They grafted the N-linked glycosylation pathway of
+They introduced the N-linked glycosylation pathway of
 \emph{Campylobacter jejuni} onto a genome-scale reconstruction of
 \emph{E.~coli} metabolism and searched for gene deletions that couple
 designer-glycan production to growth \cite{Wayman2019}. Each candidate
@@ -51,9 +52,9 @@ increase. Here the bounds serve not as a report of cellular behavior
 but as levers for changing it.
 
 The two capstones thus apply Equation~\eqref{eq:general-bound} in
-opposite directions. Measurements narrow the cell-free gateways to
-estimate flux, whereas engineering interventions narrow the glycan
-gateways to design it; once the bounds are fixed, both re-solve the
+opposite directions. Measurements refine the cell-free bounds to
+estimate flux, whereas engineering interventions modify the glycan-model
+bounds to design it; once the bounds are fixed, both re-solve the
 same linear program. Design additionally requires choosing which
 bounds to move, a discrete search over deletions or expression changes
 that can be formulated through bilevel programming

@@ -1,29 +1,30 @@
 %% outlook.tex
 \section{Outlook}\label{sec:outlook}
 
-The worked examples populated the gateways of
+The worked examples populated the factors of
 Equation~\eqref{eq:general-bound} from tabulated sources: standard
 free energies from group-contribution estimates, turnover numbers
-from enzyme databases, and a control function built from regulatory
+from enzyme databases, and allosteric and expression controls built from regulatory
 microstates. The construction does not require those sources. With
 time-resolved measurements, turnover numbers, saturation constants,
-and control functions $\theta_j$ can instead be learned from the data
+allosteric factors $\theta_j$, and expression control functions $u_j$
+and $w_j$ can instead be learned from the data
 they are meant to explain, while tabulated values remain useful as
 priors when dynamic measurements are unavailable. This approach also
 extends reaction by reaction to genome-scale reconstructions, where
 the growing null space of $\mathbf S$ makes informative bounds most
-important: a gateway left at its information-free default admits a
+important: a factor left at unity admits a
 large subspace of indistinguishable flux vectors and can therefore
 weaken predictions precisely where stoichiometry constrains them
 least.
 The dynamic, data-rich regime of the cell-free capstone is also the natural
 home for the growth-dilution and accumulation term retained in
-Equation~\eqref{eq:honest-constraint} and dropped in
+Equation~\eqref{eq:dilution-constraint} and omitted in
 Equation~\eqref{eq:sv0}. Cell-free reactions are one setting dense
-enough in time-resolved measurement to estimate fluxes without
-discarding that term, and the same opportunity extends wherever
+enough in time-resolved measurement to estimate fluxes while retaining
+that term, and the same opportunity extends wherever
 intracellular state can be tracked closely enough in time, including
 inside a growing culture. The natural direction is therefore to
 estimate flux directly against
-Equation~\eqref{eq:honest-constraint}, with $\mu\mathbf x$ carried
-rather than discarded, wherever measurements support it.
+Equation~\eqref{eq:dilution-constraint}, with $\mu\mathbf x$ retained
+wherever measurements support it.

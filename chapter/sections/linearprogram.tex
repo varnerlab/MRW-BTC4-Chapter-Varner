@@ -1,10 +1,11 @@
 %% linearprogram.tex
 \section{The Linear Program and Its Geometry}\label{sec:lp}
 
-The honest constraint of Equation~\eqref{eq:honest-constraint},
+The flux constraint retaining growth dilution,
+Equation~\eqref{eq:dilution-constraint},
 together with its steady-state special case
-Equation~\eqref{eq:sv0}, is a statement of conservation and
-nothing more: it does not by itself pick out any particular flux
+Equation~\eqref{eq:sv0}, is a statement of conservation: it does not by
+itself pick out any particular flux
 distribution among all those consistent with it. Turning conservation
 into a prediction requires two further ingredients. The first is a box of
 flux bounds, $\boldsymbol\ell\le\hat{\mathbf v}\le\mathbf u$, one lower and
@@ -22,8 +23,8 @@ becomes a linear program:
   & \boldsymbol\ell \le \hat{\mathbf v} \le \mathbf u.
 \end{aligned}
 \end{equation}
-Equation~\eqref{eq:fba-lp} is flux balance analysis in its complete,
-textbook form \cite{Orth2010}. The objective vector $\mathbf c$ is a
+This linear program is the complete textbook formulation of flux balance
+analysis \cite{Orth2010}. The objective vector $\mathbf c$ is a
 choice, not a derived quantity: setting $c_j=1$ at the index of a biomass
 pseudo-reaction, one that drains precursors in the ratios required to
 build new cell mass, casts the LP as growth-rate maximization, the
@@ -31,13 +32,11 @@ default assumption for a cell under selection pressure to divide. Setting
 $c_j=1$ instead at the index of a product-export exchange reaction casts
 the same LP as yield maximization for a chosen metabolite, the framing
 relevant to a bioprocess engineer optimizing a production strain rather
-than modeling wild-type physiology. Nothing in Equation~\eqref{eq:fba-lp}
-distinguishes these cases mechanistically; the constraint set is
-identical, and only $\mathbf c$ changes.
+than modeling wild-type physiology. These cases have the same constraint
+set and differ only in $\mathbf c$.
 
-The linear-programming machinery is necessary, rather than a matter of
-convenience, because the constraint set alone is almost always
-underdetermined. A genome-scale reconstruction lists every reaction
+Linear programming addresses the underdetermination of the constraint
+set. A genome-scale reconstruction lists every reaction
 annotated to a genome, and the reaction count $n$ typically exceeds the
 metabolite count $m$, because
 a single metabolite typically participates in several reactions while a
@@ -52,8 +51,27 @@ cannot distinguish among them. The flux bounds cut this unbounded
 subspace down to a bounded polytope, and the objective in
 Equation~\eqref{eq:fba-lp} selects a single vertex, or a face, of that
 polytope, but the underlying indeterminacy, that most of the space
-allowed by stoichiometry is not resolved by stoichiometry, does not go
-away merely because an optimum has been found.
+allowed by stoichiometry is not resolved by stoichiometry, remains after
+an optimum has been found. This progression from conservation to bounds
+to optimization is summarized in Figure~\ref{fig:lp-geometry}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{lp_geometry.pdf}
+  \caption{Geometry of flux balance analysis in a two-flux projection.
+    (a) Conservation restricts steady-state fluxes to the null space
+    $\mathcal N(\mathbf S)$; the rays represent admissible steady-state
+    directions in the displayed projection. (b) Lower and upper flux bounds
+    intersect that space to form the convex feasible polytope $\mathcal P$.
+    (c) Parallel level sets of the linear objective
+    $\mathbf c^{\mathsf T}\hat{\mathbf v}$ move in the objective direction
+    until they support the polytope at an optimum. That optimum may be a
+    unique vertex or an entire face. In the latter case, fluxes can vary while
+    retaining the same objective value, and flux variability analysis projects
+    the optimal face onto a reaction-specific interval, illustrated here for
+    $\hat v_1$.}
+  \label{fig:lp-geometry}
+\end{figure}
 
 The singular value decomposition makes the geometry of that
 indeterminacy explicit. Writing $\mathbf S = \mathbf U\boldsymbol\Sigma
