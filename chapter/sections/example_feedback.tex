@@ -36,10 +36,12 @@ balances include degradation and growth dilution. The committed-step rate is
 where $X_3^{\circ}=1$ in the concentration units used by the simulation.
 The normalized ratios are dimensionless.
 
-The example uses a $330$-residue enzyme, a $990$-nucleotide gene,
-polymerase elongation at $60$ nucleotides per second, and ribosome elongation
-at $16$ amino acids per second. These values provide illustrative expression
-timescales. The steady-state abundance also depends on an mRNA half-life of
+The kinetic reference combines expression timescales with metabolic feedback
+and gives a steady-state throughput $T^{\star}\approx2.66$
+(Fig.~\ref{fig:feedback}). It uses a $330$-residue enzyme, a $990$-nucleotide
+gene, polymerase elongation at $60$ nucleotides per second, and ribosome
+elongation at $16$ amino acids per second. These values provide illustrative
+expression timescales. The steady-state abundance also depends on an mRNA half-life of
 $2.5$ minutes, a protein half-life of $35$ minutes, and a culture doubling
 time of $60$ minutes. The same growth rate $\mu$ appears in both balances,
 but its relative contribution differs because transcript and protein have
@@ -52,16 +54,15 @@ $T$. Because export is first order in $X_3$, $X_3=T/k_3$. Substitution of the
 activity and expression controls gives one consistency condition for $X_3$.
 The numerical solution was $X_3^{\star}\approx4$, with activity factor
 $\theta_{\mathrm{BST}}^{\star}\approx0.574$, an expression ratio
-$(e/e^{\circ})^{\star}\approx0.464$, and a throughput
-$T^{\star}\approx2.66$ (Fig.~\ref{fig:feedback}). Basal transcription
+$(e/e^{\circ})^{\star}\approx0.464$. Basal transcription
 $\lambda$, defined by Equations~\eqref{eq:mrna} and
 \eqref{eq:control-split}, keeps expression above zero. The values $a=0.4$
 and $b=0.6$ make both controls affect the result; neither control alone
 produces the reference throughput.
 
-The flux-balance model kept the chain's stoichiometry unchanged and
-placed the entire dual-control content on the single bound of the
-committed step:
+The FBA comparison keeps the chain's stoichiometry unchanged and places the
+entire dual-control content on the committed-step bound
+(Fig.~\ref{fig:feedback}). The bound is
 \begin{equation}\label{eq:feedback-bound}
   0 \;\le\; \hat v_{r_0} \;\le\;
   V^{\circ}_{\max,r_0}\,(e/e^{\circ})\,\theta_{\mathrm{FBA}}(X_3),
@@ -84,7 +85,7 @@ stoichiometric matrix and differed only in the bound on $r_0$. With both
 factors set to one, the predicted flux was $10$. Expression control alone
 reduced it to $4.64$, activity control alone reduced it to $6.10$, and both
 controls reduced it to $2.83$. The dual-control result is within about six
-percent of the BST reference value, $2.66$ (Fig.~\ref{fig:feedback}).
+percent of the BST reference value, $2.66$.
 
 \begin{figure}[htbp]
   \centering
@@ -101,12 +102,13 @@ percent of the BST reference value, $2.66$ (Fig.~\ref{fig:feedback}).
   \label{fig:feedback}
 \end{figure}
 
-The Hill parameters are uncertain because $K=5$ and $n=2$ were specified,
-not fitted. We therefore varied $K$ from $3$ to $8$ and $n$ from $1$ to $3$,
+The parameter sweep addresses uncertainty in the Hill parameters, which were
+specified as $K=5$ and $n=2$ rather than fitted
+(Fig.~\ref{fig:feedback_robust}). We therefore varied $K$ from $3$ to $8$ and $n$ from $1$ to $3$,
 recomputed $\theta_{\mathrm{FBA}}$ at the reference $X_3$, and solved the
 program at each grid point. With both controls, the predicted flux ranged from
-about $1.4$ to $4.1$ and included the BST value of $2.66$
-(Fig.~\ref{fig:feedback_robust}). The nominal parameters gave $2.83$. Activity
+about $1.4$ to $4.1$ and included the BST value of $2.66$. The nominal
+parameters gave $2.83$. Activity
 control alone kept the flux above about $2.97$, while expression control alone
 kept it at $4.64$. Thus, neither single-control model included the BST value
 over the tested parameter range, but the dual-control model did.

@@ -100,6 +100,9 @@ The remaining items are listed below.
   in opposite directions,” and “independent recovery” has been removed.
 - The sentence “Linear programming addresses the underdetermination of the
   constraint set” has been replaced with a direct explanation.
+- Every figure reference is integrated into the opening sentence of the
+  paragraph that discusses it; standalone constructions such as “Figure 1
+  shows these steps” have been removed. The chapter currently has no tables.
 
 ### Code reproducibility and terminology
 
