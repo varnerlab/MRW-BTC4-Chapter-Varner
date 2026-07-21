@@ -1,42 +1,24 @@
 %% gateways.tex
 \section{Integrative Flux Bounds}\label{sec:gateways}
 
-Conservation alone leaves the flux distribution underdetermined: the
-mole-balance constraint fixes a subspace, not a point, and the box of
-bounds together with the objective is what narrows that subspace to a
-prediction. The objective is a modeling choice. The bounds are where
-biology enters, and they
-enter not as numbers to be looked up but as a model in their own right.
-Writing a single upper bound as a product of factors makes that model
-visible. For reaction $j$, the factorized bound is:
+Reaction bounds can include several types of condition-specific data. For
+reaction $j$, write the bound as
 \begin{equation}\label{eq:general-bound}
   -\delta_j\Bigl[V^{\circ}_{\max,j}\,(e/e^{\circ})\,\theta_j(\cdot)\,f_j(\cdot)\Bigr]
   \;\le\; \hat v_j \;\le\;
   V^{\circ}_{\max,j}\,(e/e^{\circ})\,\theta_j(\cdot)\,f_j(\cdot),
 \end{equation}
-where $V^{\circ}_{\max,j}$ sets a reference capacity carrying the units
-of flux and the remaining factors are dimensionless corrections that
-scale that capacity up or down. Each factor represents a distinct kind
-and level of biological information: $\delta_j$ encodes thermodynamic
-directionality, $V^{\circ}_{\max,j}$ and $f_j$ encode enzyme kinetics,
-$(e/e^{\circ})$ encodes the abundance established by gene expression,
-and $\theta_j$ encodes allosteric regulation of the activity of the
-enzyme molecules already present. The expression and translation
-controls $u_j$ and $w_j$ therefore do not replace $\theta_j$ in this
-bound: they act through the transcript and protein balances below and
-ultimately change $(e/e^{\circ})$. A bound therefore provides an
-explicit accounting of what is known about a reaction. With no
-information beyond a capacity scale the correction factors are set to
-unity, and each is refined as measurements or mechanistic models become
-available. This is also where the underdetermined polytope is finally
-narrowed: not by conservation but by the bounds, and every informative
-factor tightens that polytope using evidence of a particular kind, so that
-tracing a prediction back to its cause is a matter of asking which
-factor in Equation~\eqref{eq:general-bound} was responsible.
+where $V^{\circ}_{\max,j}$ is a reference capacity with units of flux. The
+other factors are dimensionless. The reversibility factor $\delta_j$ sets
+the reverse direction. The terms $V^{\circ}_{\max,j}$ and $f_j$ describe
+enzyme capacity and substrate saturation. The ratio $(e/e^{\circ})$
+describes enzyme abundance, and $\theta_j$ describes allosteric activity.
+Transcriptional and translational controls $u_j$ and $w_j$ act through the
+expression model and change $(e/e^{\circ})$. They are distinct from
+$\theta_j$. When data are unavailable, the corresponding factor is set to
+one. Measurements or mechanistic models can then replace that default.
 
-The thermodynamic factor is the switch $\delta_j$, which decides
-whether the reaction may carry flux in the reverse direction at all. It
-takes one of two values:
+The reversibility factor $\delta_j$ has two values:
 \begin{equation}\label{eq:thermo-gate}
   \delta_j \;=\;
   \begin{cases}
@@ -44,105 +26,59 @@ takes one of two values:
     0, & \text{reaction $j$ irreversible},
   \end{cases}
 \end{equation}
-so that $\delta_j=1$ leaves the lower bound of
-Equation~\eqref{eq:general-bound} negative and the reaction free to run
-backward, while $\delta_j=0$ collapses the lower bound to zero and pins
-the reaction to the forward direction. The assignment follows the sign
-of $\Delta G^{\circ}_j-\Delta G^{*}_j$, the standard free energy of
-reaction measured against a threshold $\Delta G^{*}_j$ meant to
-represent the physiological concentration range, or equivalently a
-cutoff on the equilibrium constant $K_{\mathrm{eq},j}$: a reaction whose
-driving force cannot plausibly change sign anywhere in that range is
-declared irreversible, and its reverse flux is forbidden. This is a
-heuristic directionality rule, a stand-in for propagating a stated
-concentration range through $\Delta G=\Delta G^{\circ}+RT\ln Q$ and
-checking directly whether the sign can flip, not a substitute for that
-calculation where the range is actually known. Standard free energies
-for this test are drawn from group- and component-contribution
-estimates, for which eQuilibrator provides genome-scale coverage
-\cite{Beber2022}.
+When $\delta_j=1$, the lower bound is negative and reverse flux is allowed.
+When $\delta_j=0$, the lower bound is zero. A simple assignment compares
+$\Delta G^{\circ}_j$ with a threshold $\Delta G^{*}_j$. This threshold rule
+is heuristic. A thermodynamic analysis should instead propagate stated
+activity ranges through $\Delta G=\Delta G^{\circ}+RT\ln Q$ and test
+whether $\Delta G$ can change sign. eQuilibrator provides standard free
+energy estimates for this calculation \cite{Beber2022}.
 
-When the reaction is allowed to proceed, its capacity is set by enzyme
-kinetics, and this is the role of the reference scale
-$V^{\circ}_{\max,j}$ together with the saturation factor $f_j$. The
-scale is a maximal velocity, given by the product of a turnover number
-and a characteristic enzyme abundance:
+Enzyme kinetics set the forward capacity. Define the reference capacity as
 \begin{equation}\label{eq:vmax}
   V^{\circ}_{\max,j} \;=\; k^{\circ}_{\mathrm{cat},j}\,e^{\circ},
 \end{equation}
-where $k^{\circ}_{\mathrm{cat},j}$ is the catalytic rate constant of the
-enzyme catalyzing reaction $j$ and $e^{\circ}$ is a reference enzyme
-concentration. Turnover numbers are tabulated per enzyme and substrate
-in BRENDA \cite{Chang2021}, and a representative $e^{\circ}$ can be read
-from compilations of cellular abundances such as BioNumbers
-\cite{Milo2010}. The scale $V^{\circ}_{\max,j}$ is the flux the enzyme
-would sustain at reference abundance and saturating substrate, and the
-fraction of that ceiling actually reached at the prevailing substrate
-concentration is the saturation factor. That factor follows from the
-enzyme mechanism itself. A single-substrate enzyme binds substrate
-reversibly and turns it over to product according to the mechanism:
+where $k^{\circ}_{\mathrm{cat},j}$ is the turnover number and $e^{\circ}$
+is a reference enzyme concentration. BRENDA reports turnover numbers
+\cite{Chang2021}, and BioNumbers reports cellular abundance scales
+\cite{Milo2010}. The saturation factor gives the fraction of
+$V^{\circ}_{\max,j}$ available at the current substrate concentration.
+For a single-substrate enzyme, consider
 \begin{equation}\label{eq:mm-mechanism}
   E + S_j \;\underset{k_{-1}}{\overset{k_1}{\rightleftharpoons}}\; [ES]
   \;\overset{k_{\mathrm{cat}}}{\longrightarrow}\; E + P,
 \end{equation}
-with $[ES]$ the enzyme-substrate complex. Holding the complex at
-quasi-steady state, on the standard argument that it equilibrates fast
-relative to the depletion of substrate, and eliminating the free enzyme
-through the conservation of total enzyme $[E]_T=[E]+[ES]$, gives the
-complex as a hyperbolic function of substrate alone,
-$[ES]=[E]_T\,[S_j]/(K_{M,j}+[S_j])$ with
-$K_{M,j}\equiv(k_{-1}+k_{\mathrm{cat}})/k_1$.
-The reaction velocity is the rate of the turnover step,
-$v_j=k_{\mathrm{cat}}[ES]$, so writing the capacity as
-$V_{\max,j}=k_{\mathrm{cat}}[E]_T$ recovers the Michaelis--Menten rate
-law \cite{MichaelisMenten1913}, and the saturation factor is obtained by
-normalizing the rate to that capacity:
+where $[ES]$ is the enzyme--substrate complex. The quasi-steady-state
+approximation and enzyme conservation, $[E]_T=[E]+[ES]$, give
+$[ES]=[E]_T[S_j]/(K_{M,j}+[S_j])$, where
+$K_{M,j}=(k_{-1}+k_{\mathrm{cat}})/k_1$. With
+$v_j=k_{\mathrm{cat}}[ES]$ and
+$V_{\max,j}=k_{\mathrm{cat}}[E]_T$, the Michaelis--Menten law gives
+\cite{MichaelisMenten1913}
 \begin{equation}\label{eq:mm}
   v_j \;=\; V_{\max,j}\,\frac{[S_j]}{K_{M,j}+[S_j]}
   \qquad\Longrightarrow\qquad
   f_j([S_j]) \;=\; \frac{v_j}{V_{\max,j}}
   \;=\; \frac{[S_j]}{K_{M,j}+[S_j]}\;\in[0,1],
 \end{equation}
-with $[S_j]$ the substrate concentration and $K_{M,j}$ the Michaelis
-constant. The saturation factor $f_j$ interpolates between negligible
-capacity ($f_j\to0$ as substrate is exhausted) and the maximal capacity
-($f_j\to1$ at saturation), and it is the same hyperbolic law that
-governs single-enzyme assays. Because $f_j$
-depends on the substrate concentration, incorporating this factor makes the
-bound a function of the metabolic state rather than a fixed number, the
-point at which a static flux balance begins to acquire the
-state-dependence that a dynamic treatment carries to its conclusion.
+where $[S_j]$ is substrate concentration and $K_{M,j}$ is the Michaelis
+constant. The factor approaches zero at low substrate and one at
+saturation. Because $f_j$ depends on $[S_j]$, the bound becomes
+state-dependent.
 
-The scale $V^{\circ}_{\max,j}$ was fixed at a reference enzyme abundance
-$e^{\circ}$, but the abundance actually present is itself a variable set
-by gene expression, and the ratio $(e/e^{\circ})$ is the factor through
-which that variability enters. To treat abundance as a modeled
-quantity rather than a fixed parameter, write balances for the
-transcript $m_j$ and the protein $p_j$ of the gene encoding the enzyme:
+Gene expression sets enzyme abundance. Balances for transcript $m_j$ and
+protein $p_j$ are
 \begin{align}
   \dot m_j &= r_{X,j}\,u_j - (\theta_{m,j}+\mu)\,m_j + \lambda_j,
   \label{eq:mrna}\\
   \dot p_j &= r_{L,j}\,w_j\,m_j - (\theta_{p,j}+\mu)\,p_j,
   \label{eq:protein}
 \end{align}
-where $r_{X,j}$ and $r_{L,j}$ are transcription and translation rate
-capacities, $u_j$ and $w_j$ are dimensionless control functions that
-modulate those capacities, and $\theta_{m,j}$ and $\theta_{p,j}$ are
-first-order degradation rate constants for message and protein, and
-$\lambda_j$ is a basal, or leak, source of transcript. The loss term in
-each balance is not the degradation constant alone but the sum
-$(\theta_{m,j}+\mu)$ or $(\theta_{p,j}+\mu)$: every intracellular
-species is removed both by its own turnover and by dilution into the
-growing culture at the specific growth rate $\mu$. That $\mu$ is not a
-new parameter. It is the very growth-dilution term retained in the
-constraint retaining growth dilution,
-Equation~\eqref{eq:dilution-constraint}, carried
-through consistently: an
-enzyme is diluted by growth exactly as a metabolite is, and the same
-$\mu$ that balances metabolic production in the flux constraint sets
-the residence time of the transcripts and proteins that fix the flux
-bounds. Holding the balances at steady state gives the closed-form
-abundances:
+where $r_{X,j}$ and $r_{L,j}$ are transcription and translation
+capacities, $u_j$ and $w_j$ are dimensionless controls,
+$\theta_{m,j}$ and $\theta_{p,j}$ are degradation constants, and
+$\lambda_j$ is basal transcription. Growth adds $\mu$ to both loss rates.
+At steady state,
 \begin{equation}\label{eq:expression-ss}
   m^{\star}_j = \frac{r_{X,j}u_j+\lambda_j}{\theta_{m,j}+\mu},
   \qquad
@@ -150,35 +86,19 @@ abundances:
   \qquad
   (e/e^{\circ}) = \frac{p^{\star}_j}{e^{\circ}},
 \end{equation}
-and the protein level $p^{\star}_j$ is mapped onto the abundance of the
-catalytic activity for reaction $j$ through the gene-protein-reaction
-(GPR) rules of the reconstruction, which encode whether an activity
-requires a single gene product, several assembled into a complex, or
-any one of several interchangeable isozymes. Through
-Equation~\eqref{eq:expression-ss} the expression factor couples the
-flux ceiling to the entire upstream apparatus of transcription and
-translation, with $\mu$ standing in every denominator as the visible
-signature of the growth-aware bookkeeping begun in the mole-balance
-derivation. The ratio $(e/e^{\circ})$ is also the
-natural port for measured data: a transcriptomic or proteomic profile
-enters here, rescaling the capacity of each reaction by the abundance
-actually observed under a given condition and turning one
-reconstruction into a family of condition-specific models.
+Gene--protein--reaction rules map $p_j^\star$ to catalytic activity. These
+rules represent single enzymes, multisubunit complexes, and isozymes.
+Measured transcript or protein abundance can also set
+$(e/e^{\circ})$ directly and produce condition-specific capacities.
 
-One statistical mechanical construction can represent allosteric
-activity, transcription, and translation. The common idea is to
-classify configurations by function. Some configurations of an enzyme,
-promoter, or translation-initiation complex permit the process of
-interest; the remaining configurations do not. The physical
-configurations and the criterion for activity differ among the three
-processes, but the calculation is the same: the numerator sums the
-configurations that permit the process, while the denominator sums all
-configurations available to the regulated element.
-
-Let $\mathcal S_q$ denote the set of configurations of a regulated
-element associated with process $q$, where $q$ may be catalysis,
-transcription, or translation. Configuration $s\in\mathcal S_q$ has
-energy $\epsilon_s$, with its statistical weight given by:
+A single statistical-mechanical construction can describe allosteric
+activity, transcription, and translation. Divide the configurations of an
+enzyme, promoter, or translation complex into active and inactive sets. The
+control is the statistical weight of the active set divided by the weight of
+all configurations. Let $\mathcal S_q$ be the configurations for process $q$,
+where $q$ denotes
+catalysis, transcription, or translation. Configuration
+$s\in\mathcal S_q$ has energy $\epsilon_s$ and weight
 \begin{equation}\label{eq:partition}
   \omega_s(\mathbf x)
     = g_s(\mathbf x)e^{-\beta\epsilon_s},
@@ -190,17 +110,13 @@ energy $\epsilon_s$, with its statistical weight given by:
     = \frac{\omega_s(\mathbf x)}{Z_q(\mathbf x)},
 \end{equation}
 where $\beta=1/(k_BT)$ and $Z_q$ is the partition function. The factor
-$g_s(\mathbf x)$ accounts for ligand concentrations, binding
-stoichiometry, and degeneracy. For example, a configuration containing
-$n$ bound molecules of an effector $x$ contributes a concentration
-factor proportional to $(x/K)^n$. The partition function is therefore a
-concentration-dependent sum over every configuration, not only those
-that are functional.
+$g_s(\mathbf x)$ includes ligand concentration, binding stoichiometry, and
+degeneracy. A state with $n$ bound effector molecules, for example, has a
+concentration factor proportional to $(x/K)^n$.
 
-Now let $\mathcal A_q\subseteq\mathcal S_q$ be the configurations that
-permit process $q$, and let $\mathcal I_q=\mathcal S_q\setminus\mathcal
-A_q$ be the configurations that do not. The dimensionless control for
-that process is the probability of occupying the active subset:
+Let $\mathcal A_q\subseteq\mathcal S_q$ contain the active configurations
+and let $\mathcal I_q=\mathcal S_q\setminus\mathcal A_q$ contain the
+inactive configurations. The control is the probability of the active set:
 \begin{equation}\label{eq:active-state-control}
   \Phi_q(\mathbf x)
     = \sum_{s\in\mathcal A_q}p_s(\mathbf x)
@@ -211,19 +127,12 @@ that process is the probability of occupying the active subset:
     = \frac{Z_{\mathcal A_q}}
       {Z_{\mathcal A_q}+Z_{\mathcal I_q}}.
 \end{equation}
-Here $Z_{\mathcal B}=\sum_{s\in\mathcal B}\omega_s$ denotes a
-partition sum restricted to the subset $\mathcal B$. This ratio makes
-the functional classification explicit. Every active
-configuration appears in both the numerator and denominator; inactive
-configurations appear only in the denominator. Consequently
-$0\leq\Phi_q\leq1$, and an effector increases or decreases the control
-according to whether it preferentially weights active or inactive
-configurations.
-
-The compact constants used in promoter models can be connected directly
-to these Boltzmann weights. Choose configuration $0$ as a reference and
-write $\Delta\epsilon_s=\epsilon_s-\epsilon_0$. The relative energetic
-weight and the complete state weight are then related by:
+Here $Z_{\mathcal B}=\sum_{s\in\mathcal B}\omega_s$ is the partition sum
+over subset $\mathcal B$. Active states appear in the numerator and
+denominator; inactive states appear only in the denominator. Therefore
+$0\leq\Phi_q\leq1$. An effector increases or decreases $\Phi_q$ according
+to the states it stabilizes. Choose configuration $0$ as a reference and define
+$\Delta\epsilon_s=\epsilon_s-\epsilon_0$. Then
 \begin{equation}\label{eq:effective-state-weight}
   K_{\star,s}
     \equiv \frac{\omega_s/g_s}{\omega_0/g_0}
@@ -232,17 +141,15 @@ weight and the complete state weight are then related by:
   \frac{\omega_s}{\omega_0}
     = \frac{g_s(\mathbf x)}{g_0(\mathbf x)}K_{\star,s}.
 \end{equation}
-With the conventional choice $\omega_0=g_0=1$, this becomes
-$\omega_s=g_s(\mathbf x)K_{\star,s}$. Thus, a term such as $K_2f_{TL}$
-combines an energetic factor $K_2=e^{-\beta\Delta\epsilon_2}$ with the
-availability $f_{TL}$ of the ligand-bound transcription factor. In a
-fitted promoter model, however, $K_1$ and $K_2$ are effective,
-dimensionless weights: they may absorb a constant RNA-polymerase
-concentration, standard-state factors, and other lumped contributions,
-and need not equal measured dissociation constants.
+With $\omega_0=g_0=1$, the state weight is
+$\omega_s=g_s(\mathbf x)K_{\star,s}$. A term such as $K_2f_{TL}$ combines
+the energetic factor $K_2=e^{-\beta\Delta\epsilon_2}$ with the available
+ligand-bound transcription factor $f_{TL}$. Fitted values of $K_1$ and
+$K_2$ may also include constant polymerase concentration, standard-state
+terms, or other fixed contributions. They need not be measured
+dissociation constants.
 
-Figure~\ref{fig:active-subset} summarizes the construction from molecular
-configurations to process-specific control:
+Figure~\ref{fig:active-subset} summarizes this construction.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.88\textwidth]{active_subset.pdf}
@@ -257,20 +164,13 @@ configurations to process-specific control:
   \label{fig:active-subset}
 \end{figure}
 
-The inducible-promoter models of Moon, Voigt, and coworkers provide a
-concrete example of this construction \cite{Moon2012}. Their
-Supplementary Figure~S7 and Equations~3--6 enumerate promoter
-configurations and assign a partition-function term to each one. For
-the Lux promoter, the configurations have weights
-$1$, $K_1$, and $K_2f_{TL}$, corresponding respectively to an empty
-promoter, RNA-polymerase binding, and joint binding of RNA polymerase
-with the ligand-bound LuxR complex. The two RNA-polymerase-bound
-configurations permit transcription and therefore appear in the
-numerator. For the Tac promoter, the empty, RNA-polymerase-bound, and
-repressor-bound configurations have weights $1$, $K_1$, and $K_2f_T$;
-only the RNA-polymerase-bound configuration permits transcription.
-After normalization by the maximal promoter activity, the two controls
-are therefore given by:
+Moon, Voigt, and coworkers used this construction for inducible promoters
+\cite{Moon2012}. The Lux promoter has weights $1$, $K_1$, and
+$K_2f_{TL}$ for the empty, polymerase-bound, and polymerase--LuxR-bound
+states. Both polymerase-bound states permit transcription. The Tac promoter
+has weights $1$, $K_1$, and $K_2f_T$ for the empty, polymerase-bound, and
+repressor-bound states. Only the polymerase-bound state permits
+transcription. Normalization gives
 \begin{equation}\label{eq:moon-promoter-control}
   u_{\mathrm{Lux}}
     = \frac{K_1+K_2f_{TL}}{1+K_1+K_2f_{TL}},
@@ -278,30 +178,23 @@ are therefore given by:
   u_{\mathrm{Tac}}
     = \frac{K_1}{1+K_1+K_2f_T}.
 \end{equation}
-Here $f_{TL}$ is the ligand-bound fraction of the transcription factor,
-whereas $f_T$ is its ligand-free fraction. The Lux example adds weight
-to an active configuration as inducer increases; the Tac example
-removes weight from an inactive, repressor-bound configuration. Both
-are direct specializations of Equation~\eqref{eq:active-state-control}.
-
-A two-configuration element illustrates the reduction. If an inactive
-configuration has weight $\omega_I=1$ and an effector-stabilized active
-configuration has weight
-$\omega_A=(x/K)^n e^{-\beta\Delta\epsilon}$, then the control becomes:
+Here $f_{TL}$ is the ligand-bound transcription-factor fraction and $f_T$
+is the ligand-free fraction. Increasing inducer adds weight to an active
+Lux state and removes weight from an inactive Tac state. Both controls are
+special cases of Equation~\eqref{eq:active-state-control}. A two-state model
+gives a familiar special case. If the inactive state has
+weight $\omega_I=1$ and the effector-stabilized active state has weight
+$\omega_A=(x/K)^n e^{-\beta\Delta\epsilon}$, then
 \begin{equation}\label{eq:two-state-control}
   \Phi_q(x)
     = \frac{(x/K)^n e^{-\beta\Delta\epsilon}}
       {1+(x/K)^n e^{-\beta\Delta\epsilon}},
 \end{equation}
-where $\Delta\epsilon$ is the active-state energy relative to the
-inactive reference. The familiar Hill-like form is thus a normalized
-active-state weight.
-If the effector instead stabilizes an inactive configuration, its
-concentration-dependent weight enters the denominator but not the
-numerator, and the control decreases with $x$.
+where $\Delta\epsilon$ is the active-state energy relative to the inactive
+state. If the effector instead stabilizes the inactive state, its weight
+appears only in the denominator and the control decreases with $x$.
 
-The process-specific factors used above are instances of
-Equation~\eqref{eq:active-state-control}:
+Equation~\eqref{eq:active-state-control} gives each process-specific factor:
 \begin{equation}\label{eq:control-mapping}
   \theta_j = \Phi_{\mathrm{cat},j},
   \qquad
@@ -309,19 +202,15 @@ Equation~\eqref{eq:active-state-control}:
   \qquad
   w_j = \Phi_{\mathrm{TL},j}.
 \end{equation}
-The allosteric factor $\theta_j$ multiplies catalytic capacity directly
-in Equation~\eqref{eq:general-bound}. The total transcriptional control
-$\bar u_j$ is separated below into regulated and basal contributions,
-while $w_j$ multiplies translational capacity in
-Equation~\eqref{eq:protein}. These dimensionless controls are distinct
-from the degradation-rate constants $\theta_{m,j}$ and
-$\theta_{p,j}$.
-
-Basal expression follows by subdividing the transcriptionally active
-set. Let $\mathcal A_{\mathrm{TX}}^{\mathrm{reg}}$ contain active
-configurations reached through the regulated input and let
-$\mathcal A_{\mathrm{TX}}^{\mathrm{basal}}$ contain configurations that
-support transcription without that input. Their contributions are:
+The factor $\theta_j$ multiplies catalytic capacity in
+Equation~\eqref{eq:general-bound}. The factor $\bar u_j$ controls
+transcription, and $w_j$ controls translation in
+Equation~\eqref{eq:protein}. These controls are distinct from the
+degradation constants $\theta_{m,j}$ and $\theta_{p,j}$. Split the
+transcriptionally active set into regulated and basal states.
+Let $\mathcal A_{\mathrm{TX}}^{\mathrm{reg}}$ contain the regulated states
+and $\mathcal A_{\mathrm{TX}}^{\mathrm{basal}}$ contain states that support
+transcription without the regulated input. Then
 \begin{equation}\label{eq:control-split}
   \bar u_j
     = \frac{Z_{\mathcal A_{\mathrm{TX}}^{\mathrm{reg}}}}{Z_{\mathrm{TX}}}
@@ -330,77 +219,37 @@ support transcription without that input. Their contributions are:
   \qquad
   \lambda_j \equiv r_{X,j}u_j^{\dagger}.
 \end{equation}
-The regulated contribution $u_j$ enters the transcription term in
-Equation~\eqref{eq:mrna}, whereas the basal contribution
-$u_j^{\dagger}$ supplies its leak source $\lambda_j$. The promoter-state
-specialization follows the construction used by Moon, Voigt, and
-coworkers \cite{Moon2012}. The effective biophysical model of Adhikari and
-coworkers extends the same active-subset accounting to transcriptional
-and translational control \cite{Adhikari2020}; the factorization here
-places those controls alongside the corresponding allosteric factor.
+The regulated term $u_j$ enters Equation~\eqref{eq:mrna}. The basal term
+$u_j^{\dagger}$ defines $\lambda_j$. Moon, Voigt, and coworkers used this
+promoter-state construction \cite{Moon2012}. Adhikari and coworkers
+extended it to transcriptional and translational control
+\cite{Adhikari2020}.
 
-Each information layer requires data that is often unavailable:
-thermodynamic estimates, turnover numbers, substrate concentrations,
-expression measurements, and regulatory parameters. When that data is
-scarce the correction factors are set to unity,
+These factors require thermodynamic, kinetic, expression, and regulatory
+data. When data are unavailable, set the correction factors to one,
 $f_j\approx1$, $(e/e^{\circ})\approx1$, and
-$\theta_j\approx1$, and the general bound collapses to the two-parameter
-box:
+$\theta_j\approx1$. This gives the baseline bound
 \begin{equation}\label{eq:simplified-bound}
   -\delta_j\,V^{\circ}_{\max,j} \;\le\; \hat v_j \;\le\; V^{\circ}_{\max,j}.
 \end{equation}
-The simplified form in Equation~\eqref{eq:simplified-bound} retains only
-the thermodynamic factor and the capacity scale, and it is the reversible or irreversible
-$\pm V_{\max}$ box used throughout genome-scale flux balance analysis.
-It is the tractable baseline representation of a bound when
-nothing beyond a capacity estimate is known. The factorized form in
-Equation~\eqref{eq:general-bound} records which
-assumptions that baseline makes and which factor requires additional
-information to relax each of them.
-
-Each class of information just described has a named, established predecessor in the
-constraint-based modeling literature, and this chapter's contribution is
-the unifying notation and workflow that connects them, not the invention
-of any individual constraint. The thermodynamic factor $\delta_j$ is the
-central device of thermodynamics-based flux analysis, which propagates
-standard free energies and metabolite activity ranges through the whole
-network to rule out infeasible flux and concentration profiles together
-\cite{Henry2007}. The kinetic factors, $V^{\circ}_{\max,j}$ built from a
-turnover number and an enzyme abundance together with the saturation
-factor $f_j$, are the organizing idea behind enzyme-constrained flux
-balance analysis, most fully realized in the GECKO framework, which
-folds a proteome-wide capacity constraint into a genome-scale
-reconstruction \cite{Sanchez2017}. The expression factor $(e/e^{\circ})$,
-transcript and protein balances entered as a modeled quantity rather
-than a fixed parameter, is the metabolism-and-expression (ME) model
-construction, which couples the transcription and translation machinery
-directly to the metabolic network at genome scale
-\cite{OBrien2013}. The expression control functions $u_j$ and $w_j$
-connect to two established lines of regulatory constraint-based
-modeling: regulatory flux balance analysis, which switches expression-linked
-reactions on and off with Boolean rules derived from a transcriptional
-regulatory network \cite{Covert2001}, and PROM, which replaces the
-Boolean rule with a continuous, data-derived probability of an
-interaction being active \cite{Chandrasekaran2010}. The allosteric
-factor $\theta_j$ represents the distinct, direct regulation of enzyme
-activity after the enzyme has been expressed. What the integrative
-factorization of Equation~\eqref{eq:general-bound} adds is not a fifth
-constraint class but a common accounting of how these four
-already-established devices contribute to one bound, so that a single
-notation and a single worked derivation carry across all four rather
-than requiring a separate formalism, and a separate paper, for each.
-
-The expression model above lumped transcription and
-translation into aggregate capacities $r_{X,j}$ and $r_{L,j}$, but these
-processes can themselves be resolved to the level of the sequences they
-read. Transcription of a gene and translation of its protein consume
-nucleotides, amino acids, and energy in stoichiometric ratios fixed by
-the gene and protein sequences, and those precursor demands can be
-computed directly from the sequences and entered into $\mathbf S$ as
-reactions in their own right \cite{AllenPalsson2003}, with the
-precursors supplied by exchange reactions across the system boundary.
-Expression then becomes flux-bearing chemistry inside the same linear
-program as metabolism, a construction carried out for cell-free protein
-synthesis by Vilkhovoy and coworkers \cite{Vilkhovoy2018}, and it is
-the mechanism behind the cell-free capstone taken up later in this
-chapter.
+Equation~\eqref{eq:simplified-bound} retains only reversibility and
+reference capacity. Equation~\eqref{eq:general-bound} shows which omitted
+factors require additional data. Each factor has a precedent in
+constraint-based modeling. Thermodynamics-
+based flux analysis uses free energies and metabolite activity ranges to
+exclude infeasible states \cite{Henry2007}. Enzyme-constrained FBA uses
+turnover numbers and enzyme abundance; GECKO applies this approach at genome
+scale \cite{Sanchez2017}. Metabolism-and-expression models couple
+transcription and translation to metabolism \cite{OBrien2013}. Regulatory
+FBA uses Boolean expression rules \cite{Covert2001}, whereas PROM uses
+data-derived interaction probabilities \cite{Chandrasekaran2010}. The
+allosteric factor $\theta_j$ represents direct regulation of enzyme
+activity. Equation~\eqref{eq:general-bound} places these established terms
+in one notation. The balances above use aggregate transcription and
+translation capacities,
+$r_{X,j}$ and $r_{L,j}$. A sequence-resolved model can instead calculate
+nucleotide, amino-acid, and energy demands from each gene and protein
+sequence and add those reactions to $\mathbf S$ \cite{AllenPalsson2003}.
+Expression then becomes part of the flux calculation. Vilkhovoy and
+coworkers used this construction for cell-free protein synthesis
+\cite{Vilkhovoy2018}; the later capstone returns to that model.

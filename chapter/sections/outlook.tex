@@ -1,30 +1,19 @@
 %% outlook.tex
 \section{Outlook}\label{sec:outlook}
 
-The worked examples populated the factors of
-Equation~\eqref{eq:general-bound} from tabulated sources: standard
-free energies from group-contribution estimates, turnover numbers
-from enzyme databases, and allosteric and expression controls built from regulatory
-microstates. The construction does not require those sources. With
-time-resolved measurements, turnover numbers, saturation constants,
-allosteric factors $\theta_j$, and expression control functions $u_j$
-and $w_j$ can instead be learned from the data
-they are meant to explain, while tabulated values remain useful as
-priors when dynamic measurements are unavailable. This approach also
-extends reaction by reaction to genome-scale reconstructions, where
-the growing null space of $\mathbf S$ makes informative bounds most
-important: a factor left at unity admits a
-large subspace of indistinguishable flux vectors and can therefore
-weaken predictions precisely where stoichiometry constrains them
-least.
-The dynamic, data-rich regime of the cell-free capstone is also the natural
-home for the growth-dilution and accumulation term retained in
-Equation~\eqref{eq:dilution-constraint} and omitted in
-Equation~\eqref{eq:sv0}. Cell-free reactions are one setting dense
-enough in time-resolved measurement to estimate fluxes while retaining
-that term, and the same opportunity extends wherever
-intracellular state can be tracked closely enough in time, including
-inside a growing culture. The natural direction is therefore to
-estimate flux directly against
-Equation~\eqref{eq:dilution-constraint}, with $\mu\mathbf x$ retained
-wherever measurements support it.
+The worked examples used standard free energies, turnover numbers, and
+regulatory models to set the factors in Equation~\eqref{eq:general-bound}.
+Time-course data can instead be used to estimate turnover numbers, saturation
+constants, allosteric factors $\theta_j$, and expression controls $u_j$ and
+$w_j$. Tabulated values remain useful as prior information when dynamic data
+are unavailable. The same approach can be applied reaction by reaction in
+genome-scale models.
+These models have many flux distributions that satisfy
+$\mathbf S\hat{\mathbf v}=\mathbf 0$, so condition-specific bounds are
+especially important. Setting an unknown factor to one preserves feasibility
+but may leave many fluxes unresolved. Time-course data also allow models to
+retain accumulation and growth dilution.
+Cell-free systems have $\mu=0$ but can have substantial accumulation. Growing
+cell cultures can have both terms. When measurements resolve these changes,
+fluxes should be estimated from Equation~\eqref{eq:dilution-constraint}
+instead of imposing Equation~\eqref{eq:sv0}.

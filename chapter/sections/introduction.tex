@@ -2,73 +2,49 @@
 \section{Introduction}\label{sec:intro}
 
 Biotechnology depends on predicting and directing cellular metabolism.
-Metabolic engineering redirects flux toward a target product,
-bioprocess development tunes feeding and environment to sustain it, and
-strain design asks which genetic changes will move a phenotype in a
-wanted direction; each is, at bottom, a question about the
-intracellular flux distribution, the rates at which the reactions of
-metabolism actually run under a given condition \cite{Bordbar2014}.
-That distribution is what a quantitative model is asked to predict, and
-it is also difficult to observe. A genome sequence and the
-stoichiometry of its annotated reactions are knowable in broad outline,
-though real reconstructions carry their own uncertainty in reaction
-membership, directionality, compartmentalization, and biomass
-composition; the internal fluxes, the kinetic parameters that would set
-them, and the metabolite concentrations that drive them are, at genome
-scale, far less constrained still. The problem is therefore to predict a metabolic phenotype
-from what can be known rather than from what a direct calculation would
-require.
+Metabolic engineering redirects flux toward a product. Bioprocess
+development selects operating conditions that sustain production. Strain
+design identifies genetic changes that alter the phenotype. Each task
+requires an estimate of metabolic reaction rates under a specified condition
+\cite{Bordbar2014}. These rates are difficult to measure directly. Genome
+sequences and reaction annotations provide a network structure, but
+reconstructions remain uncertain in reaction membership, directionality,
+compartments, cofactors, and biomass composition. Fluxes, kinetic parameters,
+and metabolite concentrations are even less complete at genome scale. Models
+must therefore estimate phenotype from incomplete measurements. Bioprocess
+models use several levels of biological detail. Unstructured
+models track biomass, extracellular substrates, and products with lumped
+growth, uptake, and production rates. Monod growth, inhibition, maintenance,
+and growth-associated production laws support batch, fed-batch, and
+continuous reactor analysis, but do not resolve intracellular fluxes
+\cite{Esener1983}. Structured kinetic models add intracellular pools,
+enzymes, or cellular machinery. Early single-cell models from Shuler and
+coworkers coupled intracellular metabolism to extracellular nutrients in
+microbial and mammalian cells \cite{Domach1984,Wu1992}. Reaction-level
+kinetic models assign mass-action, Michaelis--Menten, or power-law rates to
+individual reactions and integrate the resulting differential equations
+\cite{MichaelisMenten1913,Savageau1976,SavageauVoit1987,Vadhin2026}. These
+models describe transient intracellular behavior, but require more kinetic
+parameters as their resolution increases.
 
-Two broad strategies answer that problem. Mechanistic kinetic models
-write an explicit rate law for every reaction, from Michaelis--Menten
-saturation \cite{MichaelisMenten1913} through mass action to the
-power-law formalism of biochemical systems theory
-\cite{Savageau1976,SavageauVoit1987}, and integrate the resulting
-equations forward in time; they resolve the dynamics in full but demand
-a rate constant, an affinity, or a kinetic order for every step,
-parameters that are rarely available beyond a handful of well-studied
-pathways. Constraint-based models make the opposite trade. They ask
-only for the stoichiometry of the network and impose conservation of
-mass at steady state, and in doing so they scale to genome-wide
-reconstructions of thousands of reactions
-\cite{Bordbar2014,AllenPalsson2003}. Flux balance analysis is the
-constraint-based workhorse: it casts phenotype prediction as a linear
-program over the flux vector \cite{Orth2010,Heirendt2019}. Conservation
-alone, however, does not determine a flux distribution; it fixes a
-whole subspace of them, and what selects a prediction from that
-subspace is the box of upper and lower bounds placed on each reaction.
-Flux bounds are a major interface through which condition-specific
-thermodynamic, kinetic, expression, and regulatory information enters a
-constraint-based model, and the question this chapter takes up is how
-it enters:
-through which bound does a thermodynamic estimate, a turnover number,
-an expression measurement, or a regulatory signal actually change a
-flux prediction?
-
-This chapter develops flux balance analysis as an integrative
-framework, organized around bounds that provide a natural mechanism for
-combining different kinds and levels of biological information in a flux
-estimate. The flux
-constraint itself is derived not by asserting steady state but from an
-open mole balance on a growing culture, a derivation that keeps the
-growth-dilution term omitted from the textbook form and writes the
-constraint as $\mathbf S\hat{\mathbf v}=\mu\mathbf x$ rather than
-$\mathbf S\hat{\mathbf v}=\mathbf 0$. A single bound is then read as a
-product of factors representing thermodynamic reversibility, enzyme
-kinetics, gene expression, and regulation. Refining a factor means
-supplying the data or mechanistic model that determines it. Two
-worked steady-state examples make the construction concrete: a
-urea-cycle metabolic network whose flux distribution is pinned by
-thermodynamic and kinetic data drawn entirely from public databases,
-and a feedback-inhibited pathway whose regulated throughput, generated
-independently from a kinetic reference model, is recovered by incorporating the
-allosteric activity factor in a single bound. Two reported systems then show
-the same information layers combined at a scale no hand calculation could
-reach, one estimating fluxes in a dynamic cell-free reaction
-\cite{Vilkhovoy2023} and one designing a glycan-producing strain by
-model-guided gene deletion \cite{Wayman2019}. Read across these cases,
-estimating a flux distribution from data and designing one by
-intervention evaluate the bounds the same way once an intervention is
-chosen; design differs in also requiring a combinatorial search, over
-candidate deletions or expression changes, for which bounds to move
-\cite{Burgard2003}.
+Constraint-based models use a different closure. They impose mass
+conservation on the reaction network and require fewer explicit kinetic
+parameters. This approach can be applied to genome-scale reconstructions
+\cite{Bordbar2014,AllenPalsson2003}. Flux balance analysis (FBA) formulates
+the calculation as a linear program \cite{Orth2010,Heirendt2019}.
+Conservation alone usually permits many flux distributions. Reaction bounds
+restrict this feasible set, and an objective selects an optimum. Bounds are
+a major route by which condition-specific thermodynamic, kinetic,
+expression, and regulatory data enter the model. This chapter examines how
+each type of data changes a bound and its predicted fluxes. The chapter first
+derives the flux constraint from a mole balance, including
+the growth-dilution term $\mathbf S\hat{\mathbf v}=\mu\mathbf x$. It then
+factors each reaction bound into terms for reversibility, enzyme capacity,
+substrate saturation, enzyme abundance, and regulation. Two small examples
+show how these terms affect a flux prediction. The first uses public data to
+set bounds in a urea-cycle network. The second transfers expression and
+metabolite states from a kinetic feedback model into an FBA bound. Two larger
+studies illustrate related methods in dynamic cell-free protein synthesis
+\cite{Vilkhovoy2023} and model-guided strain design \cite{Wayman2019}.
+Strain design also requires a discrete search over candidate interventions,
+often formulated as a bilevel optimization problem \cite{Burgard2003}.

@@ -1,118 +1,92 @@
 %% derivation.tex
 \section{From Mole Balances to the Flux Constraint}\label{sec:derivation}
 
-Flux balance analysis (FBA) uses an algebraic constraint derived from a
-mole balance. Writing the balance out identifies the assumptions used
-to obtain its familiar textbook form and the operating conditions under
-which that reduction applies. Consider a well-mixed bioreactor of volume $V$ holding a growing cell
-culture. The culture exchanges mass with its surroundings through a set of
-physical streams $s$ (feed, harvest, gas sparging) and hosts an
-intracellular reaction network with $n$ fluxes $\hat v_j$, $j=1,\dots,n$,
-acting on $m$ metabolite species. For a species $i$ present at
-concentration $C_i$, an open mole balance over the whole culture accounts
-for material entering and leaving through the streams together with
-material produced or consumed by the reaction network:
+The FBA constraint follows from a mole balance. Its derivation defines the
+normalization basis and identifies the steady-state assumptions. Consider a
+well-mixed culture with biomass concentration $B$ and reactor volume
+$\bar V$. Their product defines the biomass basis
+\begin{equation}\label{eq:biomass-basis}
+  \mathcal B \equiv B\bar V,
+\end{equation}
+where $B$ has units gDW/L, $\bar V$ has units L, and $\mathcal B$ is the
+total biomass in gDW. An intracellular concentration $C_i$ has units
+mmol/gDW, and an intracellular flux $\hat v_j$ has units mmol/gDW/h.
+Multiplication by $\mathcal B$ gives the total intracellular amount
+$C_i\mathcal B$ and total reaction rate $\hat v_j\mathcal B$. A general
+intracellular balance includes reaction, active transport, and
+physical transport. Let $c_{i,s}$ be the concentration of species $i$ in a
+hypothetical bulk stream $s$, and let $\dot V_s$ be its volumetric flow
+rate. The intracellular mole balance is
 \begin{equation}\label{eq:mole-balance}
-  \sum_{s} d_s\, C_{i,s}\,\dot V_s \;+\; \sum_j \sigma_{ij}\hat v_j\, V
-  \;=\; \frac{d}{dt}\bigl(C_i V\bigr),
+  \sum_s d_s c_{i,s}\dot V_s
+  + \mathcal B\sum_j\sigma_{ij}\hat v_j
+  = \frac{d}{dt}\bigl(C_i\mathcal B\bigr),
 \end{equation}
-where $d_s=+1$ for streams entering the reactor and $d_s=-1$ for streams
-leaving it, $C_{i,s}$ is the concentration of species $i$ in stream $s$,
-$\dot V_s$ is the volumetric flow rate of that stream, and $\sigma_{ij}$ is
-the stoichiometric coefficient of species $i$ in reaction $j$, the $(i,j)$
-entry of the stoichiometric matrix $\mathbf S\in\mathbb R^{m\times n}$.
-This mole balance, Equation~\eqref{eq:mole-balance}, does not require
-assumptions about growth rate, feeding strategy, or steady state and
-provides the starting point for the reduction below.
+where $d_s=+1$ for an inlet and $d_s=-1$ for an outlet, and
+$\sigma_{ij}$ is entry $(i,j)$ of the stoichiometric matrix
+$\mathbf S\in\mathbb R^{m\times n}$. Each term has units mmol/h. The stream
+concentration $c_{i,s}$ has units mmol/L, whereas $C_i$ has units mmol/gDW.
+The cell membrane excludes bulk physical flow from the intracellular
+control volume, so $\dot V_s=0$ and the first term vanishes. Active
+transport remains in $\hat{\mathbf v}$ because it moves molecules without
+bulk volume flow.
 
-Two steps turn Equation~\eqref{eq:mole-balance} into a statement about
-fluxes alone. First, write the reactor volume in specific units,
-$V=B\bar V$, with $B$ the total biomass in the reactor and $\bar V$ the
-culture volume per unit biomass; this ties the extensive balance to the
-biomass that is actually growing, and the specific growth rate follows
-as $\mu\equiv(1/B)\,dB/dt$. Second, the product rule expands the
-accumulation term as:
+Expand the accumulation term before assuming a fixed reactor volume.
+Substitution of $\mathcal B=B\bar V$ gives
 \begin{equation}\label{eq:product-rule}
-  \frac{d}{dt}\bigl(C_iV\bigr)=\frac{d}{dt}\bigl(C_iB\bar V\bigr)
-  = B\bar V\,\frac{dC_i}{dt}
-  + C_i\bar V\,\frac{dB}{dt}
-  + C_iB\,\frac{d\bar V}{dt}.
+  \frac{d}{dt}\bigl(C_i\mathcal B\bigr)
+  = B\bar V\frac{dC_i}{dt}
+  + C_i\bar V\frac{dB}{dt}
+  + C_iB\frac{d\bar V}{dt}.
 \end{equation}
-Dividing Equation~\eqref{eq:mole-balance} through by $V=B\bar V$ and
-substituting Equation~\eqref{eq:product-rule} isolates the intensive
-balance for species $i$:
+After division by $\mathcal B=B\bar V$,
+Equation~\eqref{eq:mole-balance} becomes
 \begin{equation}\label{eq:intensive-balance}
-  \frac{1}{B\bar V}\sum_{s} d_s\, C_{i,s}\,\dot V_s
-  \;+\; \sum_j \sigma_{ij}\hat v_j
-  \;=\; \frac{dC_i}{dt} \;+\; \mu\,C_i
-  \;+\; \frac{C_i}{\bar V}\,\frac{d\bar V}{dt},
+  \frac{1}{\mathcal B}\sum_s d_s c_{i,s}\dot V_s
+  + \sum_j\sigma_{ij}\hat v_j
+  = \frac{dC_i}{dt}
+  + \frac{C_i}{B}\frac{dB}{dt}
+  + \frac{C_i}{\bar V}\frac{d\bar V}{dt}.
 \end{equation}
-where the middle term on the right, $\mu C_i$ with
-$\mu=(1/B)\,dB/dt$, is the growth-dilution term produced by the product
-rule. Three assumptions each remove one of the remaining terms. If the
-intracellular pool of species $i$ is at pseudo-steady state
-($dC_i/dt=0$, the usual separation-of-timescales argument, since
-metabolite turnover on the order of seconds to minutes is fast relative
-to a doubling time of hours), if the specific culture volume is constant
-($d\bar V/dt=0$, so the working volume tracks the growing biomass rather
-than drifting relative to it), and if species $i$ crosses no physical
-stream (the sum over $s$ vanishes for this species), the intensive
-balance reduces to the growth-dilution constraint:
+For a batch or fed-batch culture with no biomass flow, total biomass changes
+through growth. The specific growth rate is
+\begin{equation}\label{eq:growth-rate}
+  \mu \equiv \frac{1}{\mathcal B}\frac{d\mathcal B}{dt}
+  = \frac{1}{B}\frac{dB}{dt}
+  + \frac{1}{\bar V}\frac{d\bar V}{dt}.
+\end{equation}
+The membrane removes the physical-flow term from
+Equation~\eqref{eq:intensive-balance}. Balanced growth also gives
+$dC_i/dt=0$. Equation~\eqref{eq:growth-rate} then reduces the balance to
 \begin{equation}\label{eq:dilution-constraint}
-  C_i\,\mu \;=\; \sum_j \sigma_{ij}\hat v_j
+  C_i\mu = \sum_j\sigma_{ij}\hat v_j
   \qquad\Longleftrightarrow\qquad
-  \boxed{\mathbf S\hat{\mathbf v} \;=\; \mu\mathbf x},
+  \boxed{\mathbf S\hat{\mathbf v}=\mu\mathbf x},
 \end{equation}
-where $\mathbf x=(C_1,\dots,C_m)^\top$ collects the intracellular
-concentrations and $\hat{\mathbf v}\in\mathbb R^n$ collects the fluxes.
-The resulting flux constraint, Equation~\eqref{eq:dilution-constraint},
-retains growth dilution: net metabolic production of each intracellular
-species equals its dilution rate in the growing culture.
+where $\mathbf x=(C_1,\dots,C_m)^\top$ contains the intracellular
+concentrations in mmol/gDW and $\hat{\mathbf v}\in\mathbb R^n$ contains
+the fluxes in mmol/gDW/h. Net production balances growth dilution. For a
+fixed-volume batch reactor, $d\bar V/dt=0$ and
+$\mu=(1/B)dB/dt$. For fed-batch operation, $d\bar V/dt\neq0$, so the
+volume term must remain. The fixed-volume result is a special case of the
+general balance.
 
-The form used throughout the constraint-based modeling literature is
-obtained by neglecting the right-hand side of
-Equation~\eqref{eq:dilution-constraint}:
+Conventional FBA neglects the dilution term and uses
 \begin{equation}\label{eq:sv0}
-  \mathbf S\hat{\mathbf v} \;=\; \mathbf 0.
+  \mathbf S\hat{\mathbf v}=\mathbf 0.
 \end{equation}
-The steady-state relation in Equation~\eqref{eq:sv0} is a special case of
-Equation~\eqref{eq:dilution-constraint}, rather than an independent
-starting point \cite{Orth2010}. It is an appropriate approximation when the two
-conditions that justify neglecting $\mu\mathbf x$ hold together: growth is
-slow relative to metabolic turnover, and intracellular pools are dilute
-enough that $\mu\mathbf x$ stays small in absolute terms even when $\mu$
-itself is not negligible. Both conditions can fail in relevant operating
-regimes. In fed-batch culture the feed is metered to increase
-the working volume over the course of a run, so the specific volume
-drifts ($d\bar V/dt\neq0$); the assumption used to reach
-Equation~\eqref{eq:dilution-constraint} no longer holds, and the omitted
-term carries information about the feed schedule that
-Equation~\eqref{eq:sv0} cannot see. In cell-free systems there is no
-growing cell to dilute into ($\mu=0$), yet the reaction mixture remains
-time varying: transcript, protein, and metabolite pools
-accumulate and decay over the course of a batch reaction ($d\mathbf
-x/dt\neq0$), so the pseudo-steady-state assumption does not apply. A
-cell-free capstone later in this chapter returns to this setting, where
-the accumulation term omitted by Equation~\eqref{eq:sv0} is measured
-directly.
-
-The dilution-retaining constraint and its steady-state special case,
-Equations~\eqref{eq:dilution-constraint} and~\eqref{eq:sv0}, are, as
-written, statements about a closed system: every species that appears has its production and consumption
-accounted for entirely by the internal network $\mathbf S\hat{\mathbf v}$,
-with the physical stream terms of Equation~\eqref{eq:mole-balance}
-already omitted along the way. Cellular metabolism is open, since cells
-take up substrates and secrete products across the boundary of whatever
-system is being modeled. Constraint-based reconstructions restore that
-openness without reintroducing the stream terms explicitly: hypothetical
-exchange, or boundary, reactions are added to the network itself, one
-pseudo-reaction $\emptyset\rightleftharpoons M_i$ for each boundary
-metabolite $M_i$, entering $\mathbf S$ as an isolated nonzero column with
-no reaction partner \cite{Bordbar2014}. Flux through an exchange reaction
-enters Equation~\eqref{eq:dilution-constraint} or
-Equation~\eqref{eq:sv0} exactly as any metabolic flux does, but it is now
-interpretable as uptake or secretion across the system boundary rather
-than as a step of intracellular chemistry. A closed algebraic statement
-can thereby represent a genuinely open system: openness becomes entirely
-a matter of which reactions are admitted into $\mathbf S$ and how their
-bounds are set, the question taken up next.
+This approximation is appropriate when $\mu\mathbf x$ is small relative to
+the metabolic fluxes \cite{Orth2010}. Setting $\mu=0$ is not sufficient. A
+cell-free batch has no growing biomass, but its transcript, protein, and
+metabolite concentrations may still change. Its accumulation term
+$d\mathbf x/dt$ must remain. All model classes introduced above use the
+same balance but close the reaction term differently. Unstructured models
+use lumped rates, structured kinetic models use state-dependent
+intracellular rates, and constraint-based models use bounds and an
+objective. Constraint-based reconstructions represent uptake and secretion with
+transport and exchange reactions. A boundary reaction
+$\emptyset\rightleftharpoons M_i$ enters $\mathbf S$ as an isolated
+nonzero column with no intracellular reaction partner \cite{Bordbar2014}.
+Its flux describes molecular transport across the modeled boundary, not a
+reactor stream. The included boundary reactions and their bounds define the
+modeled system boundary.
