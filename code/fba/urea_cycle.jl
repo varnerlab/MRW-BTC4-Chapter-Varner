@@ -190,20 +190,30 @@ function urea_cycle_model(; kcat=KCAT0, e0=E0, dG=DG0, dG_threshold=-10.0, f=one
 end
 
 """
-    solve_flux(m) -> Union{Vector{Float64},Nothing}
+    solve_flux_with_status(m) -> NamedTuple
 
-Solve the FBA linear program for model `m` (Max c'v s.t. Sv=0, lb<=v<=ub).
-Return the optimal flux vector, or `nothing` if the solve is not optimal/feasible.
+Solve the FBA linear program and return its termination status and flux vector.
+The flux is `nothing` when the solve is not feasible and optimal.
 """
-function solve_flux(m)
+function solve_flux_with_status(m)
     model = Model(HiGHS.Optimizer); set_silent(model)
     n = length(m.reactions)
     @variable(model, m.lb[i] <= v[i=1:n] <= m.ub[i])
     @constraint(model, m.S * v .== 0)
     @objective(model, Max, sum(m.c[i] * v[i] for i in 1:n))
     optimize!(model)
-    is_solved_and_feasible(model) ? value.(v) : nothing
+    status = string(termination_status(model))
+    flux = is_solved_and_feasible(model) ? value.(v) : nothing
+    return (flux=flux, status=status)
 end
+
+"""
+    solve_flux(m) -> Union{Vector{Float64},Nothing}
+
+Return the optimal flux vector, or `nothing` if the solve is not feasible and
+optimal. Use `solve_flux_with_status` when the termination status is needed.
+"""
+solve_flux(m) = solve_flux_with_status(m).flux
 
 """
     solve_fba(m) -> DataFrame
