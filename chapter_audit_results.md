@@ -139,6 +139,32 @@ The remaining items are listed below.
   formulation with the explicit rate relationships used by unstructured and
   structured kinetic models, then explains why omitting a reaction-level rate
   law permits genome-scale applications.
+- Constraint terminology now distinguishes the mass-balance constraints from
+  the complete flux constraint system, which also includes lower and upper
+  reaction bounds. Singular references to a generic ``flux constraint'' were
+  replaced throughout the abstract, introduction, derivation, worked example,
+  and outlook.
+- The introduction retains the progression from kinetic to constraint-based,
+  hybrid cybernetic, and data-driven models before narrowing to the chapter
+  scope. Transitions now connect the kinetic parameter burden to
+  constraint-based modeling, contrast mechanistic and data-driven models, and
+  link the broader modeling landscape to the chapter roadmap.
+- The thermodynamic bounds section now cites thermodynamics-based metabolic
+  flux analysis where reaction directionality is introduced and cites the
+  component-contribution method alongside eQuilibrator. It uses standard
+  transformed reaction Gibbs energies, defines the dimensionless
+  activity-based reaction quotient, and states the role of biochemical
+  reference conditions. The urea-cycle example and uncertainty algorithm use
+  the same notation.
+- Section-level foreshadowing and document-oriented narration were removed
+  outside the final introduction roadmap. Transitions now follow the
+  scientific argument directly: model scale motivates the practical
+  applications, missing regulatory factors motivate the feedback pathway,
+  and each model class is connected through its balance formulation.
+- The reaction-quotient definition now restates the meaning and sign convention
+  of the stoichiometric coefficient $\sigma_{ij}$, gives absolute temperature
+  $T_{\mathrm{abs}}$ in kelvin, and reports the gas constant in units consistent
+  with reaction Gibbs energies in kJ/mol.
 
 ### Code reproducibility and terminology
 

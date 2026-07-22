@@ -1,12 +1,12 @@
 %% example_urea.tex
 \section{Worked Example: Urea-Cycle Metabolism}\label{sec:urea}
 
-This example uses thermodynamic and kinetic data to set flux bounds for a
-urea-cycle network with four cycle reactions, a competing nitric oxide
+Thermodynamic and kinetic data set flux bounds for a urea-cycle network with
+four cycle reactions, a competing nitric oxide
 synthase reaction, and exchange with the environment (left panel,
 Fig.~\ref{fig:urea}). The inputs come from public, cross-organism
 databases rather than HL-60-specific measurements. The model uses the
-steady-state constraint $\mathbf S\hat{\mathbf v}=\mathbf 0$ from
+steady-state mass-balance constraints $\mathbf S\hat{\mathbf v}=\mathbf 0$ from
 Equation~\eqref{eq:sv0} and the linear program in
 Equation~\eqref{eq:fba-lp}. The application-specific quantities are
 the stoichiometric matrix $\mathbf S$, lower-bound vector $\boldsymbol\ell$,
@@ -27,19 +27,21 @@ the network. The resulting matrix has eighteen metabolite balances and
 nineteen reactions, so the stoichiometric matrix
 $\mathbf S\in\mathbb R^{18\times19}$.
 
-We first set the thermodynamic factor in Equation~\eqref{eq:thermo-gate}.
-eQuilibrator gave the following standard reaction free energies
-\cite{Beber2022}:
-$\Delta G^{\circ}_{v_1}=-4.3$, $\Delta G^{\circ}_{v_2}=-5.5$,
-$\Delta G^{\circ}_{v_3}=-51.0$, $\Delta G^{\circ}_{v_4}=-30.3$, and
-$\Delta G^{\circ}_{v_5}=-1220$ kJ/mol. The reversibility threshold
-$\Delta G^{*}_j$ of Equation~\eqref{eq:thermo-gate} was set to
+The thermodynamic factor in Equation~\eqref{eq:thermo-gate} was based on the
+following standard transformed reaction Gibbs energies from eQuilibrator
+\cite{Noor2013,Beber2022}:
+$\Delta_{\mathrm r}G_{v_1}^{\prime\circ}=-4.3$,
+$\Delta_{\mathrm r}G_{v_2}^{\prime\circ}=-5.5$,
+$\Delta_{\mathrm r}G_{v_3}^{\prime\circ}=-51.0$,
+$\Delta_{\mathrm r}G_{v_4}^{\prime\circ}=-30.3$, and
+$\Delta_{\mathrm r}G_{v_5}^{\prime\circ}=-1220$ kJ/mol. The reversibility threshold
+$\Delta_{\mathrm r}G_j^{\prime *}$ was set to
 $-10$ kJ/mol. This is a heuristic cutoff, not a value derived from a stated
 physiological concentration range. The rule makes reactions $v_1$ and $v_2$
 reversible and reactions $v_3$, $v_4$, and $v_5$ irreversible. Exchange reactions
 retain wide bounds in both directions because their direction depends on
-the medium. We next set the kinetic capacities in Equation~\eqref{eq:vmax}. Turnover
-numbers came from BRENDA \cite{Chang2021}. Each was combined with the
+the medium. The kinetic capacities in Equation~\eqref{eq:vmax} combined
+turnover numbers from BRENDA \cite{Chang2021} with the
 reference enzyme abundance $e^{\circ}=0.01$ mmol/gDW, an illustrative intracellular
 enzyme concentration consistent with BioNumbers \cite{Milo2010}.
 Argininosuccinate synthetase and nitric oxide synthase have the turnover number
@@ -85,15 +87,15 @@ The Monte Carlo analysis treats the database inputs as uncertain rather than
 exact and compares the effect of imputing the missing saturation factor
 (Fig.~\ref{fig:urea_uq}). We assigned lognormal uncertainty of about a factor of two to
 each turnover number and the reference abundance, and normal uncertainty of a
-few kilojoules per mole to each standard free energy. For four reactions, we
+few kilojoules per mole to each standard transformed reaction Gibbs energy. For four reactions, we
 also sampled substrate concentrations and Michaelis constants from Park and
 coworkers \cite{Park2016}. Argininosuccinate lyase lacked a measured substrate
-concentration, so its saturation factor remained at one. We then solved the
-linear program for ten thousand parameter draws using
+concentration, so its saturation factor remained at one. We solved the linear
+program for ten thousand parameter draws using
 Algorithm~\ref{alg:uq}. This Monte Carlo calculation produced a right-skewed
 urea-export distribution with median $105$ and mean $156$
 mmol\,gDW$^{-1}$\,h$^{-1}$ and a central ninety-five percent interval of
-$17$ to $614$. Varying only capacity and free-energy inputs gave a median of
+$17$ to $614$. Varying only capacity and Gibbs-energy inputs gave a median of
 $113$ mmol\,gDW$^{-1}$\,h$^{-1}$. Adding the four measured saturation factors
 changed the median to $105$, so those factors had little effect. Most of the
 uncertainty came from the sampled capacity of argininosuccinate lyase. The
@@ -105,13 +107,13 @@ we imputed it from a physiological argininosuccinate concentration and a
 BRENDA Michaelis constant, the median fell to
 $50$ mmol\,gDW$^{-1}$\,h$^{-1}$ and the distribution widened toward zero.
 Better data for this limiting reaction would reduce
-the uncertainty most directly. This example used no HL-60-specific
-concentration, expression, or regulatory measurements. eQuilibrator set
-reaction direction, BRENDA set capacity scales, and the other factors remained
-at one. The result is limited mainly by argininosuccinate lyase reaction
+the uncertainty most directly. No HL-60-specific concentration, expression,
+or regulatory measurements were available. eQuilibrator provided
+the standard transformed reaction Gibbs-energy estimates, the heuristic
+threshold set reaction direction, and BRENDA set capacity scales; the other
+factors remained at one. The result is limited mainly by argininosuccinate lyase reaction
 $v_2$, while the competing nitric oxide synthase reaction $v_5$ carries
-little flux. The next example adds allosteric and expression
-control to a reaction bound.
+little flux.
 
 \begin{figure}[htbp]
   \centering
@@ -142,11 +144,12 @@ control to a reaction bound.
   \label{alg:uq}
   \begin{algorithmic}[1]
     \Require nominal turnover numbers $k^{\circ}_{\mathrm{cat}}$, reference
-      enzyme abundance $e^{\circ}$, and standard reaction free energies
-      $\Delta G^{\circ}$; nominal substrate concentrations
+      enzyme abundance $e^{\circ}$, and standard transformed reaction Gibbs
+      energies $\Delta_{\mathrm r}G^{\prime\circ}$; nominal substrate concentrations
       $\overline{[S_j]}$ and Michaelis constants $\overline{K_{M,j}}$ where
       measured; log-space spread $\sigma_{\ln}$ and free-energy standard
-      deviation $\sigma_{\Delta G}$; reversibility threshold $\Delta G^{*}$;
+      deviation $\sigma_{\Delta G}$; reversibility threshold
+      $\Delta_{\mathrm r}G^{\prime *}$;
       draw count $N$; random seed
     \State seed the random generator
     \For{draw $i = 1$ to $N$}
@@ -154,10 +157,12 @@ control to a reaction bound.
         \Comment{one shared abundance draw, $Z_e\sim\mathcal N(0,1)$}
       \For{each enzymatic reaction $j$}
         \State $k_{\mathrm{cat},j} \gets k^{\circ}_{\mathrm{cat},j}\exp(\sigma_{\ln} Z_{k,j})$,
-          \quad $\Delta G_j \gets \Delta G^{\circ}_j + \sigma_{\Delta G} Z_{\Delta G,j}$
+          \quad $\Delta_{\mathrm r}G_j^{\prime} \gets
+          \Delta_{\mathrm r}G_j^{\prime\circ} + \sigma_{\Delta G} Z_{\Delta G,j}$
           \Comment{independent $Z_{k,j}, Z_{\Delta G,j}\sim\mathcal N(0,1)$ per reaction}
         \State set reversibility factor
-          $\delta_j \gets \mathbb{1}[\Delta G_j > \Delta G^{*}]$
+          $\delta_j \gets \mathbb{1}[\Delta_{\mathrm r}G_j^{\prime} >
+          \Delta_{\mathrm r}G^{\prime *}]$
         \If{substrate data measured for reaction $j$}
           \State $[S_j] \gets \overline{[S_j]}\exp(\sigma_{\ln} Z_{S,j})$,
             \quad $K_{M,j} \gets \overline{K_{M,j}}\exp(\sigma_{\ln} Z_{K,j})$

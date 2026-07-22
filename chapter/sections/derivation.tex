@@ -1,8 +1,9 @@
 %% derivation.tex
-\section{From Mole Balances to the Flux Constraint}\label{sec:derivation}
+\section{From Mole Balances to Flux Constraints}\label{sec:derivation}
 
-The FBA constraint follows from a mole balance. Its derivation defines the
-normalization basis and identifies the steady-state assumptions. Consider a
+The mass-balance constraints used in FBA follow from mole balances. Their
+derivation defines the normalization basis and identifies the steady-state
+assumptions. Consider a
 well-mixed culture with biomass concentration $B$ and reactor volume
 $\bar V$. The biomass basis is therefore given by:
 \begin{equation}\label{eq:biomass-basis}
@@ -93,8 +94,8 @@ Equation~\eqref{eq:dynamic-flux-balance} becomes the dynamic balance
 $\mathbf S\mathbf v=d\mathbf x/dt$, where $\mathbf v$ is the cell-free flux
 vector. Dynamic constraint-based models of cell-free protein synthesis have
 used this form to impose time-dependent
-concentration changes over short intervals \cite{Dai2018}. All model classes
-introduced above use the same balance but close the reaction term differently.
+concentration changes over short intervals \cite{Dai2018}. The same balance
+underlies each model class, but each closes the reaction term differently.
 Unstructured models use lumped rates, structured kinetic models use state-dependent
 intracellular rates, and constraint-based models use bounds and an
 objective. Constraint-based reconstructions represent uptake and secretion

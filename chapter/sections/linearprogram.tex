@@ -6,9 +6,10 @@ flux bounds restrict this set to a feasible polytope, and an objective selects
 an optimal vertex or face (Fig.~\ref{fig:lp-geometry}). FBA adds lower and upper bounds,
 represented by the lower-bound vector $\boldsymbol\ell$ and upper-bound
 vector $\mathbf u$, and a linear objective with coefficient vector $\mathbf c$.
-The resulting constraints and objective are
-$\boldsymbol\ell\le\hat{\mathbf v}\le\mathbf u$ and
-$\mathbf c^\top\hat{\mathbf v}$, respectively. Bounds can represent reaction direction,
+Together, the mass-balance equations and the bounds
+$\boldsymbol\ell\le\hat{\mathbf v}\le\mathbf u$ form the flux constraint
+system. The objective $\mathbf c^\top\hat{\mathbf v}$ then selects a solution
+from that system. Bounds can represent reaction direction,
 enzyme capacity, and substrate availability. The objective states the
 quantity to maximize. Together, these elements define the linear program:
 \begin{equation}\label{eq:fba-lp}

@@ -24,10 +24,12 @@ microbial and mammalian cells \cite{Domach1984,Wu1992}. Reaction-level
 kinetic models assign mass-action, Michaelis--Menten, or power-law rates to
 individual reactions and integrate the resulting differential equations
 \cite{MichaelisMenten1913,Savageau1976,SavageauVoit1987,Vadhin2026}. These
-models describe transient intracellular behavior, but require more kinetic
-parameters as their resolution increases.
+models describe transient intracellular behavior. As their resolution
+increases, however, so does the number of required kinetic parameters. This
+parameter burden motivates formulations that do not specify a kinetic law for
+every reaction.
 
-Constraint-based models take a different approach. Unstructured and
+Constraint-based models take this approach. Unstructured and
 structured kinetic models calculate rates from specified empirical or
 mechanistic relationships, whereas constraint-based models define the flux
 distributions allowed by network stoichiometry, reaction bounds, and other
@@ -48,8 +50,9 @@ Martínez and coworkers subsequently used a hybrid cybernetic model with a
 reduced set of elementary modes to describe dynamic CHO-S metabolism
 \cite{Martinez2020}.
 
-Data-driven models provide another way to represent biological time-series
-data. Long short-term memory (LSTM) and gated recurrent unit (GRU) networks
+Rather than specifying every relationship mechanistically, data-driven models
+learn patterns directly from biological time-series data. Long short-term
+memory (LSTM) and gated recurrent unit (GRU) networks
 are established recurrent architectures for learning temporal relationships
 \cite{Hochreiter1997,Cho2014}. The relatively recent structured state-space
 sequence models S4 and S5 provide efficient representations of longer time
@@ -68,14 +71,15 @@ efforts within broader mechanistic and hybrid modeling strategies
 \cite{GonzalezHernandez2024}. Data-driven models can learn relationships that
 are difficult to specify mechanistically, but they do not inherently conserve
 mass or enforce reaction feasibility. Hybrid models can address this
-limitation by combining learned relationships with mechanistic balances and
-biological constraints.
+limitation by combining learned relationships with the mechanistic balances
+and biological constraints.
 
-This chapter focuses on how thermodynamic, kinetic, expression, and regulatory
-data can be incorporated into constraint-based models through reaction bounds.
-We first derive the flux constraint from a mole balance and identify the
-assumptions required for its steady-state form. We then formulate the linear
-program and describe how reversibility, enzyme capacity, substrate saturation,
+Within this broader modeling landscape, this chapter focuses on how
+thermodynamic, kinetic, expression, and regulatory data can be incorporated
+into constraint-based models through reaction bounds.
+We first derive the mass-balance constraints from mole balances and identify
+the assumptions required for their steady-state form. We then formulate the
+linear program and describe how reversibility, enzyme capacity, substrate saturation,
 enzyme abundance, and biological regulation restrict the feasible flux space.
 Two worked examples illustrate these ideas in a urea-cycle network and a
 feedback-inhibited pathway, while larger studies in dynamic cell-free protein

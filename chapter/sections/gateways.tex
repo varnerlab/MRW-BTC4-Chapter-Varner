@@ -31,15 +31,31 @@ The reversibility factor $\delta_j$ has two values:
 \end{equation}
 When the reversibility factor $\delta_j=1$, the lower bound is negative and
 reverse flux is allowed. When the reversibility factor $\delta_j=0$, the lower
-bound is zero. A simple assignment compares the standard reaction free energy
-$\Delta G^{\circ}_j$ with a reversibility threshold $\Delta G^{*}_j$. This
-threshold rule is heuristic. A thermodynamic analysis should instead propagate stated
-activity ranges through the reaction free energy
-$\Delta G=\Delta G^{\circ}+RT_{\mathrm{abs}}\ln Q$, where $R$ is the gas
-constant, $T_{\mathrm{abs}}$ is absolute temperature, and $Q$ is the reaction
-quotient, and then test whether the reaction free energy $\Delta G$ can change
-sign. eQuilibrator provides standard free-energy estimates for this
-calculation \cite{Beber2022}.
+bound is zero. A simple assignment compares the standard transformed reaction
+Gibbs energy $\Delta_{\mathrm r}G_j^{\prime\circ}$ with a heuristic
+reversibility threshold $\Delta_{\mathrm r}G_j^{\prime *}$. A full
+thermodynamic analysis instead propagates stated activity ranges and
+uncertainties through the reaction Gibbs energy, which is given by:
+\begin{equation}\label{eq:reaction-gibbs}
+  \Delta_{\mathrm r}G_j^{\prime}
+  = \Delta_{\mathrm r}G_j^{\prime\circ}
+  + RT_{\mathrm{abs}}\ln Q_j,
+  \qquad
+  Q_j = \prod_i a_i^{\sigma_{ij}},
+\end{equation}
+where the gas constant $R=8.314\times10^{-3}$ kJ\,mol$^{-1}$\,K$^{-1}$,
+$T_{\mathrm{abs}}$ is absolute temperature in K, $Q_j$ is the dimensionless
+reaction quotient, $a_i$ is the dimensionless activity of species $i$
+relative to its standard state, and $\sigma_{ij}$ is the stoichiometric
+coefficient of species $i$ in reaction $j$, with negative values for reactants
+and positive values for products. The prime denotes a
+biochemical transformed quantity evaluated under specified reference
+conditions, including pH and ionic strength. Reaction direction is tested by
+whether the reaction Gibbs energy $\Delta_{\mathrm r}G_j^{\prime}$ can change
+sign over the allowed activity ranges \cite{Henry2007}. The component
+contribution method provides consistent standard transformed Gibbs-energy
+estimates and uncertainties \cite{Noor2013}, and eQuilibrator makes these
+estimates available for metabolic calculations \cite{Beber2022}.
 
 Enzyme kinetics set the forward capacity. The reference capacity is given by:
 \begin{equation}\label{eq:vmax}
@@ -279,4 +295,4 @@ sequence and add those reactions to the stoichiometric matrix $\mathbf S$
 \cite{AllenPalsson2003}.
 Expression then becomes part of the flux calculation. Vilkhovoy and
 coworkers used this construction for cell-free protein synthesis
-\cite{Vilkhovoy2018}; the later capstone returns to that model.
+\cite{Vilkhovoy2018}.
