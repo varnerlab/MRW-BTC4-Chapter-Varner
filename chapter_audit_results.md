@@ -119,6 +119,26 @@ The remaining items are listed below.
   removed by using absolute temperature $T_{\mathrm{abs}}$, configuration
   subset $\mathcal C$, and bound vectors $\mathbf b^{\mathrm L}$ and
   $\mathbf b^{\mathrm U}$ where needed.
+- The introduction now places data-driven time-series methods alongside
+  unstructured, kinetic, and constraint-based models. It identifies LSTM and
+  GRU networks as established recurrent architectures, S4 and S5 as relatively
+  recent structured state-space sequence models, and neural ordinary
+  differential equations as continuous-time models. CHO monoclonal-antibody
+  production is presented as an important current application rather than the
+  only bioprocess use case, with references to recent optimization,
+  critical-quality-attribute, glycosylation, and hybrid-modeling studies.
+- The introduction also restores the earlier hybrid cybernetic lineage as a
+  bridge between kinetic and constraint-based models: the elementary-mode
+  formulation for anaerobic \emph{E. coli}, the later HCM-FBA extension for
+  larger networks, and a dynamic hybrid cybernetic model of CHO-S metabolism.
+- The final introduction paragraph now begins with the chapter's specific
+  focus and gives a concise roadmap from the mole-balance derivation through
+  the worked examples and larger applications.
+- The introduction now defines constraint-based models before referring to
+  hybrid cybernetic or data-driven approaches. It contrasts their feasible-set
+  formulation with the explicit rate relationships used by unstructured and
+  structured kinetic models, then explains why omitting a reaction-level rate
+  law permits genome-scale applications.
 
 ### Code reproducibility and terminology
 

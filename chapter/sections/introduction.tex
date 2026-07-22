@@ -27,27 +27,59 @@ individual reactions and integrate the resulting differential equations
 models describe transient intracellular behavior, but require more kinetic
 parameters as their resolution increases.
 
-Constraint-based models use a different closure. They impose mass
-conservation on the reaction network and require fewer explicit kinetic
-parameters. This approach can be applied to genome-scale reconstructions
-\cite{Bordbar2014,AllenPalsson2003}. Flux balance analysis (FBA) formulates
-the calculation as a linear program \cite{Orth2010,Heirendt2019}.
-Conservation alone usually permits many flux distributions. Reaction bounds
-restrict this feasible set, and an objective selects an optimum. Bounds are
-a major route by which condition-specific thermodynamic, kinetic,
-expression, and regulatory data enter the model. This chapter examines how
-each type of data changes a bound and its predicted fluxes. The chapter first
-derives the flux constraint from a mole balance, including
-the growth-dilution balance $\mathbf S\hat{\mathbf v}=\mu\mathbf x$, where
-$\mathbf S$ is the stoichiometric matrix, $\hat{\mathbf v}$ is the
-intracellular flux vector, $\mu$ is the growth rate, and $\mathbf x$ is the
-intracellular concentration vector. It then
-factors each reaction bound into terms for reversibility, enzyme capacity,
-substrate saturation, enzyme abundance, and regulation. Two small examples
-show how these terms affect a flux prediction. The first uses public data to
-set bounds in a urea-cycle network. The second transfers expression and
-metabolite states from a kinetic feedback model into an FBA bound. Two larger
-studies illustrate related methods in dynamic cell-free protein synthesis
-\cite{Dai2018,Vilkhovoy2023} and model-guided strain design \cite{Wayman2019}.
-Strain design also requires a discrete search over candidate interventions,
-often formulated as a bilevel optimization problem \cite{Burgard2003}.
+Constraint-based models take a different approach. Unstructured and
+structured kinetic models calculate rates from specified empirical or
+mechanistic relationships, whereas constraint-based models define the flux
+distributions allowed by network stoichiometry, reaction bounds, and other
+physical or biological constraints. Flux balance analysis (FBA) uses an
+objective to select a solution from this feasible set
+\cite{Orth2010,Heirendt2019}. Because a constraint-based model does not require
+a kinetic rate law for every reaction, it can represent much larger networks,
+including genome-scale reconstructions \cite{Bordbar2014,AllenPalsson2003}.
+Hybrid cybernetic models provide a dynamic bridge between the kinetic and
+constraint-based descriptions by combining metabolic modes with cybernetic
+variables that allocate enzyme synthesis and activity among those modes. Kim,
+Varner, and Ramkrishna applied this framework to anaerobic \emph{E.~coli}
+using elementary flux modes \cite{Kim2008}. Vilkhovoy, Minot, and Varner later
+developed hybrid cybernetic modeling with flux balance analysis (HCM-FBA),
+which uses FBA solutions in place of exhaustive elementary-mode enumeration
+and therefore extends the approach to larger networks \cite{Vilkhovoy2016}.
+Martínez and coworkers subsequently used a hybrid cybernetic model with a
+reduced set of elementary modes to describe dynamic CHO-S metabolism
+\cite{Martinez2020}.
+
+Data-driven models provide another way to represent biological time-series
+data. Long short-term memory (LSTM) and gated recurrent unit (GRU) networks
+are established recurrent architectures for learning temporal relationships
+\cite{Hochreiter1997,Cho2014}. The relatively recent structured state-space
+sequence models S4 and S5 provide efficient representations of longer time
+dependencies \cite{Gu2022,Smith2023}, while neural ordinary differential
+equations learn continuous-time state dynamics from data \cite{Chen2018}.
+These approaches are being explored across fermentation, cell culture, and
+other bioprocesses, often as forecasting models, soft sensors, or data-driven
+components of hybrid mechanistic models \cite{Mahanty2023}. Chinese hamster
+ovary (CHO) cell culture is not the only application, but it is an important
+one because of its central role in monoclonal antibody production. Current
+CHO studies have used machine learning to optimize cultivation conditions,
+relate medium composition to critical quality attributes, and predict
+antibody glycosylation from daily spent-medium measurements
+\cite{Gangwar2024,Lakshmanan2024,Richter2025}; recent reviews place these
+efforts within broader mechanistic and hybrid modeling strategies
+\cite{GonzalezHernandez2024}. Data-driven models can learn relationships that
+are difficult to specify mechanistically, but they do not inherently conserve
+mass or enforce reaction feasibility. Hybrid models can address this
+limitation by combining learned relationships with mechanistic balances and
+biological constraints.
+
+This chapter focuses on how thermodynamic, kinetic, expression, and regulatory
+data can be incorporated into constraint-based models through reaction bounds.
+We first derive the flux constraint from a mole balance and identify the
+assumptions required for its steady-state form. We then formulate the linear
+program and describe how reversibility, enzyme capacity, substrate saturation,
+enzyme abundance, and biological regulation restrict the feasible flux space.
+Two worked examples illustrate these ideas in a urea-cycle network and a
+feedback-inhibited pathway, while larger studies in dynamic cell-free protein
+synthesis \cite{Dai2018,Vilkhovoy2023} and model-guided strain design
+\cite{Wayman2019,Burgard2003} show how the same principles extend to practical
+systems. Together, these examples show how condition-specific measurements
+and proposed interventions change predicted metabolic fluxes.
