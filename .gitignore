@@ -36,6 +36,13 @@ chapter/*.log
 chapter/*.out
 texput.log
 
+# Generated figure builds and manuscript-review renders
+chapter/figures/*_fig/*.aux
+chapter/figures/*_fig/*.log
+chapter/figures/*_fig/*.pdf
+chapter/figures/*_fig/*preview*.png
+tmp/pdfs/
+
 # Third-party downloaded supplements (raw), not committed; derived subsets live in code/data
 /data/
 
