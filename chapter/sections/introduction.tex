@@ -38,13 +38,16 @@ a major route by which condition-specific thermodynamic, kinetic,
 expression, and regulatory data enter the model. This chapter examines how
 each type of data changes a bound and its predicted fluxes. The chapter first
 derives the flux constraint from a mole balance, including
-the growth-dilution term $\mathbf S\hat{\mathbf v}=\mu\mathbf x$. It then
+the growth-dilution balance $\mathbf S\hat{\mathbf v}=\mu\mathbf x$, where
+$\mathbf S$ is the stoichiometric matrix, $\hat{\mathbf v}$ is the
+intracellular flux vector, $\mu$ is the growth rate, and $\mathbf x$ is the
+intracellular concentration vector. It then
 factors each reaction bound into terms for reversibility, enzyme capacity,
 substrate saturation, enzyme abundance, and regulation. Two small examples
 show how these terms affect a flux prediction. The first uses public data to
 set bounds in a urea-cycle network. The second transfers expression and
 metabolite states from a kinetic feedback model into an FBA bound. Two larger
 studies illustrate related methods in dynamic cell-free protein synthesis
-\cite{Vilkhovoy2023} and model-guided strain design \cite{Wayman2019}.
+\cite{Dai2018,Vilkhovoy2023} and model-guided strain design \cite{Wayman2019}.
 Strain design also requires a discrete search over candidate interventions,
 often formulated as a bilevel optimization problem \cite{Burgard2003}.

@@ -4,10 +4,13 @@
 The balance equations conserve mass but usually admit many flux distributions;
 flux bounds restrict this set to a feasible polytope, and an objective selects
 an optimal vertex or face (Fig.~\ref{fig:lp-geometry}). FBA adds lower and upper bounds,
-$\boldsymbol\ell\le\hat{\mathbf v}\le\mathbf u$, and a linear objective
-$\mathbf c^\top\hat{\mathbf v}$. Bounds can represent reaction direction,
+represented by the lower-bound vector $\boldsymbol\ell$ and upper-bound
+vector $\mathbf u$, and a linear objective with coefficient vector $\mathbf c$.
+The resulting constraints and objective are
+$\boldsymbol\ell\le\hat{\mathbf v}\le\mathbf u$ and
+$\mathbf c^\top\hat{\mathbf v}$, respectively. Bounds can represent reaction direction,
 enzyme capacity, and substrate availability. The objective states the
-quantity to maximize. These elements define the linear program
+quantity to maximize. Together, these elements define the linear program:
 \begin{equation}\label{eq:fba-lp}
 \begin{aligned}
   \max_{\hat{\mathbf v}\,\in\,\mathbb R^n}\quad & \mathbf c^\top\hat{\mathbf v}\\
@@ -16,23 +19,26 @@ quantity to maximize. These elements define the linear program
 \end{aligned}
 \end{equation}
 This is the standard FBA formulation \cite{Orth2010}. The objective is a
-modeling choice. Setting $c_j=1$ for a biomass pseudo-reaction maximizes
-growth. The biomass reaction consumes precursors in the proportions needed
-to form new cell mass. Setting $c_j=1$ for a product-export reaction instead
-maximizes product secretion. The constraints remain the same; only
-$\mathbf c$ changes. The growth-aware form remains linear when $\mathbf x$ is measured and $\mu$
-is fixed or enters as a scalar decision variable. If both $\mu$ and
-$\mathbf x$ are unknown, their product is bilinear and the problem is no
-longer an LP. A model that retains $\mu\mathbf x$ must also define its relation
+modeling choice. Setting the objective coefficient $c_j=1$ for a biomass
+pseudo-reaction maximizes growth. The biomass reaction consumes precursors in
+the proportions needed to form new cell mass. Setting the objective
+coefficient $c_j=1$ for a product-export reaction instead maximizes product
+secretion. The constraints remain the same; only the objective coefficient
+vector $\mathbf c$ changes. The growth-aware form remains linear when the
+concentration vector $\mathbf x$ is measured and the growth rate $\mu$ is
+fixed or enters as a scalar decision variable. If both the growth rate $\mu$
+and concentration vector $\mathbf x$ are unknown, their product is bilinear
+and the problem is no longer an LP. A model that retains the growth-dilution
+term $\mu\mathbf x$ must also define its relation
 to the biomass pseudo-reaction so that growth-associated demands are not
-counted twice. The conservation equations usually admit many flux vectors. The
-null space
+counted twice. The conservation equations usually admit many flux vectors.
+The corresponding null space is given by:
 \[
   \mathcal N(\mathbf S)=
-  \{\hat{\mathbf v}\in\mathbb R^n:\mathbf S\hat{\mathbf v}=\mathbf0\}
+  \{\hat{\mathbf v}\in\mathbb R^n:\mathbf S\hat{\mathbf v}=\mathbf0\}.
 \]
-contains every steady-state flux vector. If
-$\operatorname{rank}(\mathbf S)<n$, the null space contains more than one
+This set contains every steady-state flux vector. If the rank condition
+$\operatorname{rank}(\mathbf S)<n$ holds, the null space contains more than one
 vector. Bounds restrict it to a feasible polytope. The objective selects a
 vertex or a face of that polytope. A face contains multiple optimal flux
 vectors, so optimization does not always give a unique solution.
@@ -46,19 +52,25 @@ vectors, so optimization does not always give a unique solution.
     polytope $\mathcal P$. (c) The objective moves toward larger values until
     it reaches an optimal vertex or face. Fluxes can vary along an optimal
     face without changing the objective. FVA reports the resulting interval
-    for each reaction, shown here for $\hat v_1$.}
+    for each reaction, shown here for reaction flux $\hat v_1$.}
   \label{fig:lp-geometry}
 \end{figure}
 
-The singular value decomposition identifies both null spaces. Write
-$\mathbf S=\mathbf U\boldsymbol\Sigma\mathbf V^\top$. Columns of
-$\mathbf V$ associated with zero singular values span the right null space,
-so every steady-state flux vector is a linear combination of these columns.
-Columns of $\mathbf U$ associated with zero singular values span the left
-null space. A vector $\mathbf y$ in the left null space defines a conserved
-quantity $\mathbf y^\top\mathbf x$, such as the total concentration of a
+The singular value decomposition identifies both null spaces. It factors the
+stoichiometric matrix as
+$\mathbf S=\mathbf U\boldsymbol\Sigma\mathbf V^\top$, where $\mathbf U$ is
+the left-singular-vector matrix, $\boldsymbol\Sigma$ is the diagonal
+singular-value matrix, and $\mathbf V$ is the right-singular-vector matrix.
+Columns of the right-singular-vector matrix $\mathbf V$ associated with zero
+singular values span the right null space, so every steady-state flux vector
+is a linear combination of these columns.
+Columns of the left-singular-vector matrix $\mathbf U$ associated with zero
+singular values span the left null space. A coefficient vector $\mathbf y$
+in the left null space defines the conserved quantity
+$\mathbf y^\top\mathbf x$, such as the total concentration of a
 cofactor pair. Genome-scale models often have a large right null space
-because $\operatorname{rank}(\mathbf S)<n$ \cite{Bordbar2014}. Flux
+because the rank condition $\operatorname{rank}(\mathbf S)<n$ holds
+\cite{Bordbar2014}. Flux
 variability analysis (FVA) measures the remaining freedom in each
 reaction \cite{Heirendt2019}. FVA fixes the objective at its optimum, or at
 a chosen fraction of that optimum, and then minimizes and maximizes each

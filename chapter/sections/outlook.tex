@@ -7,13 +7,17 @@ Time-course data can instead be used to estimate turnover numbers, saturation
 constants, allosteric factors $\theta_j$, and expression controls $u_j$ and
 $w_j$. Tabulated values remain useful as prior information when dynamic data
 are unavailable. The same approach can be applied reaction by reaction in
-genome-scale models.
-These models have many flux distributions that satisfy
-$\mathbf S\hat{\mathbf v}=\mathbf 0$, so condition-specific bounds are
+genome-scale models. These models have many flux distributions that satisfy
+the steady-state balance $\mathbf S\hat{\mathbf v}=\mathbf 0$, so
+condition-specific bounds are
 especially important. Setting an unknown factor to one preserves feasibility
 but may leave many fluxes unresolved. Time-course data also allow models to
-retain accumulation and growth dilution.
-Cell-free systems have $\mu=0$ but can have substantial accumulation. Growing
-cell cultures can have both terms. When measurements resolve these changes,
-fluxes should be estimated from Equation~\eqref{eq:dilution-constraint}
-instead of imposing Equation~\eqref{eq:sv0}.
+retain accumulation and growth dilution. Cell-free systems have no growth
+dilution, but their molecular pools can still accumulate, whereas growing
+cultures can exhibit both effects. When measurements resolve these dynamics,
+the dynamic balance in Equation~\eqref{eq:dynamic-flux-balance} provides the
+appropriate flux constraint. For a fixed-basis cell-free batch, it reduces to
+the accumulation balance $\mathbf S\mathbf v=d\mathbf x/dt$ for cell-free
+flux vector $\mathbf v$ and concentration vector $\mathbf x$, the form used in our earlier dynamic
+constraint-based model \cite{Dai2018}. The steady-state approximation should
+be used only when accumulation and growth dilution are negligible.

@@ -37,6 +37,11 @@ The remaining items are listed below.
 - The conventional FBA approximation
   $\mathbf S\hat{\mathbf v}=\mathbf0$ is distinguished from the
   growth-dilution form $\mathbf S\hat{\mathbf v}=\mu\mathbf x$.
+- The general dynamic balance is stated as
+  $\mathbf S\hat{\mathbf v}=d\mathbf x/dt+\mu\mathbf x$. For a fixed-basis
+  cell-free batch, it reduces to $\mathbf S\mathbf v=d\mathbf x/dt$, not the
+  balanced-growth or steady-state form. This is reconciled explicitly with
+  the dynamic cell-free model of Dai, Horvath, and Varner.
 
 ### Model scope and terminology
 
@@ -103,6 +108,17 @@ The remaining items are listed below.
 - Every figure reference is integrated into the opening sentence of the
   paragraph that discusses it; standalone constructions such as “Figure 1
   shows these steps” have been removed. The chapter currently has no tables.
+- Every displayed equation now has an explicit prose connector that names the
+  mathematical object and ends with a colon. Display punctuation and the
+  return to prose were also checked so equations read as part of the paragraph.
+- Mathematical symbols are now defined in words at first use. Later prose
+  pairs symbols with their meanings, such as “the null space
+  $\mathcal N(\mathbf S)$” and “the growth rate $\mu$,” instead of using bare
+  notation as a noun. The same convention was applied to captions and the
+  Monte Carlo algorithm. Conflicting uses of $T$, $\mathcal B$, and $u_j$ were
+  removed by using absolute temperature $T_{\mathrm{abs}}$, configuration
+  subset $\mathcal C$, and bound vectors $\mathbf b^{\mathrm L}$ and
+  $\mathbf b^{\mathrm U}$ where needed.
 
 ### Code reproducibility and terminology
 

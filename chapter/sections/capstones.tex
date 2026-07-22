@@ -1,24 +1,27 @@
 %% capstones.tex
 \section{Integration in Practice}\label{sec:capstones}
 
-The worked examples used small networks with one degree of freedom,
-$n-m=1$. This section considers two larger applications. The first combines
-metabolism, expression, and regulation in a dynamic cell-free model. The
+The worked examples used small networks whose reaction count $n$ and
+metabolite count $m$ differed by one, so $n-m=1$. This section considers two
+larger applications. The first combines metabolism, expression, and
+regulation in a dynamic cell-free model. The
 second changes reaction bounds to design a glycan-producing strain. Vilkhovoy
 and coworkers built a sequence-specific model of \emph{E.~coli}
 cell-free protein synthesis \cite{Vilkhovoy2018}. Transcription and
 translation reactions derived from DNA and mRNA sequences appear in the
 stoichiometric matrix with metabolism. Promoter and ribosome control functions
 $u_j$ and $w_j$ follow the biophysical models of Moon, Voigt, Adhikari, and
-coworkers \cite{Moon2012,Adhikari2020}. The dynamic model updates
-thermodynamic, kinetic, expression, and regulatory bounds during the reaction
-\cite{Vilkhovoy2023}. It was compared with time courses for 63 metabolites,
-mRNA, protein, and enzyme activity. Cell-free systems also expose accumulation
-directly. They have no growth
-dilution, so $\mu=0$, but their molecular pools change during a batch.
-Therefore, the steady-state reduction to Equation~\eqref{eq:sv0} does not
-apply. Time-course measurements can instead evaluate the accumulation term in
-Equation~\eqref{eq:dilution-constraint}.
+coworkers \cite{Moon2012,Adhikari2020}. Dai, Horvath, and Varner extended the
+sequence-specific formulation to a dynamic constraint-based model that solved
+an optimization problem over short time intervals while enforcing
+time-dependent metabolite constraints \cite{Dai2018}. A later integrated model
+updated thermodynamic, kinetic, expression, and regulatory bounds during the
+reaction and was compared with time courses for 63 metabolites, mRNA, protein,
+and enzyme activity \cite{Vilkhovoy2023}. Cell-free batches have no growth
+dilution, so the growth rate $\mu=0$, but their molecular pools still change.
+On a fixed concentration basis, their balance is therefore the dynamic form
+$\mathbf S\mathbf v=d\mathbf x/dt$ for cell-free flux vector $\mathbf v$,
+not the steady-state form $\mathbf S\mathbf v=\mathbf0$.
 
 Wayman and coworkers used a constraint-based model for strain design. They
 added the N-linked glycosylation pathway of
@@ -27,13 +30,14 @@ added the N-linked glycosylation pathway of
 designer-glycan production to growth \cite{Wayman2019}. Each candidate
 knockout sets a reaction bound to zero, after which the linear program is
 solved again. Enzyme attenuation or overexpression can instead decrease or
-increase the $(e/e^{\circ})$ factor in Equation~\eqref{eq:general-bound}. The
-single $\Delta gnd$ deletion, drawn from the model-identified strain families,
+increase the enzyme-abundance ratio $(e/e^{\circ})$ in
+Equation~\eqref{eq:general-bound}. The single $\Delta gnd$ deletion, drawn
+from the model-identified strain families,
 increased measured glycan production nearly threefold relative to wild type.
 The model identified candidate perturbations; it did not predict the magnitude
-of this experimental increase. The two applications use bounds for
-different purposes. The cell-free model
-uses measurements to estimate fluxes. The glycan model changes bounds to test
+of this experimental increase. The two applications use bounds for different
+purposes: the cell-free model uses measurements to estimate fluxes, whereas
+the glycan model changes bounds to test
 possible interventions. Strain design also requires a discrete search over
 deletions or expression changes, which can be formulated as a bilevel program
 \cite{Burgard2003}.

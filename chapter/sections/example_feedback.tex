@@ -2,7 +2,7 @@
 \section{Worked Example: A Feedback-Inhibited Linear Pathway}\label{sec:feedback}
 
 The urea-cycle example used thermodynamic and kinetic factors but set the
-expression ratio $(e/e^{\circ})$ and allosteric factor $\theta_j$ to one.
+enzyme-abundance ratio $(e/e^{\circ})$ and allosteric factor $\theta_j$ to one.
 This example includes both controls. The end product inhibits the existing
 enzyme and represses transcription of its gene. These mechanisms change
 enzyme activity and enzyme abundance, respectively, and they act on different
@@ -12,17 +12,20 @@ timescales. We represent them in a linear pathway with one controlled step:
   \xrightarrow{\,r_2\,} X_3 \xrightarrow{\,r_3\,} \emptyset,
 \end{equation}
 where $r_0$ is the committed uptake step, $r_1$ and $r_2$ are
-interconversions, and $r_3$ exports $X_3$. The end product $X_3$ controls
-both the activity and abundance of the enzyme for $r_0$. We generated a
+interconversions, and $r_3$ exports the end-product metabolite $X_3$. This end
+product controls both the activity and abundance of the enzyme for committed
+step $r_0$. We generated a
 kinetic reference with a Biochemical Systems Theory (BST)
 S-system \cite{Savageau1976,SavageauVoit1987}. The model includes five dynamic
 states: metabolites $X_1$, $X_2$, and $X_3$, transcript $m$, and enzyme $E_0$.
 BSTModelKit.jl was used to integrate these states to steady state
 \cite{Vadhin2026}. The end product enters the committed-step rate with kinetic
-order $-a$ and the transcription rate with kinetic order $-b$. Increasing
-$X_3$ therefore lowers both enzyme activity and enzyme production. Metabolic
-fluxes obey $\mathbf S\hat{\mathbf v}=\mathbf 0$, while transcript and protein
-balances include degradation and growth dilution. The committed-step rate is
+order $-a$ and the transcription rate with kinetic order $-b$. Increasing the
+end-product concentration $X_3$ therefore lowers both enzyme activity and
+enzyme production. Metabolic fluxes obey the steady-state balance
+$\mathbf S\hat{\mathbf v}=\mathbf 0$, while transcript and protein
+balances include degradation and growth dilution. The committed-step rate
+$v_{r_0}$ and BST activity factor $\theta_{\mathrm{BST}}$ are given by:
 \begin{equation}\label{eq:feedback-rate}
   \begin{aligned}
     v_{r_0} &=
@@ -33,11 +36,12 @@ balances include degradation and growth dilution. The committed-step rate is
       (X_3/X_3^{\circ})^{-b},\qquad b = 0.6,
   \end{aligned}
 \end{equation}
-where $X_3^{\circ}=1$ in the concentration units used by the simulation.
+where the reference end-product concentration $X_3^{\circ}=1$ in the
+concentration units used by the simulation.
 The normalized ratios are dimensionless.
 
 The kinetic reference combines expression timescales with metabolic feedback
-and gives a steady-state throughput $T^{\star}\approx2.66$
+and gives a steady-state pathway throughput $T^{\star}\approx2.66$
 (Fig.~\ref{fig:feedback}). It uses a $330$-residue enzyme, a $990$-nucleotide
 gene, polymerase elongation at $60$ nucleotides per second, and ribosome
 elongation at $16$ amino acids per second. These values provide illustrative
@@ -45,24 +49,29 @@ expression timescales. The steady-state abundance also depends on an mRNA half-l
 $2.5$ minutes, a protein half-life of $35$ minutes, and a culture doubling
 time of $60$ minutes. The same growth rate $\mu$ appears in both balances,
 but its relative contribution differs because transcript and protein have
-different degradation rates. Growth accounts for about four percent of
-transcript clearance,
-$\theta_m+\mu\approx0.289~\mathrm{min}^{-1}$, and about thirty-seven percent
-of enzyme clearance, $\theta_p+\mu\approx0.031~\mathrm{min}^{-1}$. At steady
-state, every reaction in the linear chain carries the same flux
-$T$. Because export is first order in $X_3$, $X_3=T/k_3$. Substitution of the
-activity and expression controls gives one consistency condition for $X_3$.
-The numerical solution was $X_3^{\star}\approx4$, with activity factor
-$\theta_{\mathrm{BST}}^{\star}\approx0.574$, an expression ratio
-$(e/e^{\circ})^{\star}\approx0.464$. Basal transcription
+different degradation rates. With transcript degradation rate $\theta_m$ and
+protein degradation rate $\theta_p$, growth accounts for about four percent
+of the total transcript clearance rate
+$\theta_m+\mu\approx0.289~\mathrm{min}^{-1}$ and about thirty-seven percent
+of the total enzyme clearance rate
+$\theta_p+\mu\approx0.031~\mathrm{min}^{-1}$. At steady state, every reaction
+in the linear chain carries the same pathway throughput $T$. Because export
+is first order in the end-product concentration $X_3$, the concentration is
+$X_3=T/k_3$, where $k_3$ is the first-order export constant. Substitution of
+the activity and expression controls gives one consistency condition for the
+end-product concentration $X_3$. The numerical solution was the steady-state
+concentration $X_3^{\star}\approx4$, with activity factor
+$\theta_{\mathrm{BST}}^{\star}\approx0.574$, an enzyme-abundance ratio
+$(e/e^{\circ})^{\star}\approx0.464$. The basal transcription rate
 $\lambda$, defined by Equations~\eqref{eq:mrna} and
-\eqref{eq:control-split}, keeps expression above zero. The values $a=0.4$
-and $b=0.6$ make both controls affect the result; neither control alone
+\eqref{eq:control-split}, keeps expression above zero. The kinetic orders
+$a=0.4$ and $b=0.6$ make both controls affect the result; neither control alone
 produces the reference throughput.
 
 The FBA comparison keeps the chain's stoichiometry unchanged and places the
 entire dual-control content on the committed-step bound
-(Fig.~\ref{fig:feedback}). The bound is
+(Fig.~\ref{fig:feedback}). The bound on committed-step flux
+$\hat v_{r_0}$ is given by:
 \begin{equation}\label{eq:feedback-bound}
   0 \;\le\; \hat v_{r_0} \;\le\;
   V^{\circ}_{\max,r_0}\,(e/e^{\circ})\,\theta_{\mathrm{FBA}}(X_3),
@@ -71,18 +80,22 @@ entire dual-control content on the committed-step bound
 which is the expression-and-regulation form of
 Equation~\eqref{eq:general-bound}. The thermodynamic and saturation factors
 remain at one. To avoid copying the BST rate law into the FBA bound, we
-represent the activity factor with a bounded two-state Hill function:
+represent the FBA activity factor $\theta_{\mathrm{FBA}}$ with a bounded
+two-state Hill function using half-saturation scale $K=5$ and Hill coefficient
+$n=2$:
 \begin{equation}\label{eq:feedback-theta-fba}
   \theta_{\mathrm{FBA}}(X_3) \;=\; \frac{K^{n}}{K^{n}+X_3^{\,n}},
   \qquad K = 5,\quad n = 2,
 \end{equation}
 the repressive form of Equation~\eqref{eq:two-state-control}. The active
 state has unit weight, and the inactive state has weight $(X_3/K)^n$.
-The parameters $K$ and $n$ were specified independently of the BST order
-$a$. Both factors were evaluated from the steady-state enzyme abundance and
-$X_3$, not from the reference flux. Four FBA solutions used the same
-stoichiometric matrix and differed only in the bound on $r_0$. With both
-factors set to one, the predicted flux was $10$. Expression control alone
+The half-saturation scale $K$ and Hill coefficient $n$ were specified
+independently of the BST kinetic order $a$. Both control factors were evaluated
+from the steady-state enzyme abundance and end-product concentration $X_3$,
+not from the reference flux. Four FBA solutions used the same stoichiometric
+matrix and differed only in the bound on committed step $r_0$. With both
+the expression and activity factors set to one, the predicted flux was $10$.
+Expression control alone
 reduced it to $4.64$, activity control alone reduced it to $6.10$, and both
 controls reduced it to $2.83$. The dual-control result is within about six
 percent of the BST reference value, $2.66$.
@@ -94,18 +107,22 @@ percent of the BST reference value, $2.66$.
   \caption{Dual-control feedback example. Left: the pathway and the
     transcription and translation steps that produce enzyme $E_0$. The end
     product $X_3$ represses enzyme expression and inhibits enzyme activity.
-    Right: predicted $r_0$ flux with neither control, each control alone, and
+    Right: predicted committed-step flux $r_0$ with neither control, each
+    control alone, and
     both controls. Expression control gives $4.64$, activity control gives
     $6.10$, and both give $2.83$. The BST reference is
-    $T^{\star}\approx2.66$, and the dashed line marks the uninhibited
+    pathway throughput $T^{\star}\approx2.66$, and the dashed line marks the
+    uninhibited
     capacity of $10$.}
   \label{fig:feedback}
 \end{figure}
 
 The parameter sweep addresses uncertainty in the Hill parameters, which were
-specified as $K=5$ and $n=2$ rather than fitted
-(Fig.~\ref{fig:feedback_robust}). We therefore varied $K$ from $3$ to $8$ and $n$ from $1$ to $3$,
-recomputed $\theta_{\mathrm{FBA}}$ at the reference $X_3$, and solved the
+specified as half-saturation scale $K=5$ and Hill coefficient $n=2$ rather
+than fitted (Fig.~\ref{fig:feedback_robust}). We therefore varied the scale
+$K$ from $3$ to $8$ and coefficient $n$ from $1$ to $3$, recomputed the FBA
+activity factor $\theta_{\mathrm{FBA}}$ at the reference end-product
+concentration $X_3$, and solved the
 program at each grid point. With both controls, the predicted flux ranged from
 about $1.4$ to $4.1$ and included the BST value of $2.66$. The nominal
 parameters gave $2.83$. Activity
@@ -117,10 +134,11 @@ over the tested parameter range, but the dual-control model did.
   \centering
   \includegraphics[width=0.62\textwidth]{feedback_robustness.pdf}
   \caption{Sensitivity to the assumed activity-factor shape. The plot shows
-    the dual-control flux while $K$ and $n$ vary in
+    the dual-control flux while the half-saturation scale $K$ and Hill
+    coefficient $n$ vary in the FBA activity factor
     $\theta_{\mathrm{FBA}}=K^{n}/(K^{n}+X_3^{n})$. The color scale is centered
     on the BST reference $T^{\star}\approx2.66$, and the black contour marks
     equal FBA and BST fluxes. The predicted flux ranges from about $1.4$ to
-    $4.1$. The marked nominal point, $(K,n)=(5,2)$, gives $2.83$.}
+    $4.1$. The marked nominal parameter pair, $(K,n)=(5,2)$, gives $2.83$.}
   \label{fig:feedback_robust}
 \end{figure}
