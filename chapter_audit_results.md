@@ -204,28 +204,37 @@ The remaining items are listed below.
   drawn from the model-identified strain families, increased measured glycan
   production nearly threefold relative to wild type. The chapter now separates
   the model-identified perturbation from the magnitude measured experimentally.
+- The five urea-cycle reactions were re-queried in eQuilibrator using their
+  KEGG compound identifiers. The chapter now reports the standard transformed
+  reaction Gibbs energies at pH 7.5, pMg 3.0, ionic strength 0.25 M, and
+  298.15 K, together with eQuilibrator's displayed 95% confidence intervals.
+  The nitric oxide synthase stoichiometry matches the EC 1.14.13.39 record, and
+  its standard transformed reaction Gibbs energy is $-1254.4\pm29.6$ kJ/mol.
+  The previous $-1220$ kJ/mol value was the millimolar transformed value
+  $\Delta_{\mathrm r}G^{\prime m}$, not
+  $\Delta_{\mathrm r}G^{\prime\circ}$.
+- The complete thermodynamic query strings, conditions, source URLs, direction
+  assignments, and access date are recorded in
+  `code/data/urea_thermodynamics.csv` and described in the README.
 
 ## Remaining technical and reproducibility items
 
 ### Parameter provenance
 
-The chapter identifies eQuilibrator, BRENDA, BioNumbers, and Park et al. as
-sources, but it does not provide a complete record for each parameter. A
-reproducible parameter table should include the database record or query,
-organism, substrate, assay direction, temperature, pH, original units,
-conversion, selection rule, and access date.
-
-The thermodynamic calculations also need their transformed-state conditions,
-including pH, ionic strength, temperature, magnesium assumptions, and
-uncertainty. The reported nitric oxide synthase value of
-$-1220$ kJ/mol warrants a separate stoichiometric and thermodynamic check.
+The eQuilibrator and Park et al. inputs now have reproducible source records.
+The remaining provenance work concerns the BRENDA turnover numbers and the
+BioNumbers abundance scale. A complete record should identify the database
+record, organism, substrate, assay direction, temperature, pH, original units,
+conversion, selection rule, and access date for each retained value. The common
+reference abundance is now described as an illustrative capacity scale rather
+than a reaction-specific physiological measurement.
 
 ## Verification
 
 - latexmk -pdf -interaction=nonstopmode -halt-on-error Chapter.tex: passed.
 - git diff --check: passed.
 - PDF text scan found none of the previously flagged phrases.
-- All 15 rendered pages were inspected. No clipped text, overlapping elements,
+- All 20 rendered pages were inspected. No clipped text, overlapping elements,
   broken figures, unreadable captions, or margin overflow was found.
 - The urea and feedback Julia test suites passed after the code changes.
 - The full 10,000-draw UQ calculations completed with zero failed solves in
@@ -234,7 +243,7 @@ $-1220$ kJ/mol warrants a separate stoichiometric and thermodynamic check.
 
 ## Conclusion
 
-The language and paragraph-structure audits are closed. The chapter now uses
-direct, professional prose in sustained paragraphs throughout. The audit
-remains open only for parameter provenance and the separate thermodynamic
-check identified above.
+The language, paragraph-structure, and thermodynamic audits are closed. The
+chapter now uses direct, professional prose in sustained paragraphs throughout.
+The audit remains open only for the BRENDA and BioNumbers provenance records
+identified above.

@@ -7,7 +7,7 @@ include(joinpath(@__DIR__, "urea_cycle.jl"))
 const N        = 10_000
 const SEED     = 20260713
 const SIGMA_LN = 0.69     # lognormal spread for kcat, e0, conc, Km
-const DG_SIGMA = 2.0      # kJ/mol, normal spread for dG
+const DG_SIGMA = 2.0      # kJ/mol, illustrative normal SD; not the eQuilibrator 95% CI
 
 """
     load_park_saturation(path) -> Dict{Int,Tuple{Float64,Float64}}

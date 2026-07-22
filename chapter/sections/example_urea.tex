@@ -27,23 +27,45 @@ the network. The resulting matrix has eighteen metabolite balances and
 nineteen reactions, so the stoichiometric matrix
 $\mathbf S\in\mathbb R^{18\times19}$.
 
-The thermodynamic factor in Equation~\eqref{eq:thermo-gate} was based on the
-following standard transformed reaction Gibbs energies from eQuilibrator
-\cite{Noor2013,Beber2022}:
-$\Delta_{\mathrm r}G_{v_1}^{\prime\circ}=-4.3$,
-$\Delta_{\mathrm r}G_{v_2}^{\prime\circ}=-5.5$,
-$\Delta_{\mathrm r}G_{v_3}^{\prime\circ}=-51.0$,
-$\Delta_{\mathrm r}G_{v_4}^{\prime\circ}=-30.3$, and
-$\Delta_{\mathrm r}G_{v_5}^{\prime\circ}=-1220$ kJ/mol. The reversibility threshold
-$\Delta_{\mathrm r}G_j^{\prime *}$ was set to
-$-10$ kJ/mol. This is a heuristic cutoff, not a value derived from a stated
-physiological concentration range. The rule makes reactions $v_1$ and $v_2$
-reversible and reactions $v_3$, $v_4$, and $v_5$ irreversible. Exchange reactions
-retain wide bounds in both directions because their direction depends on
-the medium. The kinetic capacities in Equation~\eqref{eq:vmax} combined
+The standard transformed reaction Gibbs energies from eQuilibrator and the
+heuristic direction assignments for the five enzymatic reactions are
+summarized under a common transformed-state convention
+(Table~\ref{tab:urea-thermodynamics}) \cite{Noor2013,Beber2022}. The estimates
+use pH 7.5, pMg 3.0, ionic strength 0.25 M, and absolute temperature
+$T_{\mathrm{abs}}=298.15$ K; the displayed uncertainties are eQuilibrator
+95\% confidence intervals. The reversibility threshold
+$\Delta_{\mathrm r}G_j^{\prime *}=-10$ kJ/mol is a heuristic cutoff, not a
+value derived from a stated physiological activity range.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Standard transformed reaction Gibbs energies and heuristic
+    direction assignments for the urea-cycle model.}
+  \label{tab:urea-thermodynamics}
+  \begin{tabular}{llrrr}
+    \toprule
+    Reaction & EC number & $\Delta_{\mathrm r}G_j^{\prime\circ}$
+      (kJ/mol) & 95\% CI (kJ/mol) & $\delta_j$ \\
+    \midrule
+    $v_1$ & 6.3.4.5   & $-4.3$    & $\pm 2.9$  & 1 \\
+    $v_2$ & 4.3.2.1   & $11.6$    & $\pm 5.7$  & 1 \\
+    $v_3$ & 3.5.3.1   & $-33.9$   & $\pm 12.4$ & 0 \\
+    $v_4$ & 2.1.3.3   & $-30.3$   & $\pm 5.7$  & 0 \\
+    $v_5$ & 1.14.13.39 & $-1254.4$ & $\pm 29.6$ & 0 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The heuristic rule makes reactions $v_1$ and $v_2$ reversible and reactions
+$v_3$, $v_4$, and $v_5$ irreversible, while exchange reactions retain wide
+bounds in both directions because their direction depends on the medium. The
+kinetic capacities in Equation~\eqref{eq:vmax} combined
 turnover numbers from BRENDA \cite{Chang2021} with the
-reference enzyme abundance $e^{\circ}=0.01$ mmol/gDW, an illustrative intracellular
-enzyme concentration consistent with BioNumbers \cite{Milo2010}.
+reference enzyme abundance $e^{\circ}=0.01$ mmol/gDW. This common illustrative
+abundance sets the capacity scale; it is not a reaction-specific physiological
+measurement. BioNumbers provides cellular abundance scales that can inform a
+condition-specific value when the required measurements are available
+\cite{Milo2010}.
 Argininosuccinate synthetase and nitric oxide synthase have the turnover number
 $k^{\circ}_{\mathrm{cat}}=10.0$ s$^{-1}$, which gives the reference capacities
 $V^{\circ}_{\max,v_1}=V^{\circ}_{\max,v_5}=360$ mmol\,gDW$^{-1}$\,h$^{-1}$;
@@ -85,9 +107,13 @@ numerical tolerance.
 
 The Monte Carlo analysis treats the database inputs as uncertain rather than
 exact and compares the effect of imputing the missing saturation factor
-(Fig.~\ref{fig:urea_uq}). We assigned lognormal uncertainty of about a factor of two to
-each turnover number and the reference abundance, and normal uncertainty of a
-few kilojoules per mole to each standard transformed reaction Gibbs energy. For four reactions, we
+(Fig.~\ref{fig:urea_uq}), using a separate illustrative free-energy spread
+rather than the eQuilibrator confidence intervals in
+Table~\ref{tab:urea-thermodynamics}. We assigned lognormal uncertainty of about
+a factor of two to each turnover number and the reference abundance and
+independent normal uncertainty with standard deviation
+$\sigma_{\Delta G}=2.0$ kJ/mol to each standard transformed reaction Gibbs
+energy. For four reactions, we
 also sampled substrate concentrations and Michaelis constants from Park and
 coworkers \cite{Park2016}. Argininosuccinate lyase lacked a measured substrate
 concentration, so its saturation factor remained at one. We solved the linear

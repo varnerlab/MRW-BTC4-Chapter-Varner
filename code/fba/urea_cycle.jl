@@ -15,12 +15,14 @@ Network (VFF format, from data/Network.net):
   b1–b14  exchange reactions (±1000 default)
 
 Flux bounds:
-  Reversibility δⱼ from eQuilibrator (threshold −10 kJ/mol):
+  Reversibility δⱼ from standard transformed reaction Gibbs energies queried
+  from eQuilibrator at pH 7.5, pMg 3.0, I = 0.25 M, and T = 298.15 K
+  (threshold −10 kJ/mol):
     v1: ΔG = −4.3  kJ/mol  → δ = 1 (reversible)
-    v2: ΔG = −5.5  kJ/mol  → δ = 1 (reversible)
-    v3: ΔG = −51.0 kJ/mol  → δ = 0 (irreversible)
+    v2: ΔG = 11.6  kJ/mol  → δ = 1 (reversible)
+    v3: ΔG = −33.9 kJ/mol  → δ = 0 (irreversible)
     v4: ΔG = −30.3 kJ/mol  → δ = 0 (irreversible)
-    v5: ΔG = −1220 kJ/mol  → δ = 0 (irreversible)
+    v5: ΔG = −1254.4 kJ/mol → δ = 0 (irreversible)
   Vmax = kcat × eₒ × 3600  (eₒ = 0.01 mmol/gDW; kcat from BRENDA in s⁻¹, ×3600 converts to h⁻¹):
     v1: kcat = 10.0  → Vmax = 360
     v2: kcat =  3.28 → Vmax = 118.08
@@ -45,7 +47,7 @@ Fields:
 """
 const KCAT0 = [10.0, 3.28, 190.0, 410.0, 10.0]   # 1/s, from BRENDA (v1..v5)
 const E0    = 0.01                                # mmol/gDW, reference enzyme abundance
-const DG0   = [-4.3, -5.5, -51.0, -30.3, -1220.0] # kJ/mol, from eQuilibrator (v1..v5)
+const DG0   = [-4.3, 11.6, -33.9, -30.3, -1254.4] # standard transformed kJ/mol, eQuilibrator (v1..v5)
 
 function urea_cycle_model(; kcat=KCAT0, e0=E0, dG=DG0, dG_threshold=-10.0, f=ones(5))::NamedTuple
 
