@@ -3,7 +3,7 @@ include(joinpath(@__DIR__, "urea_cycle.jl"))
 
 # Nominal bounds must match kcat (s^-1) * e0 * 3600 (s -> h conversion).
 expected_lb = vcat([-360.0, -118.08,    0.0,     0.0,   0.0], fill(-1000.0, 14))
-expected_ub = vcat([ 360.0,  118.08, 6840.0, 14760.0, 360.0], fill( 1000.0, 14))
+expected_ub = vcat([ 360.0,  118.08, 6840.0, 14760.0, 38.88], fill( 1000.0, 14))
 
 m = urea_cycle_model()
 # isapprox, not ==: Vmax = kcat*e0*3600 (e.g. 3.28*0.01*3600) differs from the literal 118.08

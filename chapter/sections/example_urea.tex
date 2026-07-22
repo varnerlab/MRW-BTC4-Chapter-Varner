@@ -63,21 +63,21 @@ kinetic capacities in Equation~\eqref{eq:vmax} combine nominal turnover
 numbers with the reference enzyme abundance $e^{\circ}=0.01$ mmol/gDW. These
 parameters set an illustrative capacity scale rather than representing a
 matched set of HL-60 measurements. In BRENDA release 2026.1 \cite{Chang2021},
-the values for reactions $v_2$, $v_3$, and $v_4$ have exact turnover-number
-matches, although the selected records span organisms and assay conditions;
-because the EC entries for reactions $v_1$ and $v_5$ contain no exact match,
-these reactions use the literature estimate $k_{\mathrm{cat}}\simeq10$
-s$^{-1}$ for an average enzyme as the default value \cite{BarEven2011}. The
-complete record, including organisms, substrates, assay conditions, source
+the values for reactions $v_2$ through $v_5$ have exact turnover-number
+matches, although the selected records span organisms and assay conditions.
+Because the EC entry for reaction $v_1$ contains no turnover-number field,
+this reaction uses $k_{\mathrm{cat}}\simeq10$ s$^{-1}$ as a default. This value
+is the median of 1,942 unique enzyme--natural-substrate reactions reported by
+Bar-Even et al. and is not an enzyme-specific measurement
+\cite{BarEven2011}. The complete record, including organisms, substrates, assay conditions, source
 publications, and selection rules, is provided in the accompanying data
 repository. The common reference abundance is also illustrative rather than a
 reaction-specific physiological measurement; BioNumbers provides cellular
 abundance scales that can guide its replacement
 when condition-specific measurements are available \cite{Milo2010}.
-Argininosuccinate synthetase and nitric oxide synthase use the default turnover
-number
-$k^{\circ}_{\mathrm{cat}}=10.0$ s$^{-1}$, which gives the reference capacities
-$V^{\circ}_{\max,v_1}=V^{\circ}_{\max,v_5}=360$ mmol\,gDW$^{-1}$\,h$^{-1}$;
+Argininosuccinate synthetase uses the default turnover number
+$k^{\circ}_{\mathrm{cat}}=10.0$ s$^{-1}$, which gives the reference capacity
+$V^{\circ}_{\max,v_1}=360$ mmol\,gDW$^{-1}$\,h$^{-1}$;
 arginase I has the turnover number $k^{\circ}_{\mathrm{cat}}=190.0$ s$^{-1}$,
 giving the reference capacity
 $V^{\circ}_{\max,v_3}=6840$ mmol\,gDW$^{-1}$\,h$^{-1}$; and ornithine
@@ -88,7 +88,12 @@ lyase has the lowest turnover number,
 $k^{\circ}_{\mathrm{cat},v_2}=3.28$ s$^{-1}$, which gives
 the reference capacity $V^{\circ}_{\max,v_2}=118.08$
 mmol\,gDW$^{-1}$\,h$^{-1}$, the smallest
-of the five capacities. Exchange reactions retain wide capacity bounds.
+of the first four capacities. Nitric oxide synthase has a BRENDA turnover
+number of $k^{\circ}_{\mathrm{cat},v_5}=1.08$ s$^{-1}$ for L-arginine from
+rat NOS, giving $V^{\circ}_{\max,v_5}=38.88$
+mmol\,gDW$^{-1}$\,h$^{-1}$. This smaller branch capacity does not alter the
+nominal maximum-urea solution, in which $v_5$ carries zero flux. Exchange
+reactions retain wide capacity bounds.
 
 The model has no substrate, expression, or regulatory data, so setting
 the saturation factor $f_j$, enzyme-abundance ratio $(e/e^{\circ})$, and

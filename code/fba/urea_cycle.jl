@@ -28,7 +28,7 @@ Flux bounds:
     v2: kcat =  3.28 → Vmax = 118.08
     v3: kcat = 190.0 → Vmax = 6840
     v4: kcat = 410.0 → Vmax = 14760
-    v5: kcat = 10.0  → Vmax = 360
+    v5: kcat =  1.08 → Vmax = 38.88
   lb = −δVmax, ub = Vmax for enzymatic reactions; ±1000 for exchange reactions.
 
 Objective: maximise urea export through b4.  Under the secretion-positive
@@ -45,8 +45,8 @@ Fields:
   ub           upper flux bounds
   c            objective coefficients (c[b4] = +1.0; maximises urea export)
 """
-const KCAT0 = [10.0, 3.28, 190.0, 410.0, 10.0]   # 1/s; v2-v4: BRENDA 2026.1;
-                                                        # v1/v5: Bar-Even average-enzyme default
+const KCAT0 = [10.0, 3.28, 190.0, 410.0, 1.08]   # 1/s; v2-v5: BRENDA 2026.1;
+                                                        # v1: Bar-Even global-median default
 const E0    = 0.01                                # mmol/gDW, reference enzyme abundance
 const DG0   = [-4.3, 11.6, -33.9, -30.3, -1254.4] # standard transformed kJ/mol, eQuilibrator (v1..v5)
 

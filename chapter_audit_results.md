@@ -225,11 +225,13 @@ The eQuilibrator, Park et al., and BRENDA inputs now have reproducible source
 records. `code/data/urea_turnover_numbers.csv` records the BRENDA 2026.1 exact
 matches, organisms, substrates, available assay conditions, original
 publications, selection rules, and access date. The audit found exact matches
-for the nominal values used by reactions $v_2$, $v_3$, and $v_4$, but no exact
-matches for the 10.0 s$^{-1}$ values used by reactions $v_1$ and $v_5$; the
-chapter and code now identify those two values as defaults based on the
-approximate turnover number of the average enzyme reported by Bar-Even et al.
-(2011; DOI 10.1021/bi2002289), rather than enzyme-specific measurements.
+for the nominal values used by reactions $v_2$ through $v_5$, including the
+1.08 s$^{-1}$ L-arginine turnover number selected for rat nitric oxide
+synthase. The EC 6.3.4.5 entry for $v_1$ contains no turnover-number field, so
+the chapter and code identify its 10.0 s$^{-1}$ value as a global default based
+on the median of 1,942 unique enzyme--natural-substrate reactions reported by
+Bar-Even et al. (2011; DOI 10.1021/bi2002289), rather than an enzyme-specific
+measurement.
 The common enzyme abundance is likewise identified as an illustrative capacity
 scale rather than a reaction-specific physiological measurement, so it does
 not require a unique BioNumbers record.

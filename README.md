@@ -110,10 +110,12 @@ BRENDA release 2026.1, downloaded on July 22, 2026 as
 `brenda_2026_1.json.tar.gz` (SHA-256
 `bb2549d02b7255de2272b35701c331493caad16b82eb38a41adb2e03bbb0d2e1`). The
 raw CC BY 4.0 database download remains in the ignored `data/` directory. Exact
-BRENDA matches support the nominal values for `v2`, `v3`, and `v4`; the two
-10.0 s^-1 values used for `v1` and `v5` have no exact records in this release
-and instead use the approximate turnover number of the average enzyme reported
-by Bar-Even et al. (2011; DOI `10.1021/bi2002289`) as a documented default. The
+BRENDA matches support the nominal values for `v2` through `v5`, including the
+1.08 s^-1 L-arginine turnover number selected for rat nitric oxide synthase.
+The EC 6.3.4.5 entry for `v1` has no turnover-number field, so `v1` uses the
+approximately 10 s^-1 median reported by Bar-Even et al. for 1,942 unique
+enzyme--natural-substrate reactions (2011; DOI `10.1021/bi2002289`) as a
+documented global default. The
 CSV reports the organisms, substrates, conditions, literature identifiers,
 exact match counts, and selection rules needed to interpret the retained
 values.
