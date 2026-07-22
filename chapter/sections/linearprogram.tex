@@ -9,9 +9,9 @@ vector $\mathbf u$, and a linear objective with coefficient vector $\mathbf c$.
 Together, the mass-balance equations and the bounds
 $\boldsymbol\ell\le\hat{\mathbf v}\le\mathbf u$ form the flux constraint
 system. The objective $\mathbf c^\top\hat{\mathbf v}$ then selects a solution
-from that system. Bounds can represent reaction direction,
-enzyme capacity, and substrate availability. The objective states the
-quantity to maximize. Together, these elements define the linear program:
+from that system. Because bounds can represent reaction direction, enzyme
+capacity, and substrate availability, the balances, bounds, and quantity to
+maximize together define the linear program:
 \begin{equation}\label{eq:fba-lp}
 \begin{aligned}
   \max_{\hat{\mathbf v}\,\in\,\mathbb R^n}\quad & \mathbf c^\top\hat{\mathbf v}\\
@@ -19,13 +19,13 @@ quantity to maximize. Together, these elements define the linear program:
   & \boldsymbol\ell \le \hat{\mathbf v} \le \mathbf u.
 \end{aligned}
 \end{equation}
-This is the standard FBA formulation \cite{Orth2010}. The objective is a
-modeling choice. Setting the objective coefficient $c_j=1$ for a biomass
-pseudo-reaction maximizes growth. The biomass reaction consumes precursors in
-the proportions needed to form new cell mass. Setting the objective
-coefficient $c_j=1$ for a product-export reaction instead maximizes product
-secretion. The constraints remain the same; only the objective coefficient
-vector $\mathbf c$ changes. The growth-aware form remains linear when the
+This standard FBA formulation \cite{Orth2010} separates the constraint system
+from the modeling choice expressed by the objective. Setting the objective
+coefficient $c_j=1$ for a biomass pseudo-reaction maximizes growth by consuming
+precursors in the proportions needed to form new cell mass, whereas setting
+$c_j=1$ for a product-export reaction maximizes product secretion. The
+constraints remain unchanged; only the objective coefficient vector
+$\mathbf c$ differs. The growth-aware form remains linear when the
 concentration vector $\mathbf x$ is measured and the growth rate $\mu$ is
 fixed or enters as a scalar decision variable. If both the growth rate $\mu$
 and concentration vector $\mathbf x$ are unknown, their product is bilinear
@@ -38,11 +38,11 @@ The corresponding null space is given by:
   \mathcal N(\mathbf S)=
   \{\hat{\mathbf v}\in\mathbb R^n:\mathbf S\hat{\mathbf v}=\mathbf0\}.
 \]
-This set contains every steady-state flux vector. If the rank condition
-$\operatorname{rank}(\mathbf S)<n$ holds, the null space contains more than one
-vector. Bounds restrict it to a feasible polytope. The objective selects a
-vertex or a face of that polytope. A face contains multiple optimal flux
-vectors, so optimization does not always give a unique solution.
+This set contains every steady-state flux vector and contains more than one
+vector when the rank condition $\operatorname{rank}(\mathbf S)<n$ holds.
+Bounds restrict the null space to a feasible polytope, and the objective
+selects a vertex or face; because a face contains multiple optimal flux
+vectors, optimization does not always give a unique solution.
 
 \begin{figure}[htbp]
   \centering
@@ -57,17 +57,17 @@ vectors, so optimization does not always give a unique solution.
   \label{fig:lp-geometry}
 \end{figure}
 
-The singular value decomposition identifies both null spaces. It factors the
+The singular value decomposition identifies both null spaces by factoring the
 stoichiometric matrix as
 $\mathbf S=\mathbf U\boldsymbol\Sigma\mathbf V^\top$, where $\mathbf U$ is
 the left-singular-vector matrix, $\boldsymbol\Sigma$ is the diagonal
 singular-value matrix, and $\mathbf V$ is the right-singular-vector matrix.
 Columns of the right-singular-vector matrix $\mathbf V$ associated with zero
 singular values span the right null space, so every steady-state flux vector
-is a linear combination of these columns.
-Columns of the left-singular-vector matrix $\mathbf U$ associated with zero
-singular values span the left null space. A coefficient vector $\mathbf y$
-in the left null space defines the conserved quantity
+is a linear combination of these columns, whereas columns of the
+left-singular-vector matrix $\mathbf U$ associated with zero singular values
+span the left null space. A coefficient vector $\mathbf y$ in this space
+defines the conserved quantity
 $\mathbf y^\top\mathbf x$, such as the total concentration of a
 cofactor pair. Genome-scale models often have a large right null space
 because the rank condition $\operatorname{rank}(\mathbf S)<n$ holds

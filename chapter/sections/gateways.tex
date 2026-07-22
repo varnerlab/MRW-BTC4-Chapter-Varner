@@ -8,12 +8,12 @@ reaction $j$, the bound is written as:
   \;\le\; \hat v_j \;\le\;
   V^{\circ}_{\max,j}\,(e/e^{\circ})\,\theta_j(\cdot)\,f_j(\cdot),
 \end{equation}
-where $V^{\circ}_{\max,j}$ is a reference capacity with units of flux. The
-other factors are dimensionless. The reversibility factor $\delta_j$ sets
-the reverse direction. The reference capacity $V^{\circ}_{\max,j}$ and
-saturation factor $f_j$ describe enzyme capacity and substrate saturation.
-The enzyme-abundance ratio $(e/e^{\circ})$ compares the current enzyme
-concentration $e$ with the reference concentration $e^{\circ}$, and the
+where $V^{\circ}_{\max,j}$ is a reference capacity with units of flux and the
+remaining factors are dimensionless. The reversibility factor $\delta_j$ sets
+the reverse direction; the reference capacity $V^{\circ}_{\max,j}$ and
+saturation factor $f_j$ describe enzyme capacity and substrate saturation;
+the enzyme-abundance ratio $(e/e^{\circ})$ compares the current enzyme
+concentration $e$ with the reference concentration $e^{\circ}$; and the
 allosteric factor $\theta_j$ describes enzyme activity.
 Transcriptional and translational controls $u_j$ and $w_j$ act through the
 expression model and change the enzyme-abundance ratio $(e/e^{\circ})$. They
@@ -63,8 +63,9 @@ Enzyme kinetics set the forward capacity. The reference capacity is given by:
 \end{equation}
 where $k^{\circ}_{\mathrm{cat},j}$ is the turnover number and $e^{\circ}$
 is a reference enzyme concentration. BRENDA reports turnover numbers
-\cite{Chang2021}, and BioNumbers reports cellular abundance scales
-\cite{Milo2010}. The saturation factor gives the fraction of
+\cite{Chang2021}, while BioNumbers reports cellular abundance scales
+\cite{Milo2010}; together, these quantities set the reference capacity. The
+saturation factor gives the fraction of
 the reference capacity $V^{\circ}_{\max,j}$ available at the current substrate
 concentration.
 For a single-substrate enzyme, the reaction mechanism is written as:
@@ -115,10 +116,10 @@ both loss rates. At steady state, the solutions are:
   (e/e^{\circ}) = \frac{p^{\star}_j}{e^{\circ}}.
 \end{equation}
 Gene--protein--reaction rules map the steady-state protein abundance
-$p_j^\star$ to catalytic activity. These
-rules represent single enzymes, multisubunit complexes, and isozymes.
-Measured transcript or protein abundance can also set the enzyme-abundance
-ratio $(e/e^{\circ})$ directly and produce condition-specific capacities.
+$p_j^\star$ to catalytic activity for single enzymes, multisubunit complexes,
+and isozymes, while measured transcript or protein abundance can set the
+enzyme-abundance ratio $(e/e^{\circ})$ directly and produce condition-specific
+capacities.
 
 Active and inactive configurations provide one statistical-mechanical
 description of allosteric, transcriptional, and translational control
@@ -233,7 +234,8 @@ relative to the inactive state. If the effector instead stabilizes the inactive 
 appears only in the denominator and the control decreases with the effector
 concentration $x$.
 
-Equation~\eqref{eq:active-state-control} gives each process-specific factor:
+The active-state control in Equation~\eqref{eq:active-state-control} maps
+directly to each process-specific factor:
 \begin{equation}\label{eq:control-mapping}
   \theta_j = \Phi_{\mathrm{cat},j},
   \qquad
@@ -274,11 +276,12 @@ $\theta_j\approx1$. This gives the baseline bound:
 \begin{equation}\label{eq:simplified-bound}
   -\delta_j\,V^{\circ}_{\max,j} \;\le\; \hat v_j \;\le\; V^{\circ}_{\max,j}.
 \end{equation}
-Equation~\eqref{eq:simplified-bound} retains only reversibility and
-reference capacity. Equation~\eqref{eq:general-bound} shows which omitted
-factors require additional data. Each factor has a precedent in
-constraint-based modeling. Thermodynamics-
-based flux analysis uses free energies and metabolite activity ranges to
+The baseline bound in Equation~\eqref{eq:simplified-bound} retains only
+reversibility and reference capacity, whereas the general bound in
+Equation~\eqref{eq:general-bound} identifies the omitted factors that require
+additional data. Each factor has a precedent in
+constraint-based modeling: thermodynamics-based flux analysis uses free
+energies and metabolite activity ranges to
 exclude infeasible states \cite{Henry2007}. Enzyme-constrained FBA uses
 turnover numbers and enzyme abundance; GECKO applies this approach at genome
 scale \cite{Sanchez2017}. Metabolism-and-expression models couple
@@ -286,8 +289,8 @@ transcription and translation to metabolism \cite{OBrien2013}. Regulatory
 FBA uses Boolean expression rules \cite{Covert2001}, whereas PROM uses
 data-derived interaction probabilities \cite{Chandrasekaran2010}. The
 allosteric factor $\theta_j$ represents direct regulation of enzyme
-activity. Equation~\eqref{eq:general-bound} places these established terms
-in one notation. The balances above use aggregate transcription and
+activity. The general bound in Equation~\eqref{eq:general-bound} places these
+established terms in one notation. The balances above use aggregate transcription and
 translation capacities $r_{X,j}$ and $r_{L,j}$. A sequence-resolved model can
 instead calculate
 nucleotide, amino-acid, and energy demands from each gene and protein

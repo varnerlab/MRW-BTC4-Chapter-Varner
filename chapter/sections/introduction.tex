@@ -1,18 +1,18 @@
 %% introduction.tex
 \section{Introduction}\label{sec:intro}
 
-Biotechnology depends on predicting and directing cellular metabolism.
-Metabolic engineering redirects flux toward a product. Bioprocess
-development selects operating conditions that sustain production. Strain
-design identifies genetic changes that alter the phenotype. Each task
+Biotechnology depends on predicting and directing cellular metabolism:
+metabolic engineering redirects flux toward a product, bioprocess development
+selects operating conditions that sustain production, and strain design
+identifies genetic changes that alter the phenotype. Each task
 requires an estimate of metabolic reaction rates under a specified condition
-\cite{Bordbar2014}. These rates are difficult to measure directly. Genome
-sequences and reaction annotations provide a network structure, but
+\cite{Bordbar2014}, although these rates are difficult to measure directly.
+Genome sequences and reaction annotations provide a network structure, but
 reconstructions remain uncertain in reaction membership, directionality,
 compartments, cofactors, and biomass composition. Fluxes, kinetic parameters,
-and metabolite concentrations are even less complete at genome scale. Models
-must therefore estimate phenotype from incomplete measurements. Bioprocess
-models use several levels of biological detail. Unstructured
+and metabolite concentrations are even less complete at genome scale, so
+models must estimate phenotype from incomplete measurements. Bioprocess
+models address this problem at several levels of biological detail. Unstructured
 models track biomass, extracellular substrates, and products with lumped
 growth, uptake, and production rates. Monod growth, inhibition, maintenance,
 and growth-associated production laws support batch, fed-batch, and
@@ -29,9 +29,9 @@ increases, however, so does the number of required kinetic parameters. This
 parameter burden motivates formulations that do not specify a kinetic law for
 every reaction.
 
-Constraint-based models take this approach. Unstructured and
-structured kinetic models calculate rates from specified empirical or
-mechanistic relationships, whereas constraint-based models define the flux
+Constraint-based models take this approach: unstructured and structured
+kinetic models calculate rates from specified empirical or mechanistic
+relationships, whereas constraint-based models define the flux
 distributions allowed by network stoichiometry, reaction bounds, and other
 physical or biological constraints. Flux balance analysis (FBA) uses an
 objective to select a solution from this feasible set

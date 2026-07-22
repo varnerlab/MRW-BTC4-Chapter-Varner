@@ -165,6 +165,15 @@ The remaining items are listed below.
   of the stoichiometric coefficient $\sigma_{ij}$, gives absolute temperature
   $T_{\mathrm{abs}}$ in kelvin, and reports the gas constant in units consistent
   with reaction Gibbs energies in kJ/mol.
+- A renewed chapter-wide flow audit corrected sentence-level choppiness within
+  otherwise long paragraphs. Closely related declarative sentences were joined
+  with explicit logical connections in the introduction, mole-balance
+  derivation, linear-program geometry, integrative-bound definitions, and
+  feedback example without reintroducing short standalone paragraphs.
+- A chapter-wide reference-placement audit removed sentences beginning with
+  ``Equation'' and kept equation references inline after the scientific
+  subject. The three regressions were confined to the integrative flux-bound
+  discussion.
 
 ### Code reproducibility and terminology
 

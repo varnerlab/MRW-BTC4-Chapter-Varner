@@ -1,8 +1,8 @@
 %% derivation.tex
 \section{From Mole Balances to Flux Constraints}\label{sec:derivation}
 
-The mass-balance constraints used in FBA follow from mole balances. Their
-derivation defines the normalization basis and identifies the steady-state
+The mass-balance constraints used in FBA follow from mole balances, and their
+derivation defines both the normalization basis and the steady-state
 assumptions. Consider a
 well-mixed culture with biomass concentration $B$ and reactor volume
 $\bar V$. The biomass basis is therefore given by:
@@ -27,15 +27,15 @@ rate. The intracellular mole balance is given by:
 where the stream-direction coefficient $d_s=+1$ for an inlet and $d_s=-1$
 for an outlet, and $\sigma_{ij}$ is entry $(i,j)$ of the stoichiometric matrix
 $\mathbf S\in\mathbb R^{m\times n}$ for $m$ metabolites and $n$ reactions.
-Each term has units mmol/h. The stream
-concentration $c_{i,s}$ has units mmol/L, whereas $C_i$ has units mmol/gDW.
-The cell membrane excludes bulk physical flow from the intracellular
-control volume, so the volumetric flow rate $\dot V_s=0$ and the first term
-vanishes. Active transport remains in the flux vector $\hat{\mathbf v}$
+Each term has units mmol/h; the stream concentration $c_{i,s}$ has units
+mmol/L, whereas $C_i$ has units mmol/gDW. Because the cell membrane excludes
+bulk physical flow from the intracellular control volume, the volumetric flow
+rate $\dot V_s=0$ and the first term vanishes, while active transport remains
+in the flux vector $\hat{\mathbf v}$
 because it moves molecules without bulk volume flow.
 
-Expand the accumulation term before assuming a fixed reactor volume.
-Substitution of the biomass-basis relation $\mathcal B=B\bar V$ gives:
+Expanding the accumulation term before assuming a fixed reactor volume and
+substituting the biomass-basis relation $\mathcal B=B\bar V$ gives:
 \begin{equation}\label{eq:product-rule}
   \frac{d}{dt}\bigl(C_i\mathcal B\bigr)
   = B\bar V\frac{dC_i}{dt}
@@ -52,15 +52,15 @@ Equation~\eqref{eq:mole-balance} becomes:
   + \frac{C_i}{\bar V}\frac{d\bar V}{dt}.
 \end{equation}
 For a batch or fed-batch culture with no biomass flow, total biomass changes
-through growth. The specific growth rate is given by:
+through growth, so the specific growth rate is given by:
 \begin{equation}\label{eq:growth-rate}
   \mu \equiv \frac{1}{\mathcal B}\frac{d\mathcal B}{dt}
   = \frac{1}{B}\frac{dB}{dt}
   + \frac{1}{\bar V}\frac{d\bar V}{dt}.
 \end{equation}
 The membrane removes the physical-flow term from
-Equation~\eqref{eq:intensive-balance}. Define the concentration vector as
-$\mathbf x=(C_1,\dots,C_m)^\top$ in mmol/gDW. Combining the remaining terms
+Equation~\eqref{eq:intensive-balance}. With the concentration vector defined as
+$\mathbf x=(C_1,\dots,C_m)^\top$ in mmol/gDW, combining the remaining terms
 with Equation~\eqref{eq:growth-rate} gives the dynamic intracellular balance:
 \begin{equation}\label{eq:dynamic-flux-balance}
   \mathbf S\hat{\mathbf v}
@@ -73,7 +73,7 @@ Balanced growth gives $d\mathbf x/dt=\mathbf0$, so this balance reduces to:
   \boxed{\mathbf S\hat{\mathbf v}=\mu\mathbf x},
 \end{equation}
 where the flux vector $\hat{\mathbf v}\in\mathbb R^n$ contains the reaction
-fluxes in mmol/gDW/h. Net production balances growth dilution. For a
+fluxes in mmol/gDW/h, so net production balances growth dilution. For a
 fixed-volume batch reactor, $d\bar V/dt=0$ and
 $\mu=(1/B)dB/dt$. For fed-batch operation, $d\bar V/dt\neq0$, so the
 volume term must remain. The fixed-volume result is a special case of the
@@ -103,6 +103,6 @@ with transport and exchange reactions. A boundary reaction
 $\emptyset\rightleftharpoons M_i$ enters the stoichiometric matrix $\mathbf S$
 as an isolated nonzero column with no intracellular reaction partner
 \cite{Bordbar2014}.
-Its flux describes molecular transport across the modeled boundary, not a
-reactor stream. The included boundary reactions and their bounds define the
-modeled system boundary.
+Its flux describes molecular transport across the modeled boundary rather
+than a reactor stream, and the included boundary reactions and their bounds
+define the modeled system boundary.
