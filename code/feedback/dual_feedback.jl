@@ -3,12 +3,13 @@
 #   activity   (theta) : X3 allosterically inhibits E0             (fast)
 #   expression (e/e0)  : X3 transcriptionally represses gene(E0)   (slow)
 #
-# The "truth" is an extended BSTModelKit S-system over [X1,X2,X3,m,E0]. The FBA
-# layer (below) approximates it, to within about 6%, through the product bound
+# The reference is an extended BSTModelKit S-system over [X1,X2,X3,m,E0]. The
+# FBA layer compares with it, to within about 6%, through the product bound
 # Vmax0*(e/e0)*theta on r0. Nothing is copied from the integrated fluxes: (e/e0)
-# is the MEASURED enzyme abundance (reference e0 = 1 by the nondimensional
+# is the reference-state enzyme abundance (reference e0 = 1 by the
+# nondimensional
 # normalization), and theta is a bounded, independent Hill occupancy
-# K^n/(K^n+X3^n) evaluated at the measured X3 -- not the truth model's own
+# K^n/(K^n+X3^n) evaluated at the reference X3 -- not the reference model's own
 # X3^-a allosteric kinetics.
 #
 # Expression states are nondimensional ratios normalized to their de-repressed
@@ -25,32 +26,32 @@ const K3     = 0.666   # export rate constant; places the fixed point at X3* = 4
 const FAST   = 100.0   # r1, r2 internal steps: fast enough never to limit
 
 # --------------------------------------------------------------------------- #
-# Sequence-specific expression parameters (realistic-but-fake). Capacities and
-# timescales are computed from gene + protein length and elongation rates; NO
-# precursors enter S (that is the cell-free capstone's construction). These set
-# the residence times that carry mu and calibrate the reference abundance; the
-# (e/e0) response to X3 is carried by B_EXPR.
+# Illustrative sequence metadata. Gene and protein lengths and elongation rates
+# determine the two reported elongation times, but those times do not calibrate
+# the steady-state expression coefficients below. The half-lives and growth
+# rate determine clearance; B_EXPR determines the response to X3.
 # --------------------------------------------------------------------------- #
 struct SeqParams
     L_prot::Float64; L_gene::Float64
-    tau_X::Float64;  tau_L::Float64
+    transcription_time_s::Float64; translation_time_s::Float64
     theta_m::Float64; theta_p::Float64; mu::Float64
 end
 
 function sequence_params()::SeqParams
-    L_prot = 330.0                 # aa, fake committed-step enzyme
+    L_prot = 330.0                 # aa, illustrative committed-step enzyme
     L_gene = 3 * L_prot            # 990 nt (3 nt / codon)
     e_X = 60.0                     # nt/s transcription elongation (E. coli 40-70)
     e_L = 16.0                     # aa/s translation elongation   (E. coli 12-20)
-    tau_X = L_gene / e_X           # 16.5 s transcript elongation delay
-    tau_L = L_prot / e_L           # 20.6 s protein elongation delay
+    transcription_time_s = L_gene / e_X  # illustrative; not used in calibration
+    translation_time_s = L_prot / e_L    # illustrative; not used in calibration
     t_half_m = 2.5                 # min, mRNA half-life
     t_half_p = 35.0                # min, stable-enzyme half-life
     T_double = 60.0                # min, doubling time
     theta_m = log(2) / t_half_m    # ~0.277 /min
     theta_p = log(2) / t_half_p    # ~0.0198 /min
     mu      = log(2) / T_double    # ~0.0116 /min  (ONE growth rate, both denominators)
-    return SeqParams(L_prot, L_gene, tau_X, tau_L, theta_m, theta_p, mu)
+    return SeqParams(L_prot, L_gene, transcription_time_s, translation_time_s,
+                     theta_m, theta_p, mu)
 end
 
 # BSTModelKit.jl is pinned in code/Manifest.toml; this wrapper isolates the one remaining
@@ -66,7 +67,7 @@ function reaction_fluxes(model::BSTModel, X::Vector{Float64})::Vector{Float64}
 end
 
 # Build the 5-species dual-feedback S-system and integrate to steady state.
-function feedback_truth()
+function feedback_reference()
     sp    = sequence_params()
     model = build(joinpath(@__DIR__, "Dual-Feedback.toml"))
 
@@ -121,10 +122,10 @@ function feedback_truth()
 end
 
 # =========================================================================== #
-# Constraint-based recovery. The SAME linear chain as a flux-balance model; the
+# Constraint-based comparison. The same linear chain is used as an FBA model;
 # feedback enters ONLY through the committed-step bound, as the product
 #   ub[r0] = Vmax0 * (e/e0) * theta
-# with each gateway switchable so its marginal effect is visible.
+# with each control switchable so its marginal effect is visible.
 # =========================================================================== #
 
 # Metabolic stoichiometry (rows X1,X2,X3 ; cols r0,r1,r2,r3). Asserted equal to
@@ -138,41 +139,43 @@ const GENEROUS_CAPACITY = 100.0
 const METAB_REACTIONS   = ["r0","r1","r2","r3"]
 
 # Reference capacity Vmax0, activity control theta, and expression ratio (e/e0)
-# at the MEASURED steady state.
+# at the reference steady state.
 #   Vmax0 = alpha[r0]                  reference capacity (E0=1, no repression, no allostery)
 #   theta = K_THETA^N_THETA / (K_THETA^N_THETA + X3^N_THETA)   bounded two-state Hill occupancy,
-#           independent of the truth model's own X3^{-a} kinetics (not fit to match it)
-#   e_e0  = E0*                        measured enzyme abundance (reference e0 = 1 by normalization)
+#           independent of the reference model's own X3^{-a} kinetics
+#   e_e0  = E0*                        reference-state abundance ratio
 const K_THETA = 5.0
 const N_THETA = 2.0
 
-function gateway_factors(truth)
-    sidx = Dict(truth.species .=> eachindex(truth.species))
-    X3   = truth.Xss[sidx["X3"]]
+function control_factors(reference)
+    sidx = Dict(reference.species .=> eachindex(reference.species))
+    X3   = reference.Xss[sidx["X3"]]
 
-    Vmax0 = truth.model.α[findfirst(==("r0"), truth.reactions)]  # reference capacity
+    Vmax0 = reference.model.α[findfirst(==("r0"), reference.reactions)]
     θ     = K_THETA^N_THETA / (K_THETA^N_THETA + X3^N_THETA)     # bounded Hill occupancy
-    e_e0  = truth.Xss[sidx["E0"]]                                 # measured (e/e0)
+    e_e0  = reference.Xss[sidx["E0"]]                              # reference (e/e0)
     return (Vmax0 = Vmax0, θ = θ, e_e0 = e_e0)
 end
 
-# Metabolic throughput fluxes [r0,r1,r2,r3] read out of the BST truth.
-function truth_metabolic_fluxes(truth)
-    idx = Dict(truth.reactions .=> eachindex(truth.reactions))
-    return [truth.vss[idx[r]] for r in METAB_REACTIONS]
+# Metabolic throughput fluxes [r0,r1,r2,r3] from the BST reference.
+function reference_metabolic_fluxes(reference)
+    idx = Dict(reference.reactions .=> eachindex(reference.reactions))
+    return [reference.vss[idx[r]] for r in METAB_REACTIONS]
 end
 
 # Solve the constraint-based problem; `expression`/`activity` gate each factor on
 # the committed-step bound. Every other bound is identical between runs.
-function feedback_fba(gw; expression::Bool, activity::Bool)
-    gw.Vmax0 >= 0 || throw(ArgumentError("Vmax0 must be nonnegative, got $(gw.Vmax0)"))
-    0 <= gw.θ    || throw(ArgumentError("θ must be nonnegative, got $(gw.θ)"))
-    0 <= gw.e_e0 || throw(ArgumentError("e_e0 must be nonnegative, got $(gw.e_e0)"))
+function feedback_fba(controls; expression::Bool, activity::Bool)
+    controls.Vmax0 >= 0 || throw(ArgumentError("Vmax0 must be nonnegative, got $(controls.Vmax0)"))
+    0 <= controls.θ    || throw(ArgumentError("θ must be nonnegative, got $(controls.θ)"))
+    0 <= controls.e_e0 || throw(ArgumentError("e_e0 must be nonnegative, got $(controls.e_e0)"))
 
     n   = length(METAB_REACTIONS)
     idx = Dict(METAB_REACTIONS .=> eachindex(METAB_REACTIONS))
     ub  = fill(GENEROUS_CAPACITY, n)
-    ub[idx["r0"]] = gw.Vmax0 * (expression ? gw.e_e0 : 1.0) * (activity ? gw.θ : 1.0)
+    ub[idx["r0"]] = controls.Vmax0 *
+                    (expression ? controls.e_e0 : 1.0) *
+                    (activity ? controls.θ : 1.0)
     lb  = zeros(n)                             # all irreversible
 
     m = Model(HiGHS.Optimizer); set_silent(m)
@@ -181,4 +184,33 @@ function feedback_fba(gw; expression::Bool, activity::Bool)
     @objective(m, Max, v[idx["r3"]])           # maximize export = throughput
     optimize!(m)
     return value.(v)
+end
+
+# =========================================================================== #
+# Sensitivity sweep for the assumed activity-control shape.
+#
+# theta_FBA is an assumed Hill occupancy K^n/(K^n+X3^n) with no relation to the
+# reference model's X3^-a kinetics, and K and n were specified rather than fit.
+# The sweep tests whether the dual-control range includes the BST reference.
+# =========================================================================== #
+activity_control(X3, K, n) = K^n / (K^n + X3^n)
+
+# Sweep theta_FBA's shape (K, n) with the reference X3, (e/e0), and every other
+# bound held. Returns the dual-control throughput surface T_both[i,j] at (Ks[i],ns[j])
+# (oriented for Makie's heatmap(Ks, ns, T_both)), the activity-only surface Tact
+# over the same grid, and the shape-independent expression-only throughput Texpr.
+function theta_shape_sweep(reference, controls;
+                           Krange=3.0:0.25:8.0, nrange=1.0:0.1:3.0)
+    sidx = Dict(reference.species .=> eachindex(reference.species))
+    X3   = reference.Xss[sidx["X3"]]
+    r3   = findfirst(==("r3"), METAB_REACTIONS)
+    Ks, ns = collect(Krange), collect(nrange)
+    both(K, n) = feedback_fba(merge(controls, (θ = activity_control(X3, K, n),));
+                              expression=true, activity=true)[r3]
+    actonly(K, n) = feedback_fba(merge(controls, (θ = activity_control(X3, K, n),));
+                                 expression=false, activity=true)[r3]
+    Tboth = [both(K, n)    for K in Ks, n in ns]
+    Tact  = [actonly(K, n) for K in Ks, n in ns]
+    Texpr = feedback_fba(controls; expression=true, activity=false)[r3]
+    return (Ks=Ks, ns=ns, X3=X3, Tboth=Tboth, Tact=Tact, Texpr=Texpr)
 end

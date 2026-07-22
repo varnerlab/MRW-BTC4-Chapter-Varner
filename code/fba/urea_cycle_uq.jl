@@ -1,4 +1,4 @@
-# Parametric-bootstrap UQ for the urea-cycle FBA example.
+# Monte Carlo parameter propagation for the urea-cycle FBA example.
 # Config A: kcat, e0, dG, and saturation f_j (from Park et al. data) are sampled;
 #           f_2 = 1 (argininosuccinate not measured). See design spec 2026-07-13.
 include(joinpath(@__DIR__, "..", "Include.jl"))
@@ -7,7 +7,7 @@ include(joinpath(@__DIR__, "urea_cycle.jl"))
 const N        = 10_000
 const SEED     = 20260713
 const SIGMA_LN = 0.69     # lognormal spread for kcat, e0, conc, Km
-const DG_SIGMA = 2.0      # kJ/mol, normal spread for dG
+const DG_SIGMA = 2.0      # kJ/mol, illustrative normal SD; not the eQuilibrator 95% CI
 
 """
     load_park_saturation(path) -> Dict{Int,Tuple{Float64,Float64}}
@@ -53,6 +53,13 @@ const SAT_NOMINAL = load_park_saturation()
 
 lognrand(rng, median, sln) = median * exp(sln * randn(rng))
 
+"Sample the imputed saturation factor for argininosuccinate lyase."
+function sample_f2(rng)
+    asa = lognrand(rng, 5e-6, 1.0)   # [argininosuccinate], M
+    km2 = lognrand(rng, 5e-6, 0.7)   # ASL Km, M
+    return asa / (km2 + asa)
+end
+
 "Draw a saturation vector f (length 5). If impute_f2, also sample f_2."
 function sample_f(rng; impute_f2::Bool=false)
     f = ones(5)
@@ -62,9 +69,7 @@ function sample_f(rng; impute_f2::Bool=false)
         f[j] = c / (k + c)
     end
     if impute_f2
-        asa = lognrand(rng, 5e-6, 1.0)   # [argininosuccinate], M
-        km2 = lognrand(rng, 5e-6, 0.7)   # ASL Km, M
-        f[2] = asa / (km2 + asa)
+        f[2] = sample_f2(rng)
     end
     return f
 end
@@ -73,7 +78,7 @@ end
 Draw one parameter set and return the optimal flux vector (or nothing).
 If `sample_saturation` is false, the saturation vector is held at `ones(5)`
 (no substrate/Km draws at all) so kcat, e0, and dG alone set the capacity;
-this isolates the capacity-only reference ensemble from the saturation-gateway
+this isolates the capacity-only reference ensemble from the saturation-factor
 effect tested by Config A/B.
 """
 function sample_flux(rng; impute_f2::Bool=false, sample_saturation::Bool=true)
@@ -81,32 +86,61 @@ function sample_flux(rng; impute_f2::Bool=false, sample_saturation::Bool=true)
     e0   = lognrand(rng, E0, SIGMA_LN)          # one shared draw per sample
     dG   = DG0 .+ DG_SIGMA .* randn(rng, 5)
     f    = sample_saturation ? sample_f(rng; impute_f2 = impute_f2) : ones(5)
-    solve_flux(urea_cycle_model(; kcat = kcat, e0 = e0, dG = dG, f = f))
+    m = urea_cycle_model(; kcat=kcat, e0=e0, dG=dG, f=f)
+    result = solve_flux_with_status(m)
+    return (flux=result.flux, status=result.status, model=m)
 end
 
-"Run N draws; return an (kept x nreactions) flux matrix, the nominal model, and the count of
-draws that failed to solve (infeasible/unbounded), which are dropped rather than kept."
+"Return active forward-capacity and reverse-capacity bounds at a solution."
+function binding_bounds(m, v; atol=1e-7, rtol=1e-7)
+    active = String[]
+    for j in eachindex(v)
+        if isapprox(v[j], m.ub[j]; atol=atol, rtol=rtol)
+            push!(active, "$(m.reactions[j]):upper")
+        end
+        if m.lb[j] < 0 && isapprox(v[j], m.lb[j]; atol=atol, rtol=rtol)
+            push!(active, "$(m.reactions[j]):lower")
+        end
+    end
+    return isempty(active) ? "none" : join(active, ";")
+end
+
+"Run N draws and return successful fluxes, the nominal model, and a complete draw log."
 function run_ensemble(seed; impute_f2::Bool=false, sample_saturation::Bool=true)
     rng = MersenneTwister(seed)
     m0  = urea_cycle_model()
     rows = Vector{Vector{Float64}}()
-    n_failed = 0
-    for _ in 1:N
-        v = sample_flux(rng; impute_f2 = impute_f2, sample_saturation = sample_saturation)
-        if v === nothing
-            n_failed += 1
+    draw_log = DataFrame(
+        draw=Int[],
+        status=String[],
+        binding_bounds=Union{Missing,String}[],
+        urea_export=Union{Missing,Float64}[],
+    )
+    b4 = findfirst(==("b4"), m0.reactions)
+    for draw in 1:N
+        result = sample_flux(rng; impute_f2=impute_f2,
+                             sample_saturation=sample_saturation)
+        if result.flux === nothing
+            push!(draw_log, (draw, result.status, missing, missing))
             continue
         end
+        v = result.flux
         push!(rows, v)
+        push!(draw_log, (draw, result.status,
+                         binding_bounds(result.model, v), v[b4]))
     end
-    return reduce(vcat, (r' for r in rows)), m0, n_failed
+    fluxes = isempty(rows) ? Matrix{Float64}(undef, 0, length(m0.reactions)) :
+                            reduce(vcat, (r' for r in rows))
+    return fluxes, m0, draw_log
 end
 
 # ---- Config A ----
-F, m0, nfail_A = run_ensemble(SEED; impute_f2 = false)
+F, m0, draws_A = run_ensemble(SEED; impute_f2=false)
 kept = size(F, 1)
+nfail_A = count(!=("OPTIMAL"), draws_A.status)
 @assert kept > 0.99 * N "too many infeasible draws: kept $kept of $N"
 println("configA_failed=", nfail_A)
+CSV.write(datapath("urea_fba_uq_draws.csv"), draws_A)
 vnom = solve_flux(m0)
 
 stats = DataFrame(reaction=String[], nominal=Float64[], mean=Float64[],
@@ -119,10 +153,9 @@ for (j, r) in enumerate(m0.reactions)
 end
 CSV.write(datapath("urea_fba_uq.csv"), stats)
 
-# Figure: nominal flux bars. Because the cycle is linear, every nonzero flux
-# equals the single throughput up to sign, so all bootstrap bands are identical;
-# drawing the 2.5-97.5 percentile whisker on b4 (urea export, the objective)
-# alone shows that one uncertainty without cloning it across 13 correlated fluxes.
+# Figure: nominal flux bars. Most nonzero cycle fluxes share one throughput, but
+# the NOS branch can activate in some draws. The figure therefore shows the
+# 2.5-97.5 percentile interval only for b4, the reported objective.
 let fig = Figure()
     ax = Axis(fig[1,1], xticks=(1:nrow(stats), stats.reaction), ylabel="flux",
               xticklabelrotation=pi/4)
@@ -144,10 +177,12 @@ println("configA_v5 mean=", mean(F[:, findfirst(==("v5"), m0.reactions)]))
 # ---- Capacity-only reference ensemble (no saturation sampling at all) ----
 # Same kcat/e0/dG sampling as Config A, but f held at ones(5) throughout, so
 # this isolates the "min of sampled capacities" effect from the saturation-
-# gateway effect that Config A/B probe. Not plotted; reported in prose only.
-Fcap, _, nfail_cap = run_ensemble(SEED; sample_saturation=false)
+# factor effect that Config A/B probe. Not plotted; reported in prose only.
+Fcap, _, draws_cap = run_ensemble(SEED; sample_saturation=false)
 cap_kept = size(Fcap, 1)
+nfail_cap = count(!=("OPTIMAL"), draws_cap.status)
 println("configCap_failed=", nfail_cap)
+CSV.write(datapath("urea_fba_capacity_draws.csv"), draws_cap)
 uacap = Fcap[:, b4]  # urea export (secretion-positive), capacity-only
 println("configCap_kept=", cap_kept)
 println("configCap_urea_export mean=", mean(uacap), " sd=", std(uacap),
@@ -155,24 +190,54 @@ println("configCap_urea_export mean=", mean(uacap), " sd=", std(uacap),
 
 # ---- Config B: impute and sample f_2 (argininosuccinate unmeasured) ----
 # Re-run the ensemble capturing f_2 and urea export per draw.
-let rng = MersenneTwister(SEED + 1)
+let rng = MersenneTwister(SEED), rng_f2 = MersenneTwister(SEED + 1)
     b4idx = findfirst(==("b4"), m0.reactions)
     f2s = Float64[]; ub_export = Float64[]
-    for _ in 1:N
+    draws_B = DataFrame(
+        draw=Int[],
+        status=String[],
+        binding_bounds=Union{Missing,String}[],
+        f2=Float64[],
+        urea_export=Union{Missing,Float64}[],
+    )
+    for draw in 1:N
         # replicate sample_flux but keep f_2 for reporting
         kcat = KCAT0 .* exp.(SIGMA_LN .* randn(rng, 5))
         e0   = lognrand(rng, E0, SIGMA_LN)
         dG   = DG0 .+ DG_SIGMA .* randn(rng, 5)
-        f    = sample_f(rng; impute_f2 = true)
-        v    = solve_flux(urea_cycle_model(; kcat=kcat, e0=e0, dG=dG, f=f))
-        v === nothing && continue
+        # Shared inputs use the same random-number stream as Config A. The
+        # imputed f2 uses a separate stream, so it does not shift later draws.
+        f    = sample_f(rng; impute_f2=false)
+        f[2] = sample_f2(rng_f2)
+        m    = urea_cycle_model(; kcat=kcat, e0=e0, dG=dG, f=f)
+        result = solve_flux_with_status(m)
+        if result.flux === nothing
+            push!(draws_B, (draw, result.status, missing, f[2], missing))
+            continue
+        end
+        v = result.flux
         push!(f2s, f[2]); push!(ub_export, v[b4idx])
+        push!(draws_B, (draw, result.status, binding_bounds(m, v),
+                        f[2], v[b4idx]))
     end
 
-    # Sensitivity CSV: Config A (f2=1) and Config B (sampled f2) urea export
-    sens = DataFrame(config=String[], f2=Float64[], urea_export=Float64[])
-    for x in ua;        push!(sens, ("A", 1.0, x)); end
-    for (g, x) in zip(f2s, ub_export); push!(sens, ("B", g, x)); end
+    # Draw-level sensitivity output retains failed solves and binding bounds.
+    sens = DataFrame(
+        config=String[],
+        draw=Int[],
+        status=String[],
+        binding_bounds=Union{Missing,String}[],
+        f2=Float64[],
+        urea_export=Union{Missing,Float64}[],
+    )
+    for row in eachrow(draws_A)
+        push!(sens, ("A", row.draw, row.status, row.binding_bounds,
+                     1.0, row.urea_export))
+    end
+    for row in eachrow(draws_B)
+        push!(sens, ("B", row.draw, row.status, row.binding_bounds,
+                     row.f2, row.urea_export))
+    end
     CSV.write(datapath("urea_uq_sensitivity.csv"), sens)
 
     println("configB_f2 median=", quantile(f2s, 0.5))

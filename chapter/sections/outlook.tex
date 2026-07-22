@@ -1,46 +1,27 @@
 %% outlook.tex
 \section{Outlook}\label{sec:outlook}
 
-The worked examples of this chapter populated the gateways of
-Equation~\eqref{eq:general-bound} from tabulated sources: standard
-free energies from group-contribution estimates, turnover numbers
-from enzyme databases, a control function built by hand from a
-partition function over a handful of regulatory microstates. None of
-that is required by the construction itself. A turnover number, a
-saturation constant, or a control function $\theta_j$ is,
-mathematically, a parameter or a function fit to data, and where
-time-resolved measurement of the kind reviewed in the capstones is
-available, these quantities can be
-learned directly from the data they are meant to explain rather than
-looked up from a compilation assembled under different conditions,
-with the tabulated values retained as a prior where dynamic
-measurement is not.
-
-The same construction, opened here on networks small enough to check
-by hand, carries without modification to genome-scale reconstructions
-of thousands of reactions: Equation~\eqref{eq:general-bound} is
-applied reaction by reaction regardless of network size. What changes
-with scale is the weight the bounds are asked to carry.
-The null space of $\mathbf S$ grows with
-the excess of reactions over metabolites, so that at genome scale the
-stoichiometric constraint alone leaves an enormous subspace of flux
-vectors indistinguishable, and it is precisely there that a poorly
-constrained gateway, a bound left at its information-free default for
-want of data, does the most damage to a prediction. Closing gateways
-with data matters most exactly where the null-space argument bites
-hardest.
-
-The dynamic, data-rich regime realized in the cell-free capstone
-is the natural home for the
-growth-dilution and accumulation term retained in
-Equation~\eqref{eq:honest-constraint} and dropped in
-Equation~\eqref{eq:sv0}. Cell-free reactions are one setting dense
-enough in time-resolved measurement to estimate fluxes without
-discarding that term, and the same opportunity extends wherever
-intracellular state can be tracked closely enough in time, in
-principle inside a growing culture as readily as in a reaction tube.
-The natural direction is therefore not a retreat to the steady-state
-reduction of Equation~\eqref{eq:sv0} once more data arrives, but the
-opposite: estimating flux directly against
-Equation~\eqref{eq:honest-constraint}, with $\mu\mathbf x$ carried
-rather than discarded, wherever the measurement to support it exists.
+Standard transformed reaction Gibbs energies, turnover numbers, and regulatory
+models set the factors in Equation~\eqref{eq:general-bound}.
+Time-course data can instead be used to estimate turnover numbers, saturation
+constants, allosteric factors $\theta_j$, and expression controls $u_j$ and
+$w_j$. Tabulated values remain useful as prior information when dynamic data
+are unavailable. The same approach can be applied reaction by reaction in
+genome-scale models. These models have many flux distributions that satisfy
+the steady-state balance $\mathbf S\hat{\mathbf v}=\mathbf 0$, so
+condition-specific bounds are
+especially important. Setting an unknown factor to one preserves feasibility
+but may leave many fluxes unresolved. Time-course data also allow models to
+retain accumulation and growth dilution. Cell-free systems have no growth
+dilution, but their molecular pools can still accumulate, whereas growing
+cultures can exhibit both effects. When measurements resolve these dynamics,
+the dynamic balance in Equation~\eqref{eq:dynamic-flux-balance} provides the
+appropriate mass-balance constraints. For a fixed-basis cell-free batch, it reduces to
+the accumulation balance $\mathbf S\mathbf v=d\mathbf x/dt$ for cell-free
+flux vector $\mathbf v$ and concentration vector $\mathbf x$, the form used in our earlier dynamic
+constraint-based model \cite{Dai2018}. The steady-state approximation should
+be used only when accumulation and growth dilution are negligible. Before
+condition-specific bounds are used for design, their predictions should be
+tested against measurements not used to construct them, such as exchange
+rates, $^{13}$C-derived fluxes, or responses to genetic and environmental
+perturbations.

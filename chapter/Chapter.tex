@@ -14,34 +14,19 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-Predicting the intracellular flux distribution of a growing cell is a
-central problem in biotechnology, yet the internal fluxes, kinetic
-parameters, and metabolite concentrations that would determine it are,
-at genome scale, largely unmeasured, while the stoichiometry of the
-reaction network is fully known. This chapter develops flux balance
-analysis, the constraint-based method that turns stoichiometry and
-conservation into a linear program for the flux distribution, as an
-integrative framework in which the flux bounds, rather than the
-stoichiometric matrix, carry the biological information that narrows a
-prediction. The flux constraint is derived from an open mole balance on
-a growing culture rather than asserted as a steady state, a derivation
-that retains the growth-dilution term the textbook form discards and
-makes explicit the operating regimes, fed-batch and cell-free among
-them, where that term cannot be dropped. Each flux bound is then
-written as a product of dimensionless factors, one gateway apiece for
-thermodynamic reversibility, enzyme kinetics, gene expression, and
-regulation, so that supplying a thermodynamic estimate, a turnover
-number, an expression measurement, or a regulatory model amounts to
-opening the corresponding gateway. Two worked steady-state examples, a
-urea-cycle metabolic network constrained entirely from public databases
-and a feedback-inhibited pathway whose regulated throughput is
-recovered by opening the regulatory gateway against an independent
-kinetic truth, make the construction concrete, and two published
-systems, a dynamic cell-free reaction and a model-guided
-glycan-producing strain, show the gateways opened together at genome
-scale. Estimating a flux distribution from data and designing one by
-intervention emerge as the same operation on the bounds, run in
-opposite directions.
+Intracellular fluxes, kinetic parameters, and metabolite concentrations are
+sparsely measured at genome scale. Flux balance analysis estimates fluxes
+from network stoichiometry, reaction bounds, and an optimization objective.
+This chapter derives the mass-balance constraints from mole balances and
+states the assumptions that lead to their steady-state form. It then combines
+these equations with reaction bounds based on reversibility, enzyme capacity, substrate saturation,
+enzyme abundance, and regulation. A urea-cycle model shows how public
+thermodynamic and kinetic estimates set reaction bounds. A
+feedback-inhibited pathway shows how expression and allosteric regulation
+change a capacity bound. Two larger studies illustrate related methods in
+cell-free protein synthesis and strain design. Together, these examples show
+how condition-specific data and proposed interventions change flux
+predictions through reaction bounds.
 \end{abstract}
 \input{sections/introduction}
 \input{sections/derivation}
@@ -51,6 +36,12 @@ opposite directions.
 \input{sections/example_feedback}
 \input{sections/capstones}
 \input{sections/outlook}
+\section*{Code and data availability}
+Source code, generated data, and instructions for reproducing the worked
+examples and figures are available at
+\url{https://github.com/varnerlab/MRW-BTC4-Chapter-Varner}. The repository
+includes the Julia project and manifest files needed to reproduce the
+computational environment.
 \bibliographystyle{unsrtnat}
 \bibliography{References}
 \end{document}

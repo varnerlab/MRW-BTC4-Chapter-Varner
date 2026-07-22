@@ -11,7 +11,9 @@ m = urea_cycle_model()
 @assert all(isapprox.(m.lb, expected_lb; atol=1e-9)) "lb mismatch: $(m.lb)"
 @assert all(isapprox.(m.ub, expected_ub; atol=1e-9)) "ub mismatch: $(m.ub)"
 
-v = solve_flux(m)
+nominal_result = solve_flux_with_status(m)
+@assert nominal_result.status == "OPTIMAL" "unexpected solver status: $(nominal_result.status)"
+v = nominal_result.flux
 @assert v !== nothing "nominal model failed to solve"
 b4 = findfirst(==("b4"), m.reactions)
 @assert isapprox(v[b4], 118.08; atol=1e-6) "urea export $(v[b4]) != 118.08 (secretion-positive)"
@@ -39,6 +41,9 @@ using Test
 
 infeasible = urea_cycle_model(; kcat = zeros(5))  # zero capacity everywhere -> b4 forced to 0, still feasible;
 infeasible = (; infeasible..., lb = infeasible.lb .+ 1.0, ub = infeasible.ub)  # lb > ub -> infeasible
+failed_result = solve_flux_with_status(infeasible)
+@assert failed_result.flux === nothing
+@assert failed_result.status != "OPTIMAL"
 @test_throws ErrorException solve_fba(infeasible)
 
 println("test_urea_cycle (Task 2): validation and solve-failure checks passed")
