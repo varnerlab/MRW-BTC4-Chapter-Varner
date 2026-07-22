@@ -23,7 +23,7 @@ Flux bounds:
     v3: ΔG = −33.9 kJ/mol  → δ = 0 (irreversible)
     v4: ΔG = −30.3 kJ/mol  → δ = 0 (irreversible)
     v5: ΔG = −1254.4 kJ/mol → δ = 0 (irreversible)
-  Vmax = kcat × eₒ × 3600  (eₒ = 0.01 mmol/gDW; kcat from BRENDA in s⁻¹, ×3600 converts to h⁻¹):
+  Vmax = kcat × eₒ × 3600  (eₒ = 0.01 mmol/gDW; nominal kcat in s⁻¹, ×3600 converts to h⁻¹):
     v1: kcat = 10.0  → Vmax = 360
     v2: kcat =  3.28 → Vmax = 118.08
     v3: kcat = 190.0 → Vmax = 6840
@@ -45,7 +45,8 @@ Fields:
   ub           upper flux bounds
   c            objective coefficients (c[b4] = +1.0; maximises urea export)
 """
-const KCAT0 = [10.0, 3.28, 190.0, 410.0, 10.0]   # 1/s, from BRENDA (v1..v5)
+const KCAT0 = [10.0, 3.28, 190.0, 410.0, 10.0]   # 1/s; v2-v4: BRENDA 2026.1;
+                                                        # v1/v5: Bar-Even average-enzyme default
 const E0    = 0.01                                # mmol/gDW, reference enzyme abundance
 const DG0   = [-4.3, 11.6, -33.9, -30.3, -1254.4] # standard transformed kJ/mol, eQuilibrator (v1..v5)
 
@@ -159,7 +160,7 @@ function urea_cycle_model(; kcat=KCAT0, e0=E0, dG=DG0, dG_threshold=-10.0, f=one
     #   exchange reactions: lb = -1000, ub = 1000
     # ------------------------------------------------------------------ #
     delta = Float64[g > dG_threshold ? 1.0 : 0.0 for g in dG]
-    Vmax  = kcat .* e0 .* 3600.0   # kcat is s^-1 (BRENDA); convert to h^-1 to match e0 (mmol/gDW)
+    Vmax  = kcat .* e0 .* 3600.0   # kcat is s^-1; convert to h^-1 to match e0 (mmol/gDW)
     cap   = Vmax .* f
     n_ex  = 14
     lb = vcat(-delta .* cap, fill(-1000.0, n_ex))

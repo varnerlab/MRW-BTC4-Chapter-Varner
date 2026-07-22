@@ -217,17 +217,22 @@ The remaining items are listed below.
   assignments, and access date are recorded in
   `code/data/urea_thermodynamics.csv` and described in the README.
 
-## Remaining technical and reproducibility items
+## Resolved technical and reproducibility items
 
 ### Parameter provenance
 
-The eQuilibrator and Park et al. inputs now have reproducible source records.
-The remaining provenance work concerns the BRENDA turnover numbers and the
-BioNumbers abundance scale. A complete record should identify the database
-record, organism, substrate, assay direction, temperature, pH, original units,
-conversion, selection rule, and access date for each retained value. The common
-reference abundance is now described as an illustrative capacity scale rather
-than a reaction-specific physiological measurement.
+The eQuilibrator, Park et al., and BRENDA inputs now have reproducible source
+records. `code/data/urea_turnover_numbers.csv` records the BRENDA 2026.1 exact
+matches, organisms, substrates, available assay conditions, original
+publications, selection rules, and access date. The audit found exact matches
+for the nominal values used by reactions $v_2$, $v_3$, and $v_4$, but no exact
+matches for the 10.0 s$^{-1}$ values used by reactions $v_1$ and $v_5$; the
+chapter and code now identify those two values as defaults based on the
+approximate turnover number of the average enzyme reported by Bar-Even et al.
+(2011; DOI 10.1021/bi2002289), rather than enzyme-specific measurements.
+The common enzyme abundance is likewise identified as an illustrative capacity
+scale rather than a reaction-specific physiological measurement, so it does
+not require a unique BioNumbers record.
 
 ## Verification
 
@@ -245,5 +250,4 @@ than a reaction-specific physiological measurement.
 
 The language, paragraph-structure, and thermodynamic audits are closed. The
 chapter now uses direct, professional prose in sustained paragraphs throughout.
-The audit remains open only for the BRENDA and BioNumbers provenance records
-identified above.
+No technical or reproducibility issue identified by this audit remains open.

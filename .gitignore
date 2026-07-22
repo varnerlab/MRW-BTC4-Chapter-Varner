@@ -34,6 +34,8 @@ chapter/*.bbl
 chapter/*.blg
 chapter/*.log
 chapter/*.out
+chapter/*.fls
+chapter/*.fdb_latexmk
 texput.log
 
 # Generated figure builds and manuscript-review renders

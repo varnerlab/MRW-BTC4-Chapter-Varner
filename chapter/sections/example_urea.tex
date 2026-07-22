@@ -59,14 +59,23 @@ value derived from a stated physiological activity range.
 The heuristic rule makes reactions $v_1$ and $v_2$ reversible and reactions
 $v_3$, $v_4$, and $v_5$ irreversible, while exchange reactions retain wide
 bounds in both directions because their direction depends on the medium. The
-kinetic capacities in Equation~\eqref{eq:vmax} combined
-turnover numbers from BRENDA \cite{Chang2021} with the
-reference enzyme abundance $e^{\circ}=0.01$ mmol/gDW. This common illustrative
-abundance sets the capacity scale; it is not a reaction-specific physiological
-measurement. BioNumbers provides cellular abundance scales that can inform a
-condition-specific value when the required measurements are available
-\cite{Milo2010}.
-Argininosuccinate synthetase and nitric oxide synthase have the turnover number
+kinetic capacities in Equation~\eqref{eq:vmax} combine nominal turnover
+numbers with the reference enzyme abundance $e^{\circ}=0.01$ mmol/gDW. These
+parameters set an illustrative capacity scale rather than representing a
+matched set of HL-60 measurements. In BRENDA release 2026.1 \cite{Chang2021},
+the values for reactions $v_2$, $v_3$, and $v_4$ have exact turnover-number
+matches, although the selected records span organisms and assay conditions;
+because the EC entries for reactions $v_1$ and $v_5$ contain no exact match,
+these reactions use the literature estimate $k_{\mathrm{cat}}\simeq10$
+s$^{-1}$ for an average enzyme as the default value \cite{BarEven2011}. The
+complete record, including organisms, substrates, assay conditions, source
+publications, and selection rules, is provided in the accompanying data
+repository. The common reference abundance is also illustrative rather than a
+reaction-specific physiological measurement; BioNumbers provides cellular
+abundance scales that can guide its replacement
+when condition-specific measurements are available \cite{Milo2010}.
+Argininosuccinate synthetase and nitric oxide synthase use the default turnover
+number
 $k^{\circ}_{\mathrm{cat}}=10.0$ s$^{-1}$, which gives the reference capacities
 $V^{\circ}_{\max,v_1}=V^{\circ}_{\max,v_5}=360$ mmol\,gDW$^{-1}$\,h$^{-1}$;
 arginase I has the turnover number $k^{\circ}_{\mathrm{cat}}=190.0$ s$^{-1}$,
