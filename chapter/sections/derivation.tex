@@ -25,14 +25,14 @@ rate. The intracellular mole balance is given by:
   = \frac{d}{dt}\bigl(C_i\mathcal B\bigr),
 \end{equation}
 where the stream-direction coefficient $d_s=+1$ for an inlet and $d_s=-1$
-for an outlet, and $\sigma_{ij}$ is entry $(i,j)$ of the stoichiometric matrix
-$\mathbf S\in\mathbb R^{m\times n}$ for $m$ metabolites and $n$ reactions.
-Each term has units mmol/h; the stream concentration $c_{i,s}$ has units
-mmol/L, whereas $C_i$ has units mmol/gDW. Because the cell membrane excludes
+for an outlet. The coefficient $\sigma_{ij}$ is entry $(i,j)$ of the
+stoichiometric matrix $\mathbf S\in\mathbb R^{m\times n}$ for $m$ metabolites
+and $n$ reactions. Each term has units mmol/h. The stream concentration
+$c_{i,s}$ has units mmol/L, whereas $C_i$ has units mmol/gDW. Because the cell membrane excludes
 bulk physical flow from the intracellular control volume, the volumetric flow
-rate $\dot V_s=0$ and the first term vanishes, while active transport remains
-in the flux vector $\hat{\mathbf v}$
-because it moves molecules without bulk volume flow.
+rate $\dot V_s=0$ and the first term vanishes. Active transport remains in the
+flux vector $\hat{\mathbf v}$ because it moves molecules without bulk volume
+flow.
 
 Expanding the accumulation term before assuming a fixed reactor volume and
 substituting the biomass-basis relation $\mathcal B=B\bar V$ gives:
@@ -73,7 +73,7 @@ Balanced growth gives $d\mathbf x/dt=\mathbf0$, so this balance reduces to:
   \boxed{\mathbf S\hat{\mathbf v}=\mu\mathbf x},
 \end{equation}
 where the flux vector $\hat{\mathbf v}\in\mathbb R^n$ contains the reaction
-fluxes in mmol/gDW/h, so net production balances growth dilution. For a
+fluxes in mmol/gDW/h. Net production therefore balances growth dilution. For a
 fixed-volume batch reactor, $d\bar V/dt=0$ and
 $\mu=(1/B)dB/dt$. For fed-batch operation, $d\bar V/dt\neq0$, so the
 volume term must remain. The fixed-volume result is a special case of the
@@ -89,9 +89,9 @@ $\mu\mathbf x$ is small relative to the metabolic fluxes \cite{Orth2010}.
 Setting the growth rate $\mu=0$ is not sufficient. A
 cell-free batch has no growing biomass, but its transcript, protein, and
 metabolite concentrations may still change. Its accumulation term
-$d\mathbf x/dt$ must remain; on a fixed concentration basis,
-Equation~\eqref{eq:dynamic-flux-balance} becomes the dynamic balance
-$\mathbf S\mathbf v=d\mathbf x/dt$, where $\mathbf v$ is the cell-free flux
+$d\mathbf x/dt$ must remain. On a fixed concentration basis,
+Equation~\eqref{eq:dynamic-flux-balance} becomes
+$\mathbf S\mathbf v=d\mathbf x/dt$. Here $\mathbf v$ is the cell-free flux
 vector. Dynamic constraint-based models of cell-free protein synthesis have
 used this form to impose time-dependent
 concentration changes over short intervals \cite{Dai2018}. The same balance
@@ -104,5 +104,5 @@ $\emptyset\rightleftharpoons M_i$ enters the stoichiometric matrix $\mathbf S$
 as an isolated nonzero column with no intracellular reaction partner
 \cite{Bordbar2014}.
 Its flux describes molecular transport across the modeled boundary rather
-than a reactor stream, and the included boundary reactions and their bounds
+than a reactor stream. The included boundary reactions and their bounds
 define the modeled system boundary.

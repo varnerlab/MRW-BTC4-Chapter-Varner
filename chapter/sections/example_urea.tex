@@ -14,7 +14,7 @@ upper-bound vector $\mathbf u$, and objective coefficient vector $\mathbf c$.
 Argininosuccinate synthetase ($v_1$, EC 6.3.4.5)
 forms argininosuccinate. Argininosuccinate lyase ($v_2$, EC 4.3.2.1)
 produces arginine and fumarate. Arginase I ($v_3$, EC 3.5.3.1) produces
-ornithine and urea, and ornithine transcarbamylase ($v_4$, EC 2.1.3.3)
+ornithine and urea. Ornithine transcarbamylase ($v_4$, EC 2.1.3.3)
 regenerates citrulline. Nitric oxide synthase ($v_5$, EC 1.14.13.39)
 competes with arginase for arginine and produces nitric oxide and
 citrulline. The five enzymatic reactions involve eighteen metabolites. Fourteen
@@ -32,15 +32,18 @@ heuristic direction assignments for the five enzymatic reactions are
 summarized under a common transformed-state convention
 (Table~\ref{tab:urea-thermodynamics}) \cite{Noor2013,Beber2022}. The estimates
 use pH 7.5, pMg 3.0, ionic strength 0.25 M, and absolute temperature
-$T_{\mathrm{abs}}=298.15$ K; the displayed uncertainties are eQuilibrator
+$T_{\mathrm{abs}}=298.15$ K. The displayed uncertainties are eQuilibrator
 95\% confidence intervals. The reversibility threshold
 $\Delta_{\mathrm r}G_j^{\prime *}=-10$ kJ/mol is a heuristic cutoff, not a
 value derived from a stated physiological activity range.
 
 \begin{table}[htbp]
   \centering
-  \caption{Standard transformed reaction Gibbs energies and heuristic
-    direction assignments for the urea-cycle model.}
+  \caption{Standard transformed reaction Gibbs energies from eQuilibrator at
+    pH 7.5, pMg 3.0, ionic strength 0.25 M, and 298.15 K. The confidence
+    intervals are the displayed 95\% half-widths. Direction assignments use
+    the heuristic threshold
+    $\Delta_{\mathrm r}G_j^{\prime *}=-10$ kJ/mol.}
   \label{tab:urea-thermodynamics}
   \begin{tabular}{llrrr}
     \toprule
@@ -57,12 +60,13 @@ value derived from a stated physiological activity range.
 \end{table}
 
 The heuristic rule makes reactions $v_1$ and $v_2$ reversible and reactions
-$v_3$, $v_4$, and $v_5$ irreversible, while exchange reactions retain wide
-bounds in both directions because their direction depends on the medium. The
+$v_3$, $v_4$, and $v_5$ irreversible. Exchange reactions retain wide bounds
+in both directions because their direction depends on the medium. The
 kinetic capacities in Equation~\eqref{eq:vmax} combine nominal turnover
 numbers with the reference enzyme abundance $e^{\circ}=0.01$ mmol/gDW. These
 parameters set an illustrative capacity scale rather than representing a
-matched set of HL-60 measurements. In BRENDA release 2026.1 \cite{Chang2021},
+matched set of HL-60 measurements. In the BRENDA database
+\cite{Chang2021}, queried from release 2026.1,
 the values for reactions $v_2$ through $v_5$ have exact turnover-number
 matches, although the selected records span organisms and assay conditions.
 Because the EC entry for reaction $v_1$ contains no turnover-number field,
@@ -72,33 +76,33 @@ Bar-Even et al. and is not an enzyme-specific measurement
 \cite{BarEven2011}. The complete record, including organisms, substrates, assay conditions, source
 publications, and selection rules, is provided in the accompanying data
 repository. The common reference abundance is also illustrative rather than a
-reaction-specific physiological measurement; BioNumbers provides cellular
+reaction-specific physiological measurement. BioNumbers provides cellular
 abundance scales that can guide its replacement
 when condition-specific measurements are available \cite{Milo2010}.
 Argininosuccinate synthetase uses the default turnover number
 $k^{\circ}_{\mathrm{cat}}=10.0$ s$^{-1}$, which gives the reference capacity
-$V^{\circ}_{\max,v_1}=360$ mmol\,gDW$^{-1}$\,h$^{-1}$;
-arginase I has the turnover number $k^{\circ}_{\mathrm{cat}}=190.0$ s$^{-1}$,
+$V^{\circ}_{\max,v_1}=360$ mmol\,gDW$^{-1}$\,h$^{-1}$. Arginase I has the
+turnover number $k^{\circ}_{\mathrm{cat}}=190.0$ s$^{-1}$,
 giving the reference capacity
-$V^{\circ}_{\max,v_3}=6840$ mmol\,gDW$^{-1}$\,h$^{-1}$; and ornithine
+$V^{\circ}_{\max,v_3}=6840$ mmol\,gDW$^{-1}$\,h$^{-1}$. Ornithine
 transcarbamylase has the turnover number $k^{\circ}_{\mathrm{cat}}=410.0$
 s$^{-1}$, giving the reference capacity
 $V^{\circ}_{\max,v_4}=14760$ mmol\,gDW$^{-1}$\,h$^{-1}$. Argininosuccinate
 lyase has the lowest turnover number,
 $k^{\circ}_{\mathrm{cat},v_2}=3.28$ s$^{-1}$, which gives
 the reference capacity $V^{\circ}_{\max,v_2}=118.08$
-mmol\,gDW$^{-1}$\,h$^{-1}$, the smallest
+mmol\,gDW$^{-1}$\,h$^{-1}$. This is the smallest
 of the first four capacities. Nitric oxide synthase has a BRENDA turnover
 number of $k^{\circ}_{\mathrm{cat},v_5}=1.08$ s$^{-1}$ for L-arginine from
 rat NOS, giving $V^{\circ}_{\max,v_5}=38.88$
-mmol\,gDW$^{-1}$\,h$^{-1}$. This smaller branch capacity does not alter the
-nominal maximum-urea solution, in which $v_5$ carries zero flux. Exchange
+mmol\,gDW$^{-1}$\,h$^{-1}$. This smaller branch capacity did not alter the
+nominal maximum-urea solution, in which $v_5$ carried zero flux. Exchange
 reactions retain wide capacity bounds.
 
-The model has no substrate, expression, or regulatory data, so setting
+The model has no substrate, expression, or regulatory data. We therefore set
 the saturation factor $f_j$, enzyme-abundance ratio $(e/e^{\circ})$, and
-allosteric factor $\theta_j$ to one yields the reported optimal flux distribution
-(right panel, Fig.~\ref{fig:urea}). The enzymatic bounds therefore reduce to
+allosteric factor $\theta_j$ to one. These settings yield the reported optimal
+flux distribution (right panel, Fig.~\ref{fig:urea}). The enzymatic bounds therefore reduce to
 $-\delta_j V^{\circ}_{\max,j}\le\hat v_j\le V^{\circ}_{\max,j}$ for reactions
 $v_1$ through $v_5$. The fourteen exchange reactions use wide bounds of
 $-1000\le\hat v_j\le1000$ mmol\,gDW$^{-1}$\,h$^{-1}$. The objective is urea
@@ -110,19 +114,20 @@ through $v_4$ each carried $118.08$ mmol\,gDW$^{-1}$\,h$^{-1}$, the capacity
 of argininosuccinate lyase. The competing nitric oxide synthase branch
 $v_5$ carried zero flux because the objective assigns all available arginine
 to urea production. The optimal urea export was
-$118.08$ mmol\,gDW$^{-1}$\,h$^{-1}$, attained at
-the urea-export flux $\hat v_{b_4}=118.08$, and every exchange flux carrying carbon or
-nitrogen into or out of the cycle, carbamoyl phosphate and aspartate
-on the uptake side, urea and fumarate on the secretion side, scaled to
-match it. Flux-variability analysis gave
+$118.08$ mmol\,gDW$^{-1}$\,h$^{-1}$ at
+the urea-export flux $\hat v_{b_4}=118.08$. Every exchange flux carrying
+carbon or nitrogen into or out of the cycle scaled to match it. In particular,
+the uptake of carbamoyl phosphate and aspartate and the secretion of urea and
+fumarate each had magnitude $118.08$ mmol\,gDW$^{-1}$\,h$^{-1}$.
+Flux-variability analysis gave
 the same minimum and maximum for every reaction when the objective was held
 at its optimum. The optimal flux distribution is therefore unique to
 numerical tolerance.
 
 The Monte Carlo analysis treats the database inputs as uncertain rather than
-exact and compares the effect of imputing the missing saturation factor
-(Fig.~\ref{fig:urea_uq}), using a separate illustrative free-energy spread
-rather than the eQuilibrator confidence intervals in
+exact. It also compares the effect of imputing the missing saturation factor
+(Fig.~\ref{fig:urea_uq}). The calculation uses a separate illustrative
+free-energy spread rather than the eQuilibrator confidence intervals in
 Table~\ref{tab:urea-thermodynamics}. We assigned lognormal uncertainty of about
 a factor of two to each turnover number and the reference abundance and
 independent normal uncertainty with standard deviation
@@ -138,20 +143,20 @@ mmol\,gDW$^{-1}$\,h$^{-1}$ and a central ninety-five percent interval of
 $17$ to $614$. Varying only capacity and Gibbs-energy inputs gave a median of
 $113$ mmol\,gDW$^{-1}$\,h$^{-1}$. Adding the four measured saturation factors
 changed the median to $105$, so those factors had little effect. Most of the
-uncertainty came from the sampled capacity of argininosuccinate lyase, whereas
-the reversibility switches did not bind because the optimal cycle flux was
-forward and the other four enzymes usually retained excess capacity. The
+uncertainty came from the sampled capacity of argininosuccinate lyase. The
+reversibility switches did not bind because the optimal cycle flux was forward
+and the other four enzymes usually retained excess capacity. The
 missing saturation factor for argininosuccinate lyase had a larger effect:
 imputing it from a physiological argininosuccinate concentration and a BRENDA
 Michaelis constant lowered the median to $50$ mmol\,gDW$^{-1}$\,h$^{-1}$ and
-widened the distribution toward zero, indicating that better data for this
-limiting reaction would reduce the uncertainty most directly. Because no
+widened the distribution toward zero. Better data for this limiting reaction
+would therefore reduce the uncertainty most directly. Because no
 HL-60-specific concentration, expression, or regulatory measurements were
 available, eQuilibrator provided the standard transformed reaction
-Gibbs-energy estimates, the heuristic threshold set reaction direction, and
-BRENDA set capacity scales, while the other factors remained at one. Under
-these assumptions, argininosuccinate lyase reaction $v_2$ limits the result
-and the competing nitric oxide synthase reaction $v_5$ carries little flux.
+Gibbs-energy estimates. The heuristic threshold set reaction direction.
+BRENDA set the capacity scales. The other factors remained at one. Under
+these assumptions, argininosuccinate lyase reaction $v_2$ limited the result.
+The competing nitric oxide synthase reaction $v_5$ carried little flux.
 
 \begin{figure}[htbp]
   \centering
@@ -164,16 +169,16 @@ and the competing nitric oxide synthase reaction $v_5$ carries little flux.
     \includegraphics[width=\linewidth]{urea_fba.pdf}
   \end{minipage}
   \caption{Urea-cycle network and optimal fluxes. Left: reactions $v_1$
-    through $v_4$ form the cycle, and $v_5$ is the competing nitric oxide
-    synthase branch. Exchange reactions cross the dashed boundary; arginine,
+    through $v_4$ form the cycle. Reaction $v_5$ is the competing nitric oxide
+    synthase branch. Exchange reactions cross the dashed boundary. Arginine,
     citrulline, ornithine, and argininosuccinate remain internal. Right: the
     optimal flux distribution for Equation~\eqref{eq:fba-lp}. Positive exchange
     flux denotes secretion, and negative exchange flux denotes uptake. The
-    cycle reactions carry $118.08$ mmol\,gDW$^{-1}$\,h$^{-1}$, the capacity of
-    argininosuccinate lyase ($v_2$), while nitric oxide synthase reaction
-    $v_5$ carries zero flux. The whisker
-    on urea export $b_4$ shows the $2.5$--$97.5$ percentile interval from the
-    Monte Carlo calculation in Algorithm~\ref{alg:uq}.}
+    cycle reactions carried $118.08$ mmol\,gDW$^{-1}$\,h$^{-1}$, the capacity of
+    argininosuccinate lyase ($v_2$). Nitric oxide synthase reaction $v_5$
+    carried zero flux. The whisker on urea export $b_4$ shows the
+    $2.5$--$97.5$ percentile interval from Configuration A of the Monte Carlo
+    calculation in Algorithm~\ref{alg:uq}.}
   \label{fig:urea}
 \end{figure}
 
@@ -227,14 +232,14 @@ and the competing nitric oxide synthase reaction $v_5$ carries little flux.
   \centering
   \includegraphics[width=0.7\linewidth]{urea_saturation.pdf}
   \caption{Sensitivity of urea export to saturation information. Configuration A
-    (blue) samples four saturation factors derived from data reported by Park
-    and coworkers \cite{Park2016} and holds the saturation factor $f_2 = 1$
-    at the argininosuccinate
-    lyase bottleneck, whose substrate is unmeasured, giving a median urea
-    export of $105$ mmol\,gDW$^{-1}$\,h$^{-1}$. Configuration B (red)
-    imputes the saturation factor $f_2$ from a physiological argininosuccinate concentration and a
-    BRENDA Michaelis constant and samples it as well, shifting the median
-    to $50$ mmol\,gDW$^{-1}$\,h$^{-1}$ and widening the band toward zero.
+    (blue) sampled four saturation factors derived from data reported by Park
+    and coworkers \cite{Park2016}. It held the saturation factor $f_2 = 1$
+    at the argininosuccinate lyase bottleneck because its substrate is
+    unmeasured. The resulting median urea export was $105$
+    mmol\,gDW$^{-1}$\,h$^{-1}$. Configuration B (red)
+    imputed the saturation factor $f_2$ from a physiological argininosuccinate concentration and a
+    BRENDA Michaelis constant and sampled it as well. This shifted the median
+    to $50$ mmol\,gDW$^{-1}$\,h$^{-1}$ and widened the distribution toward zero.
     The horizontal axis is logarithmic.}
   \label{fig:urea_uq}
 \end{figure}

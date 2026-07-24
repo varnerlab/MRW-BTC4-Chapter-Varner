@@ -1,8 +1,8 @@
 %% linearprogram.tex
 \section{The Linear Program and Its Geometry}\label{sec:lp}
 
-The balance equations conserve mass but usually admit many flux distributions;
-flux bounds restrict this set to a feasible polytope, and an objective selects
+The balance equations conserve mass but usually admit many flux distributions.
+Flux bounds restrict this set to a feasible polytope. An objective then selects
 an optimal vertex or face (Fig.~\ref{fig:lp-geometry}). FBA adds lower and upper bounds,
 represented by the lower-bound vector $\boldsymbol\ell$ and upper-bound
 vector $\mathbf u$, and a linear objective with coefficient vector $\mathbf c$.
@@ -22,9 +22,9 @@ maximize together define the linear program:
 This standard FBA formulation \cite{Orth2010} separates the constraint system
 from the modeling choice expressed by the objective. Setting the objective
 coefficient $c_j=1$ for a biomass pseudo-reaction maximizes growth by consuming
-precursors in the proportions needed to form new cell mass, whereas setting
-$c_j=1$ for a product-export reaction maximizes product secretion. The
-constraints remain unchanged; only the objective coefficient vector
+precursors in the proportions needed to form new cell mass. Setting
+$c_j=1$ for a product-export reaction instead maximizes product secretion. The
+constraints remain unchanged. Only the objective coefficient vector
 $\mathbf c$ differs. The growth-aware form remains linear when the
 concentration vector $\mathbf x$ is measured and the growth rate $\mu$ is
 fixed or enters as a scalar decision variable. If both the growth rate $\mu$
@@ -40,9 +40,9 @@ The corresponding null space is given by:
 \]
 This set contains every steady-state flux vector and contains more than one
 vector when the rank condition $\operatorname{rank}(\mathbf S)<n$ holds.
-Bounds restrict the null space to a feasible polytope, and the objective
-selects a vertex or face; because a face contains multiple optimal flux
-vectors, optimization does not always give a unique solution.
+Bounds restrict the null space to a feasible polytope. The objective selects a
+vertex or face. A face can contain multiple optimal flux vectors, so
+optimization does not always give a unique solution.
 
 \begin{figure}[htbp]
   \centering
@@ -60,13 +60,14 @@ vectors, optimization does not always give a unique solution.
 The singular value decomposition identifies both null spaces by factoring the
 stoichiometric matrix as
 $\mathbf S=\mathbf U\boldsymbol\Sigma\mathbf V^\top$, where $\mathbf U$ is
-the left-singular-vector matrix, $\boldsymbol\Sigma$ is the diagonal
-singular-value matrix, and $\mathbf V$ is the right-singular-vector matrix.
+the left-singular-vector matrix. The matrix $\boldsymbol\Sigma$ contains the
+singular values on its diagonal. The matrix $\mathbf V$ is the
+right-singular-vector matrix.
 Columns of the right-singular-vector matrix $\mathbf V$ associated with zero
-singular values span the right null space, so every steady-state flux vector
-is a linear combination of these columns, whereas columns of the
-left-singular-vector matrix $\mathbf U$ associated with zero singular values
-span the left null space. A coefficient vector $\mathbf y$ in this space
+singular values span the right null space. Every steady-state flux vector is a
+linear combination of these columns. Columns of the left-singular-vector
+matrix $\mathbf U$ associated with zero singular values span the left null
+space. A coefficient vector $\mathbf y$ in this space
 defines the conserved quantity
 $\mathbf y^\top\mathbf x$, such as the total concentration of a
 cofactor pair. Genome-scale models often have a large right null space

@@ -2,8 +2,8 @@
 \section{Worked Example: A Feedback-Inhibited Linear Pathway}\label{sec:feedback}
 
 The urea-cycle bounds used thermodynamic and kinetic factors but set the
-enzyme-abundance ratio $(e/e^{\circ})$ and allosteric factor $\theta_j$ to one;
-the feedback-inhibited pathway includes both controls. Its end product inhibits
+enzyme-abundance ratio $(e/e^{\circ})$ and allosteric factor $\theta_j$ to one.
+The feedback-inhibited pathway includes both controls. Its end product inhibits
 the existing enzyme and represses transcription of its gene, thereby changing
 enzyme activity and enzyme abundance on different timescales. These coupled
 effects are represented in a linear pathway with one controlled step:
@@ -11,10 +11,10 @@ effects are represented in a linear pathway with one controlled step:
   \emptyset \xrightarrow{\,r_0\,} X_1 \xrightarrow{\,r_1\,} X_2
   \xrightarrow{\,r_2\,} X_3 \xrightarrow{\,r_3\,} \emptyset,
 \end{equation}
-where $r_0$ is the committed uptake step, $r_1$ and $r_2$ are
-interconversions, and $r_3$ exports the end-product metabolite $X_3$. This end
-product controls both the activity and abundance of the enzyme for committed
-step $r_0$. We generated a
+Here $r_0$ is the committed uptake step. Reactions $r_1$ and $r_2$ are
+interconversions. Reaction $r_3$ exports the end-product metabolite $X_3$.
+This end product controls both the activity and abundance of the enzyme for
+committed step $r_0$. We generated a
 kinetic reference with a Biochemical Systems Theory (BST)
 S-system \cite{Savageau1976,SavageauVoit1987}. The model includes five dynamic
 states: metabolites $X_1$, $X_2$, and $X_3$, transcript $m$, and enzyme $E_0$.
@@ -40,17 +40,17 @@ where the reference end-product concentration $X_3^{\circ}=1$ in the
 concentration units used by the simulation.
 The normalized ratios are dimensionless.
 
-The kinetic reference combines expression timescales with metabolic feedback
-and gives a steady-state pathway throughput $T^{\star}\approx2.66$
-(Fig.~\ref{fig:feedback}). It uses a $330$-residue enzyme, a $990$-nucleotide
-gene, polymerase elongation at $60$ nucleotides per second, and ribosome
-elongation at $16$ amino acids per second. These values provide illustrative
-expression timescales. The steady-state abundance also depends on an mRNA half-life of
+The kinetic reference combined expression timescales with metabolic feedback
+and gave a steady-state pathway throughput $T^{\star}\approx2.66$
+(Fig.~\ref{fig:feedback}). The simulation used a $330$-residue enzyme, a
+$990$-nucleotide gene, polymerase elongation at $60$ nucleotides per second,
+and ribosome elongation at $16$ amino acids per second. These values provided
+illustrative expression timescales. The steady-state abundance also depended on an mRNA half-life of
 $2.5$ minutes, a protein half-life of $35$ minutes, and a culture doubling
 time of $60$ minutes. The same growth rate $\mu$ appears in both balances,
 but its relative contribution differs because transcript and protein have
 different degradation rates. With transcript degradation rate $\theta_m$ and
-protein degradation rate $\theta_p$, growth accounts for about four percent
+protein degradation rate $\theta_p$, growth accounted for about four percent
 of the total transcript clearance rate
 $\theta_m+\mu\approx0.289~\mathrm{min}^{-1}$ and about thirty-seven percent
 of the total enzyme clearance rate
@@ -59,14 +59,14 @@ in the linear chain carries the same pathway throughput $T$. Because export
 is first order in the end-product concentration $X_3$, the concentration is
 $X_3=T/k_3$, where $k_3$ is the first-order export constant. Substitution of
 the activity and expression controls gives one consistency condition for the
-end-product concentration $X_3$. The numerical solution was the steady-state
-concentration $X_3^{\star}\approx4$, with activity factor
-$\theta_{\mathrm{BST}}^{\star}\approx0.574$, an enzyme-abundance ratio
+end-product concentration $X_3$. The numerical solution gave the steady-state
+concentration $X_3^{\star}\approx4$. At this solution, the activity factor was
+$\theta_{\mathrm{BST}}^{\star}\approx0.574$, and the enzyme-abundance ratio was
 $(e/e^{\circ})^{\star}\approx0.464$. The basal transcription rate
 $\lambda$, defined by Equations~\eqref{eq:mrna} and
-\eqref{eq:control-split}, keeps expression above zero. The kinetic orders
-$a=0.4$ and $b=0.6$ make both controls affect the result; neither control alone
-produces the reference throughput.
+\eqref{eq:control-split}, kept expression above zero. The kinetic orders
+$a=0.4$ and $b=0.6$ made both controls affect the result. Neither control alone
+produced the reference throughput.
 
 The FBA comparison keeps the chain's stoichiometry unchanged and places the
 entire dual-control content on the committed-step bound
@@ -95,10 +95,9 @@ from the steady-state enzyme abundance and end-product concentration $X_3$,
 not from the reference flux. Four FBA solutions used the same stoichiometric
 matrix and differed only in the bound on committed step $r_0$. With both
 the expression and activity factors set to one, the predicted flux was $10$.
-Expression control alone
-reduced it to $4.64$, activity control alone reduced it to $6.10$, and both
-controls reduced it to $2.83$. The dual-control result is within about six
-percent of the BST reference value, $2.66$.
+Expression control alone reduced it to $4.64$. Activity control alone reduced
+it to $6.10$. Both controls reduced it to $2.83$. The dual-control result was
+within about six percent of the BST reference value, $2.66$.
 
 \begin{figure}[htbp]
   \centering
@@ -109,26 +108,25 @@ percent of the BST reference value, $2.66$.
     product $X_3$ represses enzyme expression and inhibits enzyme activity.
     Right: predicted committed-step flux $r_0$ with neither control, each
     control alone, and
-    both controls. Expression control gives $4.64$, activity control gives
-    $6.10$, and both give $2.83$. The BST reference is
-    pathway throughput $T^{\star}\approx2.66$, and the dashed line marks the
-    uninhibited
-    capacity of $10$.}
+    both controls. Expression control gave $4.64$. Activity control gave
+    $6.10$. Both controls gave $2.83$. The BST reference is
+    pathway throughput $T^{\star}\approx2.66$. The dashed line marks the uninhibited
+    capacity of $10$. All fluxes are in arbitrary units.}
   \label{fig:feedback}
 \end{figure}
 
 The parameter sweep addresses uncertainty in the Hill parameters, which were
 specified as half-saturation scale $K=5$ and Hill coefficient $n=2$ rather
 than fitted (Fig.~\ref{fig:feedback_robust}). We therefore varied the scale
-$K$ from $3$ to $8$ and coefficient $n$ from $1$ to $3$, recomputed the FBA
+$K$ from $3$ to $8$ and coefficient $n$ from $1$ to $3$. We recomputed the FBA
 activity factor $\theta_{\mathrm{FBA}}$ at the reference end-product
-concentration $X_3$, and solved the
-program at each grid point. With both controls, the predicted flux ranged from
+concentration $X_3$ and solved the program at each grid point. With both
+controls, the predicted flux ranged from
 about $1.4$ to $4.1$ and included the BST value of $2.66$. The nominal
 parameters gave $2.83$. Activity
-control alone kept the flux above about $2.97$, while expression control alone
-kept it at $4.64$. Thus, neither single-control model included the BST value
-over the tested parameter range, but the dual-control model did.
+control alone kept the flux above about $2.97$. Expression control alone kept
+it at $4.64$. Neither single-control model included the BST value over the
+tested parameter range. The dual-control model did.
 
 \begin{figure}[htbp]
   \centering
@@ -137,8 +135,9 @@ over the tested parameter range, but the dual-control model did.
     the dual-control flux while the half-saturation scale $K$ and Hill
     coefficient $n$ vary in the FBA activity factor
     $\theta_{\mathrm{FBA}}=K^{n}/(K^{n}+X_3^{n})$. The color scale is centered
-    on the BST reference $T^{\star}\approx2.66$, and the black contour marks
-    equal FBA and BST fluxes. The predicted flux ranges from about $1.4$ to
-    $4.1$. The marked nominal parameter pair, $(K,n)=(5,2)$, gives $2.83$.}
+    on the BST reference $T^{\star}\approx2.66$. The black contour marks
+    equal FBA and BST fluxes. The predicted flux ranged from about $1.4$ to
+    $4.1$. The marked nominal parameter pair, $(K,n)=(5,2)$, gave $2.83$.
+    All fluxes are in arbitrary units.}
   \label{fig:feedback_robust}
 \end{figure}

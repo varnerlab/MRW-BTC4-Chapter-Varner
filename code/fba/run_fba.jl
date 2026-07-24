@@ -7,7 +7,8 @@ res = solve_fba(m)
 CSV.write(datapath("urea_fba_solution.csv"), res)
 
 let fig = Figure()
-    ax = Axis(fig[1,1], xticks=(1:nrow(res), res.reaction), ylabel="flux",
+    ax = Axis(fig[1,1], xticks=(1:nrow(res), res.reaction),
+              ylabel="flux (mmol gDW⁻¹ h⁻¹)",
               xticklabelrotation=pi/4)
     barplot!(ax, 1:nrow(res), res.flux)
     save(figpath("urea_fba.pdf"), fig)

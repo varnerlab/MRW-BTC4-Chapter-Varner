@@ -42,7 +42,7 @@ println("mu fraction of clearance: transcript=", round(sp.mu/(sp.theta_m+sp.mu),
 # chapter/figures/feedback_network.tex; the two loop colors below match it) --- #
 fig = Figure(size=(520, 400))
 axL = Axis(fig[1,1], xticks=(1:4, ["V°max","×(e/e°)","×θ","both"]),
-           ylabel="committed-step capacity (AU)",
+           ylabel="committed-step flux (AU)",
            title="Expression and activity factors multiply")
 barplot!(axL, 1:4, capacities; color=[:gray70,:steelblue,:orange,:seagreen])
 hlines!(axL, [controls.Vmax0]; color=:gray, linestyle=:dash, label="un-inhibited capacity")

@@ -157,7 +157,8 @@ CSV.write(datapath("urea_fba_uq.csv"), stats)
 # the NOS branch can activate in some draws. The figure therefore shows the
 # 2.5-97.5 percentile interval only for b4, the reported objective.
 let fig = Figure()
-    ax = Axis(fig[1,1], xticks=(1:nrow(stats), stats.reaction), ylabel="flux",
+    ax = Axis(fig[1,1], xticks=(1:nrow(stats), stats.reaction),
+              ylabel="flux (mmol gDW⁻¹ h⁻¹)",
               xticklabelrotation=pi/4)
     barplot!(ax, 1:nrow(stats), stats.nominal)
     b4row = findfirst(==("b4"), stats.reaction)

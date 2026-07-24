@@ -10,16 +10,19 @@ reaction $j$, the bound is written as:
 \end{equation}
 where $V^{\circ}_{\max,j}$ is a reference capacity with units of flux and the
 remaining factors are dimensionless. The reversibility factor $\delta_j$ sets
-the reverse direction; the reference capacity $V^{\circ}_{\max,j}$ and
-saturation factor $f_j$ describe enzyme capacity and substrate saturation;
-the enzyme-abundance ratio $(e/e^{\circ})$ compares the current enzyme
-concentration $e$ with the reference concentration $e^{\circ}$; and the
+the reverse direction. The reference capacity $V^{\circ}_{\max,j}$ and
+saturation factor $f_j$ describe enzyme capacity and substrate saturation.
+The enzyme-abundance ratio $(e/e^{\circ})$ compares the current enzyme
+concentration $e$ with the reference concentration $e^{\circ}$. The
 allosteric factor $\theta_j$ describes enzyme activity.
 Transcriptional and translational controls $u_j$ and $w_j$ act through the
 expression model and change the enzyme-abundance ratio $(e/e^{\circ})$. They
 are distinct from the allosteric factor $\theta_j$. When data are unavailable,
 the corresponding factor is set to one. Measurements or mechanistic models
 can then replace that default.
+Equation~\eqref{eq:general-bound} uses the same reference magnitude in both
+directions as a simplifying baseline. A reversible enzyme can instead have
+distinct forward and reverse capacities.
 
 The reversibility factor $\delta_j$ has two values:
 \begin{equation}\label{eq:thermo-gate}
@@ -43,21 +46,21 @@ uncertainties through the reaction Gibbs energy, which is given by:
   \qquad
   Q_j = \prod_i a_i^{\sigma_{ij}},
 \end{equation}
-where the gas constant $R=8.314\times10^{-3}$ kJ\,mol$^{-1}$\,K$^{-1}$,
-$T_{\mathrm{abs}}$ is absolute temperature in K, $Q_j$ is the dimensionless
-reaction quotient, $a_i$ is the dimensionless activity of species $i$
-relative to its standard state, and $\sigma_{ij}$ is the stoichiometric
-coefficient of species $i$ in reaction $j$, with negative values for reactants
-and positive values for products. The prime denotes a
+where the gas constant $R=8.314\times10^{-3}$ kJ\,mol$^{-1}$\,K$^{-1}$.
+The quantity $T_{\mathrm{abs}}$ is the absolute temperature in K. The quantity
+$Q_j$ is the dimensionless reaction quotient. The quantity $a_i$ is the dimensionless
+activity of species $i$ relative to its standard state. The coefficient
+$\sigma_{ij}$ is the stoichiometric coefficient of species $i$ in reaction
+$j$. It is negative for reactants and positive for products. The prime denotes a
 biochemical transformed quantity evaluated under specified reference
 conditions, including pH and ionic strength. Reaction direction is tested by
 whether the reaction Gibbs energy $\Delta_{\mathrm r}G_j^{\prime}$ can change
-sign over the allowed activity ranges: forward flux requires
-$\Delta_{\mathrm r}G_j^{\prime}<0$, reverse flux requires
-$\Delta_{\mathrm r}G_j^{\prime}>0$, and
-$\Delta_{\mathrm r}G_j^{\prime}=0$ at equilibrium \cite{Henry2007}. The component
+sign over the allowed activity ranges. Forward flux requires
+$\Delta_{\mathrm r}G_j^{\prime}<0$. Reverse flux requires
+$\Delta_{\mathrm r}G_j^{\prime}>0$. At equilibrium,
+$\Delta_{\mathrm r}G_j^{\prime}=0$ \cite{Henry2007}. The component
 contribution method provides consistent standard transformed Gibbs-energy
-estimates and uncertainties \cite{Noor2013}, and eQuilibrator makes these
+estimates and uncertainties \cite{Noor2013}. eQuilibrator makes these
 estimates available for metabolic calculations \cite{Beber2022}.
 
 Enzyme kinetics set the forward capacity. The reference capacity is given by:
@@ -66,8 +69,8 @@ Enzyme kinetics set the forward capacity. The reference capacity is given by:
 \end{equation}
 where $k^{\circ}_{\mathrm{cat},j}$ is the turnover number and $e^{\circ}$
 is a reference enzyme concentration. BRENDA reports turnover numbers
-\cite{Chang2021}, while BioNumbers reports cellular abundance scales
-\cite{Milo2010}; together, these quantities set the reference capacity. The
+\cite{Chang2021}. BioNumbers reports cellular abundance scales
+\cite{Milo2010}. Together, these quantities set the reference capacity. The
 saturation factor gives the fraction of
 the reference capacity $V^{\circ}_{\max,j}$ available at the current substrate
 concentration.
@@ -81,8 +84,8 @@ complex, and $P$ is product. The rate constants $k_1$, $k_{-1}$, and
 $k_{\mathrm{cat}}$ describe substrate association, substrate dissociation,
 and catalysis, respectively. The quasi-steady-state
 approximation and enzyme conservation, $[E]_T=[E]+[ES]$, give
-$[ES]=[E]_T[S_j]/(K_{M,j}+[S_j])$, where $[E]_T$ is total enzyme
-concentration and $K_{M,j}=(k_{-1}+k_{\mathrm{cat}})/k_1$ is the Michaelis
+$[ES]=[E]_T[S_j]/(K_{M,j}+[S_j])$. Here $[E]_T$ is total enzyme
+concentration, and $K_{M,j}=(k_{-1}+k_{\mathrm{cat}})/k_1$ is the Michaelis
 constant. With the reaction rate $v_j=k_{\mathrm{cat}}[ES]$ and maximum rate
 $V_{\max,j}=k_{\mathrm{cat}}[E]_T$, the Michaelis--Menten law is given by
 \cite{MichaelisMenten1913}:
@@ -106,9 +109,9 @@ protein $p_j$ are given by:
   \label{eq:protein}
 \end{align}
 where $r_{X,j}$ and $r_{L,j}$ are transcription and translation
-capacities, $u_j$ is the dimensionless transcriptional control, $w_j$ is the
-dimensionless translational control,
-$\theta_{m,j}$ and $\theta_{p,j}$ are degradation constants, and
+capacities. The quantities $u_j$ and $w_j$ are the dimensionless
+transcriptional and translational controls, respectively. The quantities
+$\theta_{m,j}$ and $\theta_{p,j}$ are degradation constants. The term
 $\lambda_j$ is the basal transcription rate. The growth rate $\mu$ adds to
 both loss rates. At steady state, the solutions are:
 \begin{equation}\label{eq:expression-ss}
@@ -120,7 +123,7 @@ both loss rates. At steady state, the solutions are:
 \end{equation}
 Gene--protein--reaction rules map the steady-state protein abundance
 $p_j^\star$ to catalytic activity for single enzymes, multisubunit complexes,
-and isozymes, while measured transcript or protein abundance can set the
+and isozymes. Measured transcript or protein abundance can instead set the
 enzyme-abundance ratio $(e/e^{\circ})$ directly and produce condition-specific
 capacities.
 
@@ -144,9 +147,9 @@ function, and state probability are given by:
   p_s(\mathbf x)
     = \frac{\omega_s(\mathbf x)}{Z_q(\mathbf x)},
 \end{equation}
-where $\beta=1/(k_BT_{\mathrm{abs}})$ is the inverse thermal energy,
-$k_B$ is the Boltzmann constant, $T_{\mathrm{abs}}$ is absolute temperature,
-and $Z_q$ is the partition function. The concentration factor
+where $\beta=1/(k_BT_{\mathrm{abs}})$ is the inverse thermal energy.
+The constant $k_B$ is the Boltzmann constant. The quantity $T_{\mathrm{abs}}$
+is the absolute temperature. The quantity $Z_q$ is the partition function. The concentration factor
 $g_s(\mathbf x)$ includes ligand concentration, binding stoichiometry, and
 degeneracy. For example, a state with binding stoichiometry $n$, effector
 concentration $x$, and concentration scale $K$ has a concentration factor
@@ -168,7 +171,7 @@ set:
 \end{equation}
 Here $Z_{\mathcal C}=\sum_{s\in\mathcal C}\omega_s$ is the partition sum
 over a configuration subset $\mathcal C$. Active states appear in the
-numerator and denominator; inactive states appear only in the denominator. Therefore
+numerator and denominator. Inactive states appear only in the denominator. Therefore
 $0\leq\Phi_q\leq1$ for the control $\Phi_q$. An effector increases or
 decreases the control $\Phi_q$ according
 to the states it stabilizes. Choose configuration $0$ as a reference, define
@@ -197,7 +200,7 @@ dissociation constants.
   \includegraphics[width=0.88\textwidth]{active_subset.pdf}
   \caption{Active-subset construction of biological control factors.
   (a) Configuration weights combine relative energetics with regulator
-  availability; blue states permit the process and gray states do not.
+  availability. Blue states permit the process and gray states do not.
   (b) Active states enter the numerator, while all states enter the
   partition-function denominator. The promoter shown is schematic.
   (c) Specifying the relevant configurations gives allosteric activity
@@ -280,13 +283,13 @@ $\theta_j\approx1$. This gives the baseline bound:
   -\delta_j\,V^{\circ}_{\max,j} \;\le\; \hat v_j \;\le\; V^{\circ}_{\max,j}.
 \end{equation}
 The baseline bound in Equation~\eqref{eq:simplified-bound} retains only
-reversibility and reference capacity, whereas the general bound in
+reversibility and reference capacity. The general bound in
 Equation~\eqref{eq:general-bound} identifies the omitted factors that require
 additional data. Each factor has a precedent in
 constraint-based modeling: thermodynamics-based flux analysis uses free
 energies and metabolite activity ranges to
 exclude infeasible states \cite{Henry2007}. Enzyme-constrained FBA uses
-turnover numbers and enzyme abundance; GECKO applies this approach at genome
+turnover numbers and enzyme abundance. GECKO applies this approach at genome
 scale \cite{Sanchez2017}. Metabolism-and-expression models couple
 transcription and translation to metabolism \cite{OBrien2013}. Regulatory
 FBA uses Boolean expression rules \cite{Covert2001}, whereas PROM uses
