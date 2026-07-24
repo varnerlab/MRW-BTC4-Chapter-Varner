@@ -80,3 +80,9 @@ flux. Equal minimum and maximum values mean that a reaction is fixed on
 that optimal face. A wide interval means that the reaction can vary without
 changing the required objective value. A different objective can select a
 different face and produce different intervals.
+
+As condition-specific bounds are added, the feasible set may become empty. In
+that case, conflicting bounds or mass-balance constraints should be traced
+back to their data sources. Temporary slack variables can help diagnose the
+conflict, but a relaxed solution should not be mistaken for a biologically
+feasible prediction.
